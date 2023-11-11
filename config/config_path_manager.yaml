@@ -1,0 +1,8 @@
+description_parent: description
+dest_path: /home/gheorghe/Desktop/s_AI/s_AI/test
+input_parent_man: man
+input_parent_row: row
+input_suffix: .png
+output_parent: targets
+output_suffix: .csv
+source_path: /home/gheorghe/Desktop/s_AI/s_AI/test/row
