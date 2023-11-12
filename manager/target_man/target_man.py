@@ -169,6 +169,16 @@ class TargetManager(object):
         Path(filename).touch(mode=0o666, exist_ok=True)
         self.df_targets.to_csv(filename, sep=',', index=False)
 
+    def save_configs(self):
+        #save default rating in yaml file
+        names_yaml = """default_rating : {}""".format(self.get_default_rating())
+        names = yaml.safe_load(names_yaml)
+
+        with open(self.config_file, 'w') as file:
+            yaml.dump(names, file)
+        print('default_rating {}, read {}'.format(self.get_default_rating(), open(self.config_file).read()))
+
+
     def cut(self, indexes):
         tolerance = np.arange(self.DEFAULT_OBJECT+1)
         tolerance_index = np.argwhere(list(map(lambda t: t in indexes, tolerance))).reshape(-1)
@@ -189,8 +199,8 @@ class TargetManager(object):
         print('cut_last_name {}'.format(self.df_targets))
         print('get_last_name {}, ittem {}, len {}'.format(self.get_last_name(), self.selected_object, len(self.df_targets)))
 
-    def crop_last_targets(self):
-        print('crop_targets {} item {}'.format(self.get_last_name(), self.get_selected_object()))
+    def crop_last_name(self):
+        print('crop_last_name {} item {}'.format(self.get_last_name(), self.get_selected_object()))
         cx0, cy0, cx1, cy1 = self.get_last_coord()
         print('x0 {}, y0 {}, x1 {}, y1 {}'.format(cx0, cy0, cx1, cy1))
         self.set_size(cx1 - cx0, cy1 - cy0)
@@ -205,6 +215,15 @@ class TargetManager(object):
             y0, y1 = y0 - cy0, y1 - cy0
             self.set_coord(idx, (x0, y0, x1, y1))
 
+    def double_last_name(self):
+        print('double_last_name {}'.format(self.df_targets))
+        print('get_last_name {}, ittem {}, len {}'.format(self.get_last_name(), self.selected_object, len(self.df_targets)))
+        d_new_target = self.df_targets.loc[self.selected_object]
+        print('double_last_name selected_object {}, data'.format(self.selected_object, d_new_target))
+        self.set_selected_object(len(self.get_names()))
+        
+        self.df_targets.loc[self.selected_object] = d_new_target
+        self.update_last_name()
 
     def get_invalid_obj_man(self, box:tuple):
         x0, y0, x1, y1 = box
@@ -229,7 +248,7 @@ class TargetManager(object):
         invalid_idx = self.get_invalid_obj_man(box)
         valid_idx = np.array([i for i in range(nbr_object) if i not in invalid_idx])
         print('valid_idx', valid_idx)
-        return 
+        return valid_idx
 
     def new(self, x1:int, y1:int):
         self.delete()
@@ -252,10 +271,7 @@ class TargetManager(object):
         self.update_last_name()
 
         self.selectObjectFrame.update()
-        
-        shape_rectangle = self.get_last_coord()
-        print('shape_rectangle {}, type{}'.format(shape_rectangle, type(shape_rectangle)))
-        self.imageManager.rectangle_img_show(shape_rectangle, self.get_last_name())
+        self.editManager.show()
 
     def new_frame(self, x1:int, y1:int):
         self.new(x1, y1)
@@ -286,34 +302,20 @@ class TargetManager(object):
         self.update_description_frame()
         self.selectObjectFrame.init()
 
-    def crop_targets_frame(self, index, box):
-        print('crop_targets', index)
-        self.df_targets = self.df_targets.iloc[index]
-        print('crop_targets', self.df_targets)
-        for idx in range(self.DEFAULT_OBJECT, len(self.df_targets)):
-            print(idx)
-            x0, y0, x1, y1 = self.get_coord(idx)
-            x0, x1 = x0 - box[0], x1 - box[0]
-            y0, y1 = y0 - box[1], y1 - box[1]
-            self.set_coord(idx, (x0, y0, x1, y1))
-        print('crop_targets', self.df_targets)
+    def crop_last_name_frame(self):
+        self.crop_last_name()
 
         self.update_description_frame()
         self.selectObjectFrame.init()
 
-    def save(self, filename):
+    def save_frame(self, filename):
         self.save_description()
         #save target data to csv file
         self.save_targets(filename)
         #save default rating in yaml file
-        names_yaml = """default_rating : {}""".format(self.get_default_rating())
-        names = yaml.safe_load(names_yaml)
+        self.save_configs()
 
-        with open(self.config_file, 'w') as file:
-            yaml.dump(names, file)
-        print('default_rating {}, read {}'.format(self.get_default_rating(), open(self.config_file).read()))
-
-    def save_description(self):
+    def save_description_frame(self):
         text_description = self.descriptionFrame.get_text_frame()
         self.set_last_description(text_description)
 
@@ -321,20 +323,12 @@ class TargetManager(object):
         self.cut_last_name()
         self.selectObjectFrame.cut(self.selected_object)
 
-    def double_last_name(self):
-        print('double_last_name {}'.format(self.df_targets))
-        print('get_last_name {}, ittem {}, len {}'.format(self.get_last_name(), self.selected_object, len(self.df_targets)))
-        d_new_target = self.df_targets.loc[self.selected_object]
-        print('double_last_name selected_object {}, data'.format(self.selected_object, d_new_target))
-        self.set_selected_object(len(self.get_names()))
-        
-        self.df_targets.loc[self.selected_object] = d_new_target
-        self.update_last_name()
+    def double_last_name_frame(self):
+        self.double_last_name()
         
         self.selectObjectFrame.add(self.last_name, self.selected_object)
         self.descriptionFrame.set_text_frame(self.get_last_name(), self.get_last_description())
         self.ratingFrame.set_rating_frame(self.get_last_rating())
-        print('double_last_name {}'.format(self.df_targets))
 
 
     def update_description_frame(self):

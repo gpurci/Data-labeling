@@ -12,9 +12,9 @@ class ToolsManager(object):
     def crop(self):
         print('CROP')
         self.pathManager.set_file_suffix('_crop')
-        box = elf.datasets.get_last_coord()
+        box = self.datasets.get_last_coord()
         self.imageManager.crop(box)
-        self.datasets.crop_targets()
+        self.datasets.crop_last_name_frame()
         self.editManager.show()
 
 

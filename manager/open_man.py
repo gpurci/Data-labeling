@@ -14,7 +14,7 @@ class OpenFilenameManager(object):
             dest_file = self.pathManager.get_dest_filename()
             Path(dest_file).parent.mkdir(parents=True, exist_ok=True)
             print('dest_file {}'.format(dest_file))
-            self.datasets.save(dest_file)
+            self.datasets.save_frame(dest_file)
             row_filename = self.pathManager.get_row_filename()
             if (Path(row_filename).is_file() == False):
                 self.imageManager.save(row_filename)
@@ -28,10 +28,10 @@ class OpenFilenameManager(object):
         dest_file      = self.pathManager.get_dest_filename()
         if (Path(dest_file).is_file() == True):
             print('True  -> dest_file {}'.format(dest_file))
-            self.datasets.read(dest_file)
+            self.datasets.read_frame(dest_file)
         else:
             print('False -> dest_file {}'.format(dest_file))
-            self.datasets.new()
+            self.datasets.new_frame()
         print('datasets {}'.format(self.datasets))
         source_file = self.pathManager.get_source_filename()
         self.imageManager.read(source_file)

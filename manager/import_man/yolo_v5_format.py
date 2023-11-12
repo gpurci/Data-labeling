@@ -18,7 +18,7 @@ def rename_dir(path, src, dst):
     return Path(*parts)
 
 #read a file Yolo v5 format and get array of labels, centers, width and height
-def readLabelsYoloV5Format(filename):
+def readLabelsYoloV5Format(filename:str):
   # filename - a txt file yolo v5 format
   # can use pandas: pd.read_csv(filename, sep=' ', names=['label', 'center_x', 'center_y', 'w', 'h'])
 
@@ -69,7 +69,7 @@ def readLabelsYoloV5Format(filename):
   return np_label, np_center_x, np_center_y, np_w, np_h
 
 #write a file Yolo v5 format and put labels, centers, width and height
-def writeLabelsYoloV5Format(filename, zip_elements):
+def writeLabelsYoloV5Format(filename:str, zip_elements):
   # filename     - a txt file yolo v5 format
   # zip_elements - labels, centers, width and height
     # label - object class
@@ -172,7 +172,7 @@ def yolo_v5_format_import_fn(source_path, dest_path, targets, path_man):
         for label, x0, y0, x1, y1 in zip(np_label, x0s, y0s, x1s, y1s):
             d_new_targets = { 'names':object_names[label], 
                                             'description':object_names[label], 
-                                            'rating':targets.default_rating, 
+                                            'rating':targets.get_default_rating(), 
                                             'coord x0':x0, 
                                             'coord x1':x1, 
                                             'coord y0':y0, 
