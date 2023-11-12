@@ -72,7 +72,9 @@ class SelectObjectFrame(object):
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
     def change_cursor(self, curent_cursor):
-        if ((self.last_item != -1) and (str(self.selected_obj_name.get(self.last_item))[0] == '>')):
+        if ((self.last_item != -1) and 
+            (self.last_item < self.selected_obj_name.size()) and 
+            (str(self.selected_obj_name.get(self.last_item))[0] == '>')):
             selected_obj = str(self.selected_obj_name.get(self.last_item))
             self.selected_obj_name.insert(self.last_item, selected_obj[len('> '):])
             self.selected_obj_name.delete(self.last_item+1)

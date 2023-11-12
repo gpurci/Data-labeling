@@ -15,7 +15,6 @@ class ToolsManager(object):
         box = self.datasets.get_last_coord()
         self.imageManager.crop(box)
         self.datasets.crop_last_name_frame()
-        self.editManager.show()
 
 
     def set_ImageManager(self, imageManager):

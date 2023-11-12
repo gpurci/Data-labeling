@@ -60,7 +60,7 @@ class TargetManager(object):
         self.init_last_name()
         
     def set_selected_object(self, item:int):
-        if (item < len(self.df_targets)):
+        if (item < self.get_object_size()):
             self.selected_object = item
         else:
             self.selected_object = self.DEFAULT_OBJECT
@@ -137,6 +137,9 @@ class TargetManager(object):
         y = self.df_targets['coord y1'][self.DEFAULT_OBJECT]
         return (x, y)
 
+    def get_object_size(self):
+        return len(self.get_names())
+
     def get_last_description(self):
         return self.get_description(self.selected_object)
 
@@ -188,39 +191,42 @@ class TargetManager(object):
 
         self.df_targets.drop(index=invalid_idx, inplace=True)
         #print('index {}', self.df_targets.index)
-        self.df_targets.index = np.arange(len(self.df_targets))
+        self.df_targets.index = np.arange(self.get_object_size())
+        self.set_selected_object(self.DEFAULT_OBJECT)
 
     def cut_last_name(self):
         print('cut_last_name {}'.format(self.df_targets))
-        print('get_last_name {}, ittem {}, len {}'.format(self.get_last_name(), self.selected_object, len(self.df_targets)))
+        print('get_last_name {}, ittem {}, len {}'.format(self.get_last_name(), self.selected_object, self.get_object_size()))
         if (self.selected_object > self.DEFAULT_OBJECT):
             self.cut([self.selected_object])
             self.set_selected_object(self.DEFAULT_OBJECT)
         print('cut_last_name {}'.format(self.df_targets))
-        print('get_last_name {}, ittem {}, len {}'.format(self.get_last_name(), self.selected_object, len(self.df_targets)))
+        print('get_last_name {}, ittem {}, len {}'.format(self.get_last_name(), self.selected_object, self.get_object_size()))
 
     def crop_last_name(self):
         print('crop_last_name {} item {}'.format(self.get_last_name(), self.get_selected_object()))
         cx0, cy0, cx1, cy1 = self.get_last_coord()
-        print('x0 {}, y0 {}, x1 {}, y1 {}'.format(cx0, cy0, cx1, cy1))
-        self.set_size(cx1 - cx0, cy1 - cy0)
-        print('size {}', self.get_size())
 
         invalid_index = self.get_invalid_obj_man((cx0, cy0, cx1, cy1))
+        invalid_index = np.concatenate((invalid_index, [self.selected_object]), axis=None)
         self.cut(invalid_index)
-        for idx in range(self.DEFAULT_OBJECT+1, len(self.df_targets)):
+        print('x0 {}, y0 {}, x1 {}, y1 {}'.format(cx0, cy0, cx1, cy1))
+        self.set_size(cx1 - cx0, cy1 - cy0)
+        print('size {}, object size {}'.format(self.get_size(), self.get_object_size()))
+        for idx in range(self.DEFAULT_OBJECT+1, self.get_object_size()):
             print(idx)
             x0, y0, x1, y1 = self.get_coord(idx)
             x0, x1 = x0 - cx0, x1 - cx0
             y0, y1 = y0 - cy0, y1 - cy0
             self.set_coord(idx, (x0, y0, x1, y1))
+        print('crop_last_name end')
 
     def double_last_name(self):
         print('double_last_name {}'.format(self.df_targets))
-        print('get_last_name {}, ittem {}, len {}'.format(self.get_last_name(), self.selected_object, len(self.df_targets)))
+        print('get_last_name {}, ittem {}, len {}'.format(self.get_last_name(), self.selected_object, self.get_object_size()))
         d_new_target = self.df_targets.loc[self.selected_object]
         print('double_last_name selected_object {}, data'.format(self.selected_object, d_new_target))
-        self.set_selected_object(len(self.get_names()))
+        self.set_selected_object(self.get_object_size())
         
         self.df_targets.loc[self.selected_object] = d_new_target
         self.update_last_name()
@@ -244,7 +250,7 @@ class TargetManager(object):
         return invalid_idx
 
     def get_valid_obj_man(self, box:tuple):
-        nbr_object = len(self.df_targets)
+        nbr_object = self.get_object_size()
         invalid_idx = self.get_invalid_obj_man(box)
         valid_idx = np.array([i for i in range(nbr_object) if i not in invalid_idx])
         print('valid_idx', valid_idx)
@@ -281,14 +287,14 @@ class TargetManager(object):
 
     def add_object_frame(self, d_new_target:dict):
         d_new_target['rating'] = self.default_rating
-        self.add_object(d_new_target, len(self.get_names()))
+        self.add_object(d_new_target, self.get_object_size())
         
-        self.selectObjectFrame.add(self.get_last_name(), len(self.get_names()))
+        self.selectObjectFrame.add(self.get_last_name(), self.get_object_size())
         self.descriptionFrame.set_text_frame(self.get_last_name(), self.get_last_description())
         self.ratingFrame.set_rating_frame(self.get_last_rating())
 
     def select_object_frame(self, item:int):
-        self.save_description()
+        self.save_description_frame()
         self.set_selected_object(item)
         self.update_last_name()
         
@@ -307,9 +313,10 @@ class TargetManager(object):
 
         self.update_description_frame()
         self.selectObjectFrame.init()
+        self.editManager.show()
 
     def save_frame(self, filename):
-        self.save_description()
+        self.save_description_frame()
         #save target data to csv file
         self.save_targets(filename)
         #save default rating in yaml file
