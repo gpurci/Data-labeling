@@ -166,7 +166,9 @@ class EditFrame(object):
         self.canvas_frame = LabelFrame(self.windows, text='Not file')
         self.canvas_frame.pack(fill="both", expand="yes")
 
-        self.input_canvas = Canvas(self.canvas_frame, width=self.dataset_dim.get_width(), height=self.dataset_dim.get_height(), bd=0, bg='#d1d8e3')#d1d8e3
+        self.input_canvas = Canvas(self.canvas_frame, 
+                                    width=self.dataset_dim.get_width(), height=self.dataset_dim.get_height(), 
+                                    bd=0, bg='#d1d8e3')#d1d8e3
         self.input_canvas.pack()
         self.input_canvas.bind("<B1-Motion>", self.on_canvas_dataset_click)
         self.input_canvas.bind("<ButtonRelease-1>", self.on_canvas_dataset_click_release)

@@ -172,8 +172,12 @@ class Application(Frame):
         rank_dataset_frame.pack( side = TOP )
         self.rating_frame.set_windows(rank_dataset_frame)
 
-        notebook_frame = Frame(self.frame_man.frame_image)
-        notebook_frame.pack( side = TOP )
+        #notebook_frame = Frame(self.frame_man.frame_image)
+        #notebook_frame.pack( side = TOP )
+
+        notebook_frame = LabelFrame(self.frame_man.frame_image, text='Work tab')
+        notebook_frame.pack(side=TOP, fill="both", expand="no")
+
         self.notebook_frame.set_windows(notebook_frame)
 
         dataset_frame = Frame(self.frame_man.frame_image)

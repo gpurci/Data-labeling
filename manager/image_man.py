@@ -193,3 +193,6 @@ class ImageManager:
     def edit_mode(self, box):
         box = self.calc_coord_from_target(box)
         self.edit_mode_fn(box)
+
+    def set_EditFrame(self, editFrame):
+        self.editFrame = editFrame

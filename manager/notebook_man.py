@@ -8,9 +8,9 @@ from manager.target_man.target_man import *
 class NotebookManager(object):
     def __init__(self, config_file):
         self.config_file = config_file
-        self.images = []
-        self.targets = []
-        self.filenames = []
+        self.__images = []
+        self.__targets = []
+        self.__filenames = []
         self.__idx_tab = -1
         self.read_config_yaml_file(self.config_file)
 
@@ -26,7 +26,7 @@ class NotebookManager(object):
     def set_default_rating(self, rating:int):
         self.__default_rating = rating
         for idx in range(self.get_tab_size()):
-            self.images[idx].set_default_rating(self.__default_rating)
+            self.__images[idx].set_default_rating(self.__default_rating)
 
     def save_configs(self):
         #save default rating in yaml file
@@ -38,7 +38,7 @@ class NotebookManager(object):
         print('default_rating {}, read {}'.format(self.__default_rating, open(self.config_file).read()))
 
     def get_tab_size(self):
-        return len(self.images)
+        return int(len(self.__images))
 
     def __str__(self):
         strRet = """
@@ -47,38 +47,42 @@ class NotebookManager(object):
         """.format(self.get_filename(), self.get_tab_size())
         return (strRet)
 
-    def select_tab(self, idx):
+    def select_tab(self, idx:int):
+        print('select_tab', type(idx))
         if ((idx >= 0) and (idx < self.get_tab_size())):
             self.__idx_tab = idx
+            filename = self.get_filename()
+            self.editManager.set_work_frame(filename)
         else:
             self.__idx_tab = -1
 
     def add(self, filename):
-        self.filenames.append(filename)
+        self.__filenames.append(filename)
         image_man = ImageManager(frame=[self.dataDimension.get_width(), self.dataDimension.get_height()])
         target_man = TargetManager(self.__default_rating)
 
-        self.images.append(image_man)
-        self.targets.append(target_man)
+        self.__images.append(image_man)
+        self.__targets.append(target_man)
+        self.select_tab(self.get_tab_size()-1)
         self.config()
 
     def image(self):
         if (self.__idx_tab >= 0):
-            retVal = self.images[self.__idx_tab]
+            retVal = self.__images[self.__idx_tab]
         else:
             retVal = None
         return retVal
 
     def target(self):
         if (self.__idx_tab >= 0):
-            retVal = self.targets[self.__idx_tab]
+            retVal = self.__targets[self.__idx_tab]
         else:
             retVal = None
         return retVal
 
     def get_filename(self):
         if (self.__idx_tab >= 0):
-            retVal = self.filenames[self.__idx_tab]
+            retVal = self.__filenames[self.__idx_tab]
         else:
             retVal = None
         return retVal
@@ -100,6 +104,11 @@ class NotebookManager(object):
     def add_frame(self, filename):
         self.add(filename)
         self.notebookFrame.add(filename)
+
+    def delete_tab(self, index):
+        del self.__images[index]
+        del self.__targets[index]
+        del self.__filenames[index]
 
 
 
