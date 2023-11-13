@@ -28,6 +28,7 @@ from frame.tools import *
 from frame.menu_open import *
 from frame.menu_dest import *
 from frame.import_frame import *
+from frame.notebook import *
 
 from manager.image_man import *
 from manager.target_man.target_man import *
@@ -36,6 +37,7 @@ from manager.edit_man import *
 from manager.tools_man import *
 from manager.hyperparameters_man import *
 from manager.open_man import *
+from manager.notebook_man import *
 from manager.import_man.yolo_v5_format import *
 
 
@@ -83,7 +85,7 @@ class FrameManager(object):
         
         
 
-class DatasetDimensions(object):
+class WorkFrameDimension(object):
     def __init__(self, config_file):
         self.config_file = config_file
         self.read_config_yaml_file(self.config_file)
@@ -92,18 +94,25 @@ class DatasetDimensions(object):
         if (Path(config_file).is_file() == True):
             with open(config_file) as file:
                 config_list = yaml.load(file, Loader=yaml.FullLoader)
-            self.width  = config_list['width']
-            self.height = config_list['height']
+            self.__width  = config_list['width']
+            self.__height = config_list['height']
             print(config_list)
         else:
-            self.width  = 1100
-            self.height = 550
+            self.__width  = 1100
+            self.__height = 550
 
     def get_size(self):
-        return (self.width, self.height)
+        return (self.__width, self.__height)
 
     def get_center(self):
-        return (int(self.width/2.), int(self.height/2.))
+        return (int(self.__width/2.), int(self.__height/2.))
+
+    def get_width(self):
+        return self.__width
+
+    def get_height(self):
+        return self.__height
+
 
 class Application(Frame):
 
@@ -162,7 +171,11 @@ class Application(Frame):
         rank_dataset_frame = Frame(self.frame_man.frame_image)
         rank_dataset_frame.pack( side = TOP )
         self.rating_frame.set_windows(rank_dataset_frame)
-        
+
+        notebook_frame = Frame(self.frame_man.frame_image)
+        notebook_frame.pack( side = TOP )
+        self.notebook_frame.set_windows(notebook_frame)
+
         dataset_frame = Frame(self.frame_man.frame_image)
         dataset_frame.pack( side = BOTTOM )
         self.edit_frame.set_windows(dataset_frame)
@@ -172,6 +185,8 @@ class Application(Frame):
         
         self.select_filename_frame.set_OpenFilenameMan(self.open_filename_man)
         self.select_filename_frame.set_PathManager(self.path_man)
+        self.select_filename_frame.set_NotebookManager(self.notebook_man)
+
         
         self.open_filename_man.set_SelectFilenameFrame(self.select_filename_frame)
         self.open_filename_man.set_ImageManager(self.image_man)
@@ -195,18 +210,26 @@ class Application(Frame):
         self.target_man.set_SelectObjectFrame(self.select_object_frame)
         self.target_man.set_DescriptionFrame(self.description_frame)
         self.target_man.set_RatingFrame(self.rating_frame)
-        self.target_man.set_ImageManager(self.image_man)
-        self.target_man.set_EditFrame(self.edit_frame)
         self.target_man.set_EditManager(self.edit_man)
 
         self.path_man.set_SelectFilenameFrame(self.select_filename_frame)
         self.path_man.set_ResolutionManager(self.resolution_man)
         
         self.resolution_man.set_path_parent(self.path_man.get_description_parent())
-        
+
         self.tools_man.set_ImageManager(self.image_man)
         self.tools_man.set_PathManager(self.path_man)
         self.tools_man.set_EditManager(self.edit_man)
+
+        self.notebook_frame.set_NotebookManager(self.notebook_man)
+        
+        self.notebook_man.set_DataDimension(self.dataset_dim)
+        self.notebook_man.set_EditFrame(self.edit_frame)
+        self.notebook_man.set_DescriptionFrame(self.description_frame)
+        self.notebook_man.set_SelectObjectFrame(self.select_object_frame)
+        self.notebook_man.set_RatingFrame(self.rating_frame)
+        self.notebook_man.set_EditManager(self.edit_man)
+        self.notebook_man.set_NotebookFrame(self.notebook_frame)
 
     def run(self):
         self.description_frame.run()
@@ -215,6 +238,7 @@ class Application(Frame):
         self.edit_frame.run()
         self.rating_frame.run()
         self.tools_frame.run()
+        self.notebook_frame.run()
 
     def on_key_press(self, event):
         #print('event {}'.format(event.keysym))
@@ -235,9 +259,10 @@ class Application(Frame):
         self.filetypes  = (("Type files", "*.png"), ("Type files", "*.jpg"), ("All files", "*.*"))
         self.path_man = PathManager(r'./config/config_path_manager.yaml')
         print(self.path_man)
-        self.dataset_dim = DatasetDimensions(r'./config/config_edit_frame_dim.yaml')
-        self.image_man = ImageManager(frame = [self.dataset_dim.width, self.dataset_dim.height])
-        self.target_man = TargetManager(r'./config/config_target_manager.yaml')
+        self.dataset_dim = WorkFrameDimension(r'./config/config_edit_frame_dim.yaml')
+        self.image_man = ImageManager(frame = [self.dataset_dim.get_width(), self.dataset_dim.get_height()])
+        self.target_man = TargetManager(1)
+        self.notebook_man = NotebookManager(r'./config/config_target_manager.yaml')
         self.frame_man = FrameManager(master)
         self.resolution_man = ResolutionManager(r'./', r'config_resolution.yaml', r'./config/config_resolution.yaml')
         self.tools_man = ToolsManager(self.target_man)
@@ -248,6 +273,7 @@ class Application(Frame):
         self.select_object_frame = SelectObjectFrame(self.target_man)
         self.select_filename_frame = SelectFilenameFrame(self.target_man)
         self.edit_frame = EditFrame(self.target_man)
+        self.notebook_frame = NotebookFrame()
         self.rating_frame = RatingFrame(self.target_man)
         self.tools_frame = ToolsFrame(self.tools_man)
 

@@ -47,6 +47,7 @@ class SelectFilenameFrame(object):
                 
                 self.openFilenameMan.save()
                 self.openFilenameMan.open(self.filename)
+                self.notebookMan.add_frame(self.filename)
             else:
                 pass
 
@@ -110,4 +111,7 @@ class SelectFilenameFrame(object):
 
     def set_PathManager(self, pathManager):
         self.pathManager = pathManager
+
+    def set_NotebookManager(self, notebookMan):
+        self.notebookMan = notebookMan
 

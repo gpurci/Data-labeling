@@ -21,7 +21,7 @@ class DescriptionFrame(object):
         self.labelframe = LabelFrame(self.window, text=self.datasets.get_last_name())
         self.labelframe.pack(fill="both", expand="yes")
 
-        self.text_frame = Text(self.labelframe, bd=5, yscrollcommand=scrollbar.set, width=int(self.dataset_dim.width/8), height=8)
+        self.text_frame = Text(self.labelframe, bd=5, yscrollcommand=scrollbar.set, width=int(self.dataset_dim.get_width()/8), height=8)
         self.text_frame.insert(END, self.datasets.get_last_description())
         self.text_frame.pack()
 

@@ -40,9 +40,9 @@ class EditFrame(object):
     def img_show(self, img):
         if (self.canvas_obj_image == None):
             self.canvas_obj_image = self.input_canvas.create_image(
-                                                                                                                self.imageManager.get_start_cursor(), 
-                                                                                                                anchor=NW, 
-                                                                                                                image=img)
+                                                                    self.imageManager.get_start_cursor(), 
+                                                                    anchor=NW, 
+                                                                    image=img)
         else:
             self.input_canvas.itemconfig(self.canvas_obj_image, image=img)
             
@@ -166,7 +166,7 @@ class EditFrame(object):
         self.canvas_frame = LabelFrame(self.windows, text='Not file')
         self.canvas_frame.pack(fill="both", expand="yes")
 
-        self.input_canvas = Canvas(self.canvas_frame, width=self.dataset_dim.width, height=self.dataset_dim.height, bd=0, bg='red')#d1d8e3
+        self.input_canvas = Canvas(self.canvas_frame, width=self.dataset_dim.get_width(), height=self.dataset_dim.get_height(), bd=0, bg='#d1d8e3')#d1d8e3
         self.input_canvas.pack()
         self.input_canvas.bind("<B1-Motion>", self.on_canvas_dataset_click)
         self.input_canvas.bind("<ButtonRelease-1>", self.on_canvas_dataset_click_release)

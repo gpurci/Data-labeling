@@ -3,23 +3,12 @@
 from pathlib import Path
 import pandas as pd
 import numpy as np
-import yaml
 
 class TargetManager(object):
-    def __init__(self, config_file):
-        self.config_file = config_file
+    def __init__(self, default_rating):
         self.DEFAULT_OBJECT = 1
-        self.read_config_yaml_file(self.config_file)
+        self.default_rating = default_rating
         self.init()
-
-    def read_config_yaml_file(self, config_file:str):
-        if (Path(config_file).is_file() == True):
-            with open(config_file) as file:
-                config_list = yaml.load(file, Loader=yaml.FullLoader)
-            self.default_rating = config_list['default_rating']
-            print(config_list)
-        else:
-            self.default_rating = 0
 
     def delete(self):
         del self.df_targets
@@ -60,7 +49,7 @@ class TargetManager(object):
         self.init_last_name()
         
     def set_selected_object(self, item:int):
-        if (item < self.get_object_size()):
+        if ((item >= 0) and (item < self.get_object_size())):
             self.selected_object = item
         else:
             self.selected_object = self.DEFAULT_OBJECT
@@ -171,16 +160,6 @@ class TargetManager(object):
         #save target data to csv file
         Path(filename).touch(mode=0o666, exist_ok=True)
         self.df_targets.to_csv(filename, sep=',', index=False)
-
-    def save_configs(self):
-        #save default rating in yaml file
-        names_yaml = """default_rating : {}""".format(self.get_default_rating())
-        names = yaml.safe_load(names_yaml)
-
-        with open(self.config_file, 'w') as file:
-            yaml.dump(names, file)
-        print('default_rating {}, read {}'.format(self.get_default_rating(), open(self.config_file).read()))
-
 
     def cut(self, indexes):
         tolerance = np.arange(self.DEFAULT_OBJECT+1)
@@ -319,8 +298,6 @@ class TargetManager(object):
         self.save_description_frame()
         #save target data to csv file
         self.save_targets(filename)
-        #save default rating in yaml file
-        self.save_configs()
 
     def save_description_frame(self):
         text_description = self.descriptionFrame.get_text_frame()
@@ -358,11 +335,5 @@ class TargetManager(object):
     def set_RatingFrame(self, ratingFrame):
         self.ratingFrame = ratingFrame
 
-    def set_ImageManager(self, imageManager):
-        self.imageManager = imageManager
-
     def set_EditManager(self, editManager):
         self.editManager = editManager
-
-    def set_EditFrame(self, editFrame):
-        self.editFrame = editFrame

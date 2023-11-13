@@ -65,10 +65,9 @@ class ImageManager:
         return cursor_x, cursor_y
 
     def read(self, name):
-        img = Image.open(name)
-        self.image_size = np.array(img.size, dtype=np.float32)
+        self.data = Image.open(name)
+        self.image_size = np.array(self.data.size, dtype=np.float32)
         print("image_size W {}, H {}".format(*self.image_size))
-        self.data = img
         self.do_calc_zoom()
         self.prev_cursor = np.array((0, 0), dtype=np.float32)
         img_size = np.array(self.image_size * self.zoom, dtype=np.int32)
@@ -115,6 +114,9 @@ class ImageManager:
 
     def get_image(self):
         return self.show_data
+
+    def get_image_size(self):
+        return self.data.size
 
     def get_image_size(self):
         return np.array(self.image_size * self.zoom, dtype=np.int32)

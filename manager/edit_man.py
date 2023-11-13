@@ -169,8 +169,7 @@ class EditManager(object):
                                         'coord y0':int(shape_rectangle[1]), 
                                         'coord x1':int(shape_rectangle[2]), 
                                         'coord y1':int(shape_rectangle[3])}
-        self.datasets.add_object(d_new_targets)
-        self.imageManager.rectangle_img_show(shape_rectangle, self.datasets.get_last_name())
+        self.datasets.add_object_frame(d_new_targets)
         print('datasets {}'.format(self.datasets))
 
 

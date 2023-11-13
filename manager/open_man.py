@@ -25,16 +25,18 @@ class OpenFilenameManager(object):
         self.pathManager.set_filename(filename)
         self.editManager.set_work_frame(filename)
         
+        source_file = self.pathManager.get_source_filename()
+        self.imageManager.read(source_file)
+
         dest_file      = self.pathManager.get_dest_filename()
         if (Path(dest_file).is_file() == True):
             print('True  -> dest_file {}'.format(dest_file))
             self.datasets.read_frame(dest_file)
         else:
             print('False -> dest_file {}'.format(dest_file))
-            self.datasets.new_frame()
+            x, y = self.imageManager.get_image_size()
+            self.datasets.new_frame(x, y)
         print('datasets {}'.format(self.datasets))
-        source_file = self.pathManager.get_source_filename()
-        self.imageManager.read(source_file)
         self.editManager.show()
 
 
