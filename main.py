@@ -30,15 +30,12 @@ from frame.menu_dest import *
 from frame.import_frame import *
 from frame.notebook import *
 
-from manager.image_man import *
-from manager.target_man.target_man import *
 from manager.path_man import *
 from manager.edit_man import *
 from manager.tools_man import *
 from manager.hyperparameters_man import *
 from manager.open_man import *
 from manager.notebook_man import *
-from manager.import_man.yolo_v5_format import *
 
 
 #from yolo_v5_format_manipulation import *
@@ -187,31 +184,13 @@ class Application(Frame):
     def config(self):
         self.description_frame.set_dimension(self.dataset_dim)
         
-        self.select_filename_frame.set_OpenFilenameMan(self.open_filename_man)
         self.select_filename_frame.set_PathManager(self.path_man)
         self.select_filename_frame.set_NotebookManager(self.notebook_man)
 
-        
-        self.open_filename_man.set_SelectFilenameFrame(self.select_filename_frame)
-        self.open_filename_man.set_PathManager(self.path_man)
-        self.open_filename_man.set_EditManager(self.edit_man)
-        
         self.edit_frame.set_dimension(self.dataset_dim)
         self.edit_frame.set_EditManager(self.edit_man)
         
         self.edit_man.set_EditFrame(self.edit_frame)
-
-        self.image_man.set_img_show_fn(self.edit_frame.img_show)
-        self.image_man.set_rectangle_img_show_fn(self.edit_frame.rectange_img_show)
-        self.image_man.set_move_fn(self.edit_frame.move)
-        self.image_man.set_coords_fn(self.edit_frame.coords)
-        self.image_man.set_edit_mode_fn(self.edit_frame.edit_mode)
-
-
-        self.target_man.set_SelectObjectFrame(self.select_object_frame)
-        self.target_man.set_DescriptionFrame(self.description_frame)
-        self.target_man.set_RatingFrame(self.rating_frame)
-        self.target_man.set_EditManager(self.edit_man)
 
         self.path_man.set_SelectFilenameFrame(self.select_filename_frame)
         self.path_man.set_ResolutionManager(self.resolution_man)
@@ -248,7 +227,7 @@ class Application(Frame):
         if event.state == 4 and event.keysym.lower() == "s":
             # Check if Control key (event.state == 4) and "S" key are pressed
             print("Ctrl + S pressed (Save event)")
-            self.target_man.save(self.path_man.get_dest_filename())
+            self.notebook_man.target().save(self.path_man.get_dest_filename())
             self.path_man.save()
             self.resolution_man.save()
 
@@ -263,24 +242,21 @@ class Application(Frame):
         self.path_man = PathManager(r'./config/config_path_manager.yaml')
         print(self.path_man)
         self.dataset_dim = WorkFrameDimension(r'./config/config_edit_frame_dim.yaml')
-        self.image_man = ImageManager(frame = [self.dataset_dim.get_width(), self.dataset_dim.get_height()])
-        self.target_man = TargetManager(1)
         self.notebook_man = NotebookManager(r'./config/config_target_manager.yaml')
         self.frame_man = FrameManager(master)
         self.resolution_man = ResolutionManager(r'./', r'config_resolution.yaml', r'./config/config_resolution.yaml')
         self.tools_man = ToolsManager()
-        self.edit_man = EditManager(self.target_man)
-        self.open_filename_man = OpenFilenameManager(self.target_man)
+        self.edit_man = EditManager()
         
-        self.description_frame = DescriptionFrame(self.target_man)
-        self.select_object_frame = SelectObjectFrame(self.target_man)
-        self.select_filename_frame = SelectFilenameFrame(self.target_man)
-        self.edit_frame = EditFrame(self.target_man)
+        self.description_frame = DescriptionFrame()
+        self.select_object_frame = SelectObjectFrame()
+        self.select_filename_frame = SelectFilenameFrame()
+        self.edit_frame = EditFrame()
         self.notebook_frame = NotebookFrame()
-        self.rating_frame = RatingFrame(self.target_man)
+        self.rating_frame = RatingFrame(self.notebook_man)
         self.tools_frame = ToolsFrame(self.tools_man)
 
-        self.import_frame = ImportFrame(self.target_man, master, self.path_man, yolo_v5_format_import_fn)
+        self.import_frame = ImportFrame(master, self.path_man, r'./config/config_target_manager.yaml')
 
         self.menubar_fn()
         self.set_windows()

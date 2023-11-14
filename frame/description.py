@@ -4,8 +4,8 @@ from tkinter import *
 from tkinter import messagebox
 
 class DescriptionFrame(object):
-    def __init__(self, datasets):
-        self.datasets = datasets
+    def __init__(self):
+        pass
 
     def set_windows(self, window):
         print('DescriptionFrame.set_windows')
@@ -18,12 +18,12 @@ class DescriptionFrame(object):
         scrollbar = Scrollbar(self.window)
         scrollbar.pack( side = RIGHT, fill=Y )
 
-        self.labelframe = LabelFrame(self.window, text=self.datasets.get_last_name())
+        self.labelframe = LabelFrame(self.window, text='not expected object')
         self.labelframe.pack(fill="both", expand="yes")
 
         self.text_frame = Text(self.labelframe, bd=5, yscrollcommand=scrollbar.set, 
                                 width=int(self.dataset_dim.get_width()/8), height=8)
-        self.text_frame.insert(END, self.datasets.get_last_description())
+        self.text_frame.insert(END, '')
         self.text_frame.pack()
 
     def get_text_frame(self):

@@ -6,8 +6,7 @@ from tkinter import messagebox
 from pathlib import Path
 
 class SelectFilenameFrame(object):
-    def __init__(self, datasets):
-        self.datasets = datasets
+    def __init__(self):
         self.last_item = -1
 
     def set_windows(self, windows):

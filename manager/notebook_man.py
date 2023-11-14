@@ -28,6 +28,9 @@ class NotebookManager(object):
         for idx in range(self.get_tab_size()):
             self.__images[idx].set_default_rating(self.__default_rating)
 
+    def get_default_rating(self):
+        return self.__default_rating
+
     def save_configs(self):
         #save default rating in yaml file
         names_yaml = """default_rating : {}""".format(self.__default_rating)
@@ -59,11 +62,8 @@ class NotebookManager(object):
         if ((idx >= 0) and (idx < self.get_tab_size())):
             self.__idx_tab = idx
             filename = self.get_filename()
-            
-    def set_data(self, imageMan, targetMan):
-        self.imageMan  = imageMan
-        self.targetMan = targetMan
 
+            self.set_data(self.image(), self.target())
             self.editManager.set_work_frame(filename)
             self.editManager.show()
         else:
@@ -130,6 +130,10 @@ class NotebookManager(object):
         target.set_RatingFrame(self.ratingFrame)
         target.set_EditManager(self.editManager)
 
+    def set_data(self, imageMan, targetMan):
+        self.toolsManager.set_data(imageMan, targetMan)
+        self.editManager.set_data(imageMan, targetMan)
+
     def add_frame(self, filename):
         self.add(filename)
         self.notebookFrame.add(filename)
@@ -143,6 +147,9 @@ class NotebookManager(object):
 
     def set_DataDimension(self, dataDimension):
         self.dataDimension = dataDimension
+
+    def set_ToolsManager(self, toolsManager):
+        self.toolsManager = toolsManager
 
     def set_EditFrame(self, editFrame):
         self.editFrame = editFrame

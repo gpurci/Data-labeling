@@ -4,16 +4,19 @@ from tkinter import *
 from tkinter import messagebox
 
 class SelectObjectFrame(object):
-    def __init__(self, datasets):
-        self.datasets = datasets
+    def __init__(self):
         self.last_item = -1
 
     def init(self):
-        self.change_cursor(self.datasets.get_default_object())
+        self.change_cursor(self.targetMan.get_default_object())
 
     def set_windows(self, window):
         print('SelectObjectFrame.set_windows')
         self.window = window
+
+    def set_data(self, imageMan, targetMan):
+        self.imageMan  = imageMan
+        self.targetMan = targetMan
 
     def none_fn(self):
         pass
@@ -25,7 +28,7 @@ class SelectObjectFrame(object):
         self.selected_obj_name = Listbox(self.window, height=30, width=40, yscrollcommand = scrollbar.set, bd=5)
         self.selected_obj_name.pack( side = LEFT, fill=None )
 
-        self.show()
+        self.show(['no object'])
         self.selected_obj_name.bind("<<ListboxSelect>>", self.on_select_object_name)
         self.selected_obj_name.bind("<ButtonRelease-3>", self.on_click_release)
         scrollbar.config( command = self.selected_obj_name.yview )
@@ -38,15 +41,15 @@ class SelectObjectFrame(object):
 
 
 
-    def show(self):
+    def show(self, lst_object):
         # Add items to the Listbox
-        for name in self.datasets.get_names():
+        for name in lst_object:
             print('object_description {}'.format(name))
             self.selected_obj_name.insert(END, name)
 
-    def update(self):
+    def update(self, lst_object):
         self.selected_obj_name.delete(0, END)
-        self.show()
+        self.show(lst_object)
 
     def cut(self, item):
         self.init()
@@ -64,7 +67,7 @@ class SelectObjectFrame(object):
                 print("Selected object index {}, size {}".format(selected_index, self.selected_obj_name.size()))
                 self.change_cursor(selected_index[0])
                 print("Selected object index {}, size {}".format(selected_index, self.selected_obj_name.size()))
-                self.datasets.select_object_frame(self.last_item)
+                self.targetMan.select_object_frame(self.last_item)
 
         except Exception as e:
             # Handle the exception
@@ -88,13 +91,13 @@ class SelectObjectFrame(object):
 
 
     def cut_object_button(self):
-        self.datasets.cut_last_name_frame()
+        self.targetMan.cut_last_name_frame()
 
     def double_object_button(self):
-        self.datasets.double_last_name_frame()
+        self.targetMan.double_last_name_frame()
 
     def rename_name_object(self):
-        self.datasets.set_object_name_frame(self.obj_name_entry.get())
+        self.targetMan.set_object_name_frame(self.obj_name_entry.get())
         self.filewin.withdraw()
 
     def cancel_name_object(self):

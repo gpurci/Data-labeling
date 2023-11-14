@@ -6,11 +6,16 @@ from tkinter import filedialog
 
 from pathlib import Path
 import numpy as np
+from PIL import ImageTk
+
+def hex_to_rgb(value):
+    value = value.lstrip('#')
+    lv = len(value)
+    return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
+
 
 class EditFrame(object):
-    def __init__(self, datasets):
-        self.datasets = datasets
-
+    def __init__(self):
         self.is_canvas_dataset_click_release = True
         self.init_canvas_object()
 
@@ -39,10 +44,11 @@ class EditFrame(object):
 
     def img_show(self, img):
         if (self.canvas_obj_image == None):
+            img = np.ones((10, 10, 3))#d1d8e3
             self.canvas_obj_image = self.input_canvas.create_image(
-                                                                    self.imageManager.get_start_cursor(), 
+                                                                    (0, 0), 
                                                                     anchor=NW, 
-                                                                    image=img)
+                                                                    image=ImageTk.PhotoImage(img))
         else:
             self.input_canvas.itemconfig(self.canvas_obj_image, image=img)
             
@@ -217,6 +223,3 @@ class EditFrame(object):
 
     def set_EditManager(self, editManager):
         self.editManager = editManager
-        
-    def set_ImageManager(self, imageManager):
-        self.imageManager = imageManager
