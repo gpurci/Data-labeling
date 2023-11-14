@@ -203,14 +203,15 @@ class Application(Frame):
         self.notebook_frame.set_NotebookManager(self.notebook_man)
         
         self.notebook_man.set_DataDimension(self.dataset_dim)
+        self.notebook_man.set_ToolsManager(self.tools_man)
+        self.notebook_man.set_EditManager(self.edit_man)
+        self.notebook_man.set_PathManager(self.path_man)
+        
         self.notebook_man.set_EditFrame(self.edit_frame)
         self.notebook_man.set_DescriptionFrame(self.description_frame)
         self.notebook_man.set_SelectObjectFrame(self.select_object_frame)
         self.notebook_man.set_RatingFrame(self.rating_frame)
-        self.notebook_man.set_EditManager(self.edit_man)
         self.notebook_man.set_NotebookFrame(self.notebook_frame)
-        self.notebook_man.set_PathManager(self.path_man)
-
 
 
     def run(self):
