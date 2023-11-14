@@ -15,10 +15,8 @@ class NotebookFrame(object):
         self.windows = windows
 
     def select_tab(self, *args):
-        #t_nos=str(my_tabs.index())
         select_tab_val = self.note.select()
         if (len(select_tab_val) != 0):
-            print('select_tab {}'.format(select_tab_val))
             print('select_tab index {}'.format(self.note.index(select_tab_val)))
             self.notebookManager.select_tab(self.note.index(select_tab_val))
     

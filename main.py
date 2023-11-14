@@ -193,16 +193,13 @@ class Application(Frame):
 
         
         self.open_filename_man.set_SelectFilenameFrame(self.select_filename_frame)
-        self.open_filename_man.set_ImageManager(self.image_man)
         self.open_filename_man.set_PathManager(self.path_man)
         self.open_filename_man.set_EditManager(self.edit_man)
         
         self.edit_frame.set_dimension(self.dataset_dim)
-        self.edit_frame.set_ImageManager(self.image_man)
         self.edit_frame.set_EditManager(self.edit_man)
         
         self.edit_man.set_EditFrame(self.edit_frame)
-        self.edit_man.set_ImageManager(self.image_man)
 
         self.image_man.set_img_show_fn(self.edit_frame.img_show)
         self.image_man.set_rectangle_img_show_fn(self.edit_frame.rectange_img_show)
@@ -221,7 +218,6 @@ class Application(Frame):
         
         self.resolution_man.set_path_parent(self.path_man.get_description_parent())
 
-        self.tools_man.set_ImageManager(self.image_man)
         self.tools_man.set_PathManager(self.path_man)
         self.tools_man.set_EditManager(self.edit_man)
 
@@ -234,6 +230,9 @@ class Application(Frame):
         self.notebook_man.set_RatingFrame(self.rating_frame)
         self.notebook_man.set_EditManager(self.edit_man)
         self.notebook_man.set_NotebookFrame(self.notebook_frame)
+        self.notebook_man.set_PathManager(self.path_man)
+
+
 
     def run(self):
         self.description_frame.run()
@@ -269,7 +268,7 @@ class Application(Frame):
         self.notebook_man = NotebookManager(r'./config/config_target_manager.yaml')
         self.frame_man = FrameManager(master)
         self.resolution_man = ResolutionManager(r'./', r'config_resolution.yaml', r'./config/config_resolution.yaml')
-        self.tools_man = ToolsManager(self.target_man)
+        self.tools_man = ToolsManager()
         self.edit_man = EditManager(self.target_man)
         self.open_filename_man = OpenFilenameManager(self.target_man)
         

@@ -41,12 +41,13 @@ class EditManager(object):
         self.work_mode = work_mode
 
     def show_edit_mode(self):
-        self.imageManager.img_show()
+        image = self.imageManagerFn()
+        image.img_show()
         if (self.datasets.is_rectangle_mod()):
             shape_rectangle = self.datasets.get_last_coord()
             print('object_edit shape_rectangle {}, type{}'.format(shape_rectangle, type(shape_rectangle)))
-            self.imageManager.edit_mode(shape_rectangle)
-            self.imageManager.rectangle_img_show(shape_rectangle, self.datasets.get_last_name())
+            image.edit_mode(shape_rectangle)
+            image.rectangle_img_show(shape_rectangle, self.datasets.get_last_name())
         elif (self.datasets.is_empty_mod()):
             self.editFrame.delete_edit_mode()
             self.editFrame.delete_selected_box()
@@ -56,11 +57,12 @@ class EditManager(object):
             pass
 
     def show_normal_mode(self):
-        self.imageManager.img_show()
+        image = self.imageManagerFn()
+        image.img_show()
         if (self.datasets.is_rectangle_mod()):
             shape_rectangle = self.datasets.get_last_coord()
             print('object_edit shape_rectangle {}, type{}'.format(shape_rectangle, type(shape_rectangle)))
-            self.imageManager.rectangle_img_show(shape_rectangle, self.datasets.get_last_name())
+            image.rectangle_img_show(shape_rectangle, self.datasets.get_last_name())
         elif (self.datasets.is_empty_mod()):
             self.editFrame.delete_edit_mode()
             self.editFrame.delete_selected_box()
@@ -196,4 +198,7 @@ class EditManager(object):
 
     def set_ImageManager(self, imageManager):
         self.imageManager = imageManager
+
+    def set_ImageManagerFn(self, imageManagerFn):
+        self.imageManagerFn = imageManagerFn
 

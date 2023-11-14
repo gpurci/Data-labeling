@@ -51,20 +51,49 @@ class NotebookManager(object):
         print('select_tab', type(idx))
         if ((idx >= 0) and (idx < self.get_tab_size())):
             self.__idx_tab = idx
+        else:
+            self.__idx_tab = -1
+
+    def select_tab_frame(self, idx:int):
+        print('select_tab', type(idx))
+        if ((idx >= 0) and (idx < self.get_tab_size())):
+            self.__idx_tab = idx
             filename = self.get_filename()
+            
+    def set_data(self, imageMan, targetMan):
+        self.imageMan  = imageMan
+        self.targetMan = targetMan
+
             self.editManager.set_work_frame(filename)
+            self.editManager.show()
         else:
             self.__idx_tab = -1
 
     def add(self, filename):
         self.__filenames.append(filename)
+        self.pathManager.set_filename(filename)
         image_man = ImageManager(frame=[self.dataDimension.get_width(), self.dataDimension.get_height()])
-        target_man = TargetManager(self.__default_rating)
+        source_file = self.pathManager.get_source_filename()
+        image_man.read(source_file)
 
+
+        target_man = TargetManager(self.__default_rating)
+        '''
+                                dest_file      = self.pathManager.get_dest_filename()
+                                if (Path(dest_file).is_file() == True):
+                                    print('True  -> dest_file {}'.format(dest_file))
+                                    target_man.read_frame(dest_file)
+                                else:
+                                    print('False -> dest_file {}'.format(dest_file))
+                                    x, y = image_man.get_image_size()
+                                    target_man.new_frame(x, y)
+                                print('datasets {}'.format(target_man))
+                        '''
         self.__images.append(image_man)
         self.__targets.append(target_man)
-        self.select_tab(self.get_tab_size()-1)
         self.config()
+        print('add tab {}'.format(filename))
+        self.select_tab(self.get_tab_size()-1)
 
     def image(self):
         if (self.__idx_tab >= 0):
@@ -88,14 +117,14 @@ class NotebookManager(object):
         return retVal
 
     def config(self):
-        image = self.image()
+        image = self.__images[self.get_tab_size()-1]
         image.set_img_show_fn(self.editFrame.img_show)
         image.set_rectangle_img_show_fn(self.editFrame.rectange_img_show)
         image.set_move_fn(self.editFrame.move)
         image.set_coords_fn(self.editFrame.coords)
         image.set_edit_mode_fn(self.editFrame.edit_mode)
 
-        target = self.target()
+        target = self.__targets[self.get_tab_size()-1]
         target.set_SelectObjectFrame(self.selectObjectFrame)
         target.set_DescriptionFrame(self.descriptionFrame)
         target.set_RatingFrame(self.ratingFrame)
@@ -132,3 +161,6 @@ class NotebookManager(object):
 
     def set_NotebookFrame(self, notebookFrame):
         self.notebookFrame = notebookFrame
+
+    def set_PathManager(self, pathManager):
+        self.pathManager = pathManager

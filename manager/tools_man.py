@@ -5,20 +5,23 @@ import numpy as np
 import yaml
 
 class ToolsManager(object):
-    def __init__(self, datasets):
-        self.datasets = datasets
+    def __init__(self):
         self.idx = 0
+        self.is_data = False
 
     def crop(self):
-        print('CROP')
-        self.pathManager.set_file_suffix('_crop')
-        box = self.datasets.get_last_coord()
-        self.imageManager.crop(box)
-        self.datasets.crop_last_name_frame()
+        print('CROP is_data {}'.format(self.is_data))
+        if (self.is_data == True):
+            self.pathManager.set_file_suffix('_crop')
+            box = self.targetMan.get_last_coord()
+            self.imageMan.crop(box)
+            self.targetMan.crop_last_name_frame()
+        else:
+            self.is_data = True
 
-
-    def set_ImageManager(self, imageManager):
-        self.imageManager = imageManager
+    def set_data(self, imageMan, targetMan):
+        self.imageMan  = imageMan
+        self.targetMan = targetMan
 
     def set_PathManager(self, pathManager):
         self.pathManager = pathManager
