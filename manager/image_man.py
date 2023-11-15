@@ -23,7 +23,6 @@ class ImageManager:
         self.prev_cursor = np.array((0, 0), dtype=np.float32)
         self.data = None
         self.flag = 0
-        self.is_read = False
 
     def __str__(self):
         returnStr = "ImageManager\n linii:  " + str(self.y)
@@ -31,7 +30,7 @@ class ImageManager:
         returnStr += "\n" + str(self.data)
         return returnStr
 
-    def do_calc_zoom(self):
+    def __do_calc_zoom(self):
         fX, fY = self.size_frame / self.image_size
         print('do_calc_zoom size_frame {} WH format'.format(self.size_frame))
         print('do_calc_zoom image_size {} WH format'.format(self.image_size))
@@ -68,15 +67,13 @@ class ImageManager:
         self.data = Image.open(name)
         self.image_size = np.array(self.data.size, dtype=np.float32)
         print("image_size W {}, H {}".format(*self.image_size))
-        self.do_calc_zoom()
+        self.__do_calc_zoom()
         self.prev_cursor = np.array((0, 0), dtype=np.float32)
         img_size = np.array(self.image_size * self.zoom, dtype=np.int32)
         
-        if (self.is_read == True):
-            cursor_x, cursor_y = self.get_start_cursor()
-            self.coords_fn(cursor_x, cursor_y)
-        else:
-            self.is_read = True
+        cursor_x, cursor_y = self.get_start_cursor()
+        self.coords_fn(cursor_x, cursor_y)
+
         self.show_data = ImageTk.PhotoImage(self.data.resize(img_size))
 
     def zoom_image(self, zoom_out, cursor):
@@ -153,7 +150,7 @@ class ImageManager:
         self.image_size = np.array(img.size, dtype=np.float32)
         print("image_size W {}, H {}".format(*self.image_size))
         self.data = img
-        self.do_calc_zoom()
+        self.__do_calc_zoom()
         self.prev_cursor = np.array((0, 0), dtype=np.float32)
         img_size = np.array(self.image_size * self.zoom, dtype=np.int32)
         

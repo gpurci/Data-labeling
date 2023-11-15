@@ -67,7 +67,7 @@ class SelectObjectFrame(object):
                 print("Selected object index {}, size {}".format(selected_index, self.selected_obj_name.size()))
                 self.change_cursor(selected_index[0])
                 print("Selected object index {}, size {}".format(selected_index, self.selected_obj_name.size()))
-                self.targetMan.select_object_frame(self.last_item)
+                self.targetMan.select_object(self.last_item)
 
         except Exception as e:
             # Handle the exception
@@ -91,13 +91,13 @@ class SelectObjectFrame(object):
 
 
     def cut_object_button(self):
-        self.targetMan.cut_last_name_frame()
+        self.targetMan.cut_last_name()
 
     def double_object_button(self):
-        self.targetMan.double_last_name_frame()
+        self.targetMan.double_last_name()
 
     def rename_name_object(self):
-        self.targetMan.set_object_name_frame(self.obj_name_entry.get())
+        self.targetMan.set_last_object_name(self.obj_name_entry.get())
         self.filewin.withdraw()
 
     def cancel_name_object(self):

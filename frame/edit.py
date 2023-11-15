@@ -6,7 +6,7 @@ from tkinter import filedialog
 
 from pathlib import Path
 import numpy as np
-from PIL import ImageTk
+from PIL import ImageTk, Image
 
 def hex_to_rgb(value):
     value = value.lstrip('#')
@@ -32,32 +32,25 @@ class EditFrame(object):
         self.canvas_obj_circle_2 = None
         self.canvas_obj_circle_3 = None
 
-    def set_windows(self, windows):
+    def set_windows(self, windows:object):
         self.windows = windows
 
-    def set_dimension(self, dataset_dim):
+    def set_dimension(self, dataset_dim:object):
         self.dataset_dim = dataset_dim
 
     def none_fn(self):
         print('none_fn {}'.format('test'))
         pass
 
-    def img_show(self, img):
-        if (self.canvas_obj_image == None):
-            img = np.ones((10, 10, 3))#d1d8e3
-            self.canvas_obj_image = self.input_canvas.create_image(
-                                                                    (0, 0), 
-                                                                    anchor=NW, 
-                                                                    image=ImageTk.PhotoImage(img))
-        else:
-            self.input_canvas.itemconfig(self.canvas_obj_image, image=img)
+    def img_show(self, img:object):
+        self.input_canvas.itemconfig(self.canvas_obj_image, image=img)
             
         self.delete_selected_box()
 
-    def move(self, x, y):
+    def move(self, x:int, y:int):
         self.input_canvas.move(self.canvas_obj_image, x, y)
 
-    def coords(self, x, y):
+    def coords(self, x:int, y:int):
         self.input_canvas.coords(self.canvas_obj_image, x, y)
 
     def delete_selected_box(self):
@@ -78,14 +71,14 @@ class EditFrame(object):
         self.canvas_obj_circle_2 = None
         self.canvas_obj_circle_3 = None
 
-    def rectange_img_show(self, box, text):
+    def rectange_img_show(self, box:tuple, text:str):
         self.delete_selected_box()
         self.canvas_obj_rectangle = self.input_canvas.create_rectangle(box, outline= 'yellow', width=4)
         x = box[0]+25
         y = box[1]
         self.canvas_obj_text          = self.input_canvas.create_text(x, y, text=text, fill="red", font=('Helvetica 15 bold'))
 
-    def edit_mode(self, box):
+    def edit_mode(self, box:tuple):
         self.delete_edit_mode()
         x00, y00 = box[0], box[1]
         x01, y01 = box[2], box[1]
@@ -108,7 +101,7 @@ class EditFrame(object):
         self.canvas_obj_line_1 = self.input_canvas.create_line((0, int(self.dataset_dim.height/2), int(self.dataset_dim.width), int(self.dataset_dim.height/2)), 
                                                                                                         fill="green", width=2)
 
-    def on_canvas_dataset_click(self, event):
+    def on_canvas_dataset_click(self, event:object):
         if (self.is_canvas_dataset_click_release):
             self.is_canvas_dataset_click_release = False
             self.editManager.set_start_work_coords(event.x, event.y)
@@ -120,7 +113,7 @@ class EditFrame(object):
             # Handle the exception
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
-    def on_canvas_dataset_click_release(self, event):
+    def on_canvas_dataset_click_release(self, event:object):
         self.is_canvas_dataset_click_release = True
         try:
             self.editManager.run_last_release_mode()
@@ -128,12 +121,12 @@ class EditFrame(object):
             # Handle the exception
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
-    def on_key_press_select_obj(self, event):
+    def on_key_press_select_obj(self, event:object):
         #print('event {}'.format(event.keysym))
         if event.keysym == "Return":
             self.editManager.add_object_name()
 
-    def mouse_wheel(self, event):
+    def mouse_wheel(self, event:object):
         self.editManager.mouse_wheel(event)
 
     def get_object_name(self):
@@ -175,6 +168,13 @@ class EditFrame(object):
         self.input_canvas = Canvas(self.canvas_frame, 
                                     width=self.dataset_dim.get_width(), height=self.dataset_dim.get_height(), 
                                     bd=0, bg='#d1d8e3')#d1d8e3
+
+        img = np.ones((10, 10, 3))#d1d8e3
+        img = Image.fromarray(img, mode='RGB')
+        self.canvas_obj_image = self.input_canvas.create_image(
+                                                                (0, 0), 
+                                                                anchor=NW, 
+                                                                image=ImageTk.PhotoImage(img))
         self.input_canvas.pack()
         self.input_canvas.bind("<B1-Motion>", self.on_canvas_dataset_click)
         self.input_canvas.bind("<ButtonRelease-1>", self.on_canvas_dataset_click_release)
@@ -199,7 +199,7 @@ class EditFrame(object):
         normal_button["command"] = self.normal_button
         normal_button.pack({"side": "left"})
 
-    def set_work_frame(self, filename):
+    def set_work_frame(self, filename:str):
         self.canvas_frame.config(text=filename)
 
 
@@ -221,5 +221,5 @@ class EditFrame(object):
         self.delete_edit_mode()
 
 
-    def set_EditManager(self, editManager):
+    def set_EditManager(self, editManager:object):
         self.editManager = editManager

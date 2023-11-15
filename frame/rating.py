@@ -33,7 +33,7 @@ class RatingFrame(object):
 
     def set_default_rating(self, *arg):
         print('ratind frame default_rating {}'.format(self.default_rating_combo.current()))
-        self.targetMan.set_default_rating(self.default_rating_combo.current())
+        self.notebookMan.set_default_rating(self.default_rating_combo.current())
 
     def run(self):
         self.rating = IntVar(self.window, value=self.notebookMan.get_default_rating(), name='rating')

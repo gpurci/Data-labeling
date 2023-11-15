@@ -15,7 +15,7 @@ class ToolsManager(object):
             self.pathManager.set_file_suffix('_crop')
             box = self.targetMan.get_last_coord()
             self.imageMan.crop(box)
-            self.targetMan.crop_last_name_frame()
+            self.targetMan.crop_last_name()
         else:
             self.is_data = True
 

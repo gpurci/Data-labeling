@@ -167,7 +167,7 @@ class EditManager(object):
                                         'coord y0':int(shape_rectangle[1]), 
                                         'coord x1':int(shape_rectangle[2]), 
                                         'coord y1':int(shape_rectangle[3])}
-        self.targetMan.add_object_frame(d_new_targets)
+        self.targetMan.add_object(d_new_targets)
         print('datasets {}'.format(self.targetMan))
 
 

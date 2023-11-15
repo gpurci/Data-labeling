@@ -29,6 +29,7 @@ from frame.menu_open import *
 from frame.menu_dest import *
 from frame.import_frame import *
 from frame.notebook import *
+from frame.show import *
 
 from manager.path_man import *
 from manager.edit_man import *
@@ -206,12 +207,17 @@ class Application(Frame):
         self.notebook_man.set_ToolsManager(self.tools_man)
         self.notebook_man.set_EditManager(self.edit_man)
         self.notebook_man.set_PathManager(self.path_man)
-        
+
         self.notebook_man.set_EditFrame(self.edit_frame)
         self.notebook_man.set_DescriptionFrame(self.description_frame)
         self.notebook_man.set_SelectObjectFrame(self.select_object_frame)
         self.notebook_man.set_RatingFrame(self.rating_frame)
         self.notebook_man.set_NotebookFrame(self.notebook_frame)
+        self.notebook_man.set_ShowFrame(self.show_frame)
+
+
+        self.show_frame.set_EditFrame(self.edit_frame)
+
 
 
     def run(self):
@@ -232,19 +238,22 @@ class Application(Frame):
             self.path_man.save()
             self.resolution_man.save()
 
+    #Display all
+    def display(self):
+        self.show_frame.show()
+        self.windows.after(500, self.display)
+
         
-    def __init__(self, master=None):
-        Frame.__init__(self, master)
-        
-        # Bind the key press event to the windows root
-        master.bind("<KeyPress>", self.on_key_press)
+    def __init__(self, windows=None):
+        Frame.__init__(self, windows)
+        self.windows = windows
 
         self.filetypes  = (("Type files", "*.png"), ("Type files", "*.jpg"), ("All files", "*.*"))
         self.path_man = PathManager(r'./config/config_path_manager.yaml')
         print(self.path_man)
         self.dataset_dim = WorkFrameDimension(r'./config/config_edit_frame_dim.yaml')
         self.notebook_man = NotebookManager(r'./config/config_target_manager.yaml')
-        self.frame_man = FrameManager(master)
+        self.frame_man = FrameManager(windows)
         self.resolution_man = ResolutionManager(r'./', r'config_resolution.yaml', r'./config/config_resolution.yaml')
         self.tools_man = ToolsManager()
         self.edit_man = EditManager()
@@ -256,13 +265,17 @@ class Application(Frame):
         self.notebook_frame = NotebookFrame()
         self.rating_frame = RatingFrame(self.notebook_man)
         self.tools_frame = ToolsFrame(self.tools_man)
+        self.show_frame = ShowFrame()
 
-        self.import_frame = ImportFrame(master, self.path_man, r'./config/config_target_manager.yaml')
+        self.import_frame = ImportFrame(windows, self.path_man, r'./config/config_target_manager.yaml')
 
         self.menubar_fn()
         self.set_windows()
         self.config()
         self.run()
+        # Bind the key press event to the windows root
+        self.windows.bind("<KeyPress>", self.on_key_press)
+        self.windows.after(500, self.display)
         self.pack()
 
 root = Tk()

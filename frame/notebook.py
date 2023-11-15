@@ -18,7 +18,7 @@ class NotebookFrame(object):
         select_tab_val = self.note.select()
         if (len(select_tab_val) != 0):
             print('select_tab index {}'.format(self.note.index(select_tab_val)))
-            self.notebookManager.select_tab(self.note.index(select_tab_val))
+            self.notebookMan.select_tab(self.note.index(select_tab_val))
     
     def run(self):
         # Create an instance of ttk style
@@ -31,14 +31,14 @@ class NotebookFrame(object):
         self.note = CustomNotebook(self.windows)
         self.note.bind('<<NotebookTabChanged>>', self.select_tab)
         self.note.pack(expand=True, fill=BOTH, padx=5, pady=5)
-        self.note.set_NotebookManager(self.notebookManager)
+        self.note.set_NotebookManager(self.notebookMan)
 
     def add(self, filename):
         # Adding the Tab Name
         self.note.add(Frame(self.note, width=400, height=5), text=filename)
 
-    def set_NotebookManager(self, notebookManager):
-        self.notebookManager = notebookManager
+    def set_NotebookManager(self, notebookMan):
+        self.notebookMan = notebookMan
 
 
 
@@ -138,5 +138,5 @@ class CustomNotebook(ttk.Notebook):
         })
     ])
 
-    def set_NotebookManager(self, notebookManager):
-        self.notebookManager = notebookManager
+    def set_NotebookManager(self, notebookMan):
+        self.notebookMan = notebookMan

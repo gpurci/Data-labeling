@@ -44,7 +44,7 @@ class SelectFilenameFrame(object):
                 self.filename = self.listbox_files_dataset.get(selected_index[0])
                 self.change_cursor(selected_index[0])
                 
-                self.notebookMan.add_frame(self.filename)
+                self.notebookMan.add(self.filename)
             else:
                 pass
 
