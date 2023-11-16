@@ -130,7 +130,7 @@ class NotebookManager(object):
         else:
             print('False -> dest_file {}'.format(dest_file))
             x, y = imageMan.get_image_size()
-            targetMan.new_frame(x, y)
+            targetMan.new(x, y)
         print('datasets {}'.format(targetMan))
 
 

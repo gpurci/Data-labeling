@@ -19,11 +19,11 @@ class SelectFilenameFrame(object):
         self.listbox_files_dataset = Listbox(self.windows, height=30, width=40, yscrollcommand = scrollbar.set, bd=5)
         self.listbox_files_dataset.pack( side = LEFT, fill=None )
 
-        self.show()
+        self.print_filenames()
         self.listbox_files_dataset.bind("<<ListboxSelect>>", self.on_item_select)
         scrollbar.config( command = self.listbox_files_dataset.yview )
 
-    def show(self):
+    def print_filenames(self):
         filenames = Path(self.pathManager.get_source_path()).glob('*')
         print('print_filenames {}'.format(filenames))
         # Add items to the Listbox
@@ -32,10 +32,10 @@ class SelectFilenameFrame(object):
             print('items {}'.format(new_filename))
             self.listbox_files_dataset.insert(END, new_filename)
     
-    def update(self):
+    def show(self):
         print('update {}'.format('SelectFilenameFrame'))
         self.listbox_files_dataset.delete(0, END)
-        self.show()
+        self.print_filenames()
 
     def on_item_select(self, event):
         try:

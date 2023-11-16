@@ -8,6 +8,9 @@ from PIL import Image
 from pathlib import Path
 import shutil
 
+from manager.path_man import *
+from manager.target_man.target_man import *
+
 def rename_dir(path, src, dst):
     # convert to list so that we can change elements
     parts = list(path.parts)
@@ -146,8 +149,8 @@ def transformCartesian2Center(x0, y0, x1, y1, height, width):
 def yolo_v5_format_import_fn(source_path, dest_path, targets, path_man):
     filenames  = Path(source_path).glob('*/images/*.*')
     #dest_path = Path(dest_path)
-    row_file_path     = Path(path_man.get_row_filename(dest_path, 'new.png')).parent
-    target_file_path = Path(path_man.get_target_filename(dest_path, 'new.png')).parent
+    row_file_path    = Path(path_man.get_row_path())
+    target_file_path = Path(path_man.get_target_path())
     print('row_file_path {}/ntarget_file_path {}'.format(row_file_path, target_file_path))
     row_file_path.mkdir(parents=True, exist_ok=True)
     target_file_path.mkdir(parents=True, exist_ok=True)
@@ -163,27 +166,28 @@ def yolo_v5_format_import_fn(source_path, dest_path, targets, path_man):
         from_file_T = filename.with_suffix('.txt')
         from_file_T = rename_dir(from_file_T, 'images', 'labels')
         np_label, np_center_x, np_center_y, np_w, np_h = readLabelsYoloV5Format(from_file_T)
-        img = Image.open(filename)
+        img = Image.open(str(filename))
         width, height = img.size
-        targets.new_import(height, width)
+        targets.new(height, width)
         del img
         x0s, y0s, x1s, y1s = transformCenter2Cartesian(np_center_x, np_center_y, np_w, np_h, height, width)
-        idx = 0
         for label, x0, y0, x1, y1 in zip(np_label, x0s, y0s, x1s, y1s):
             d_new_targets = { 'names':object_names[label], 
-                                            'description':object_names[label], 
-                                            'rating':targets.get_default_rating(), 
-                                            'coord x0':x0, 
-                                            'coord x1':x1, 
-                                            'coord y0':y0, 
-                                            'coord y1':y1}
-            targets.add_object_import(d_new_targets, idx)
-            idx += 1
-        to_file_T = path_man.get_target_filename(dest_path, filename.name)
+                              'description':object_names[label], 
+                              'rating':targets.get_default_rating(), 
+                              'coord x0':x0, 
+                              'coord x1':x1, 
+                              'coord y0':y0, 
+                              'coord y1':y1}
+            targets.add_object(d_new_targets)
+            print('targets {}'.format(targets.get_object_size()))
+        path_man.set_filename(str(filename.name))
+        to_file_T = path_man.get_dest_filename()
         targets.save_targets(to_file_T)
         
         print('filename {}'.format(filename))
-        print('file {}'.format(from_file_T))
+        print('to file {}'.format(to_file_F))
+        print('targets {}'.format(targets))
     #print('import_fn {}'.format(filenames))
 
 def get_object_names(config_file):

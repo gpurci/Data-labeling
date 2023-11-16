@@ -39,7 +39,7 @@ from manager.open_man import *
 from manager.notebook_man import *
 
 
-#from yolo_v5_format_manipulation import *
+from manager.import_man.yolo_v5_format import *
 
 class TimeMonitor(object):
     def __init__(self):
@@ -118,6 +118,10 @@ class Application(Frame):
         print('none_fn {}'.format('test'))
         pass
 
+    def import_yolov5_format(self):
+        self.import_frame.set_import_fn(yolo_v5_format_import_fn)
+        self.import_frame()
+
     def menubar_fn(self):
         self.menubar = Menu(self)
         self.filemenu = Menu(self.menubar, tearoff=0)
@@ -130,7 +134,7 @@ class Application(Frame):
 
         # add a submenu
         sub_menu_import = Menu(self.filemenu, tearoff=0)
-        sub_menu_import.add_command(label='yolo v5 format', command=self.import_frame)
+        sub_menu_import.add_command(label='yolo v5 format', command=self.import_yolov5_format)
         sub_menu_import.add_command(label='...', command=self.none_fn)
 
 
@@ -193,8 +197,8 @@ class Application(Frame):
         
         self.edit_man.set_EditFrame(self.edit_frame)
 
-        self.path_man.set_SelectFilenameFrame(self.select_filename_frame)
         self.path_man.set_ResolutionManager(self.resolution_man)
+        self.path_man.set_ShowFrame(self.show_frame)
         
         self.resolution_man.set_path_parent(self.path_man.get_description_parent())
 
@@ -218,6 +222,9 @@ class Application(Frame):
         self.show_frame.set_EditFrame(self.edit_frame)
         self.show_frame.set_NotebookFrame(self.notebook_frame)
         self.show_frame.set_SelectObjectFrame(self.select_object_frame)
+        self.show_frame.set_DescriptionFrame(self.description_frame)
+        self.show_frame.set_RatingFrame(self.rating_frame)
+        self.show_frame.set_SelectFilenameFrame(self.select_filename_frame)
 
 
 

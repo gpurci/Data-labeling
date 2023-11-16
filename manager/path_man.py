@@ -102,10 +102,15 @@ class PathManager(object):
 
     def set_source_path(self, source_path):
         self.source_path = source_path
-        self.selectFilenameFrame.update()
+        self.showFrame.set_show_option(self.showFrame.SHOW_FILENAMES)
 
     def set_dest_path(self, dest_path):
-        self.dest_path = dest_path
+        tmp_path = Path(dest_path)
+        if (tmp_path.parents[0] != self.output_parent):
+            self.dest_path = dest_path
+        else:
+            self.dest_path = str(tmp_path.root)
+        print('set_dest_path {}'.format(self.dest_path))
         self.resolutionMan.set_path_parent(self.get_description_parent())
 
     def set_filename(self, filename):
@@ -119,6 +124,12 @@ class PathManager(object):
 
     def get_dest_path(self):
         return self.dest_path
+
+    def get_row_path(self):
+        return str(Path(self.dest_path).joinpath(self.input_parent_row))
+
+    def get_target_path(self):
+        return str(Path(self.dest_path).joinpath(self.output_parent))
 
     def get_filename(self):
         return self.filename
@@ -152,10 +163,6 @@ class PathManager(object):
             source_file = None
         return str(source_file)
 
-    def get_row_filename(self, path, filename):
-        file = Path(path).joinpath(self.input_parent_row, 'name').with_name(filename)
-        return str(file)
-
     def get_row_filename(self):
         file = Path(self.dest_path).joinpath(self.input_parent_row, 'name').with_name(self.filename)
         return str(file)
@@ -168,10 +175,6 @@ class PathManager(object):
             dest_file = None
         return str(dest_file)
 
-    def get_target_filename(self, path, filename):
-        file = Path(path).joinpath(self.output_parent, 'name').with_name(filename).with_suffix(self.output_suffix)
-        return str(file)
-
     def get_description_parent(self):
         tmp_description_parent = str(Path(self.dest_path).joinpath(self.description_parent))
         return tmp_description_parent
@@ -180,5 +183,5 @@ class PathManager(object):
     def set_ResolutionManager(self, resolutionManager):
         self.resolutionMan = resolutionManager
 
-    def set_SelectFilenameFrame(self, selectFilenameFrame):
-        self.selectFilenameFrame = selectFilenameFrame
+    def set_ShowFrame(self, showFrame:object):
+        self.showFrame = showFrame

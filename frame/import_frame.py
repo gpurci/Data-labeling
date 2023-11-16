@@ -13,34 +13,36 @@ from manager.import_man.yolo_v5_format import *
 
 class ImportFrame(object):
     def __init__(self, windows, pathManager, config_file):
-        self.config_file = config_file
-        self.is_save = False
+        self.__config_file = config_file
         
-        self.pathManager = pathManager
+        self.__pathManager = pathManager
         self.set_windows(windows)
         
-        self.source_path = self.pathManager.get_source_path()
-        self.dest_path     = self.pathManager.get_dest_path()
+        self.__source_path = self.__pathManager.get_source_path()
+        self.__dest_path   = self.__pathManager.get_dest_path()
 
-    def set_windows(self, windows):
-        self.windows = windows
+    def set_windows(self, windows:object):
+        self.__windows = windows
+
+    def set_import_fn(self, fn:'import_function'):
+        self.__import_fn = fn
 
     def __call__(self):
-        self.filewin = Toplevel(self.windows)
-        self.src_frame = Frame(self.filewin)
-        self.src_frame.pack( side = TOP )
-        self.dest_frame = Frame(self.filewin)
-        self.dest_frame.pack( side = TOP )
-        self.button_frame = Frame(self.filewin)
-        self.button_frame.pack( side = TOP )
+        self.__import_frame = Toplevel(self.__windows)
+        source_frame = Frame(self.__import_frame)
+        source_frame.pack( side = TOP )
+        dest_frame = Frame(self.__import_frame)
+        dest_frame.pack( side = TOP )
+        import_button_frame = Frame(self.__import_frame)
+        import_button_frame.pack( side = TOP )
         
-        self.source_path_UI(self.src_frame)
-        self.destination_path_UI(self.dest_frame)
-        self.import_button(self.button_frame)
+        self.__source_path_UI(source_frame)
+        self.__destination_path_UI(dest_frame)
+        self.__import_button(import_button_frame)
 
-    def read_config_yaml_file(self):
-        if (Path(self.config_file).is_file() == True):
-            with open(self.config_file) as file:
+    def __read_config_yaml_file(self):
+        if (Path(self.__config_file).is_file() == True):
+            with open(self.__config_file) as file:
                 config_list = yaml.load(file, Loader=yaml.FullLoader)
             self.set_default_rating(config_list['default_rating'])
             print(config_list)
@@ -50,73 +52,71 @@ class ImportFrame(object):
     def set_default_rating(self, rating:int):
         self.__default_rating = rating
 
-    def open_dir_src(self):
+    def __open_dir_source(self):
         source_path = filedialog.askdirectory(
-                                                                        initialdir=self.source_path,      # Start in the root directory
-                                                                        title="Select a Directory",  # Custom title for the dialog
-                                                                        mustexist=True,                # Ensure that the selected directory exists
-                                                                    )
-        self.set_source_path_frame(source_path)
+                                                initialdir=self.__source_path,      # Start in the root directory
+                                                title="Select a Directory",  # Custom title for the dialog
+                                                mustexist=True,                # Ensure that the selected directory exists
+                                            )
+        self.__set_source_path_frame(source_path)
 
-    def set_source_path_frame(self, source_path):
-        self.source_path = source_path
-        self.src_path_entry.delete(0, END)
-        self.src_path_entry.insert(0, source_path)
+    def __set_source_path_frame(self, source_path:str):
+        self.__src_path_entry.delete(0, END)
+        self.__src_path_entry.insert(0, source_path)
 
-    def open_dir_dest(self):
+    def __open_dir_dest(self):
         dest_path = filedialog.askdirectory(
-                                                                        initialdir=self.dest_path,      # Start in the root directory
-                                                                        title="Select a Directory",  # Custom title for the dialog
-                                                                        mustexist=True,                # Ensure that the selected directory exists
-                                                                    )
-        row_path    = str(Path(self.pathManager.get_row_filename(dest_path, 'new.png')).parent)
-        self.pathManager.set_source_path(row_path)
-        self.pathManager.set_dest_path(dest_path)
-        self.set_dest_path_frame(dest_path)
+                                                initialdir=self.__dest_path,      # Start in the root directory
+                                                title="Select a Directory",  # Custom title for the dialog
+                                                mustexist=True,                # Ensure that the selected directory exists
+                                            )
+        self.__set_dest_path_frame(dest_path)
 
-    def set_dest_path_frame(self, dest_path):
-        self.dest_path = dest_path
-        self.dest_path_entry.delete(0, END)
-        self.dest_path_entry.insert(0, dest_path)
+    def __set_dest_path_frame(self, dest_path:str):
+        self.__dest_path_entry.delete(0, END)
+        self.__dest_path_entry.insert(0, dest_path)
 
-    def import_fn(self):
-        self.filewin.withdraw()
-        source_path = self.source_path
-        dest_path     = self.dest_path
-        self.read_config_yaml_file()
-        datasets = TargetManager(0)
-        datasets.set_default_rating(self.__default_rating)
-        yolo_v5_format_import_fn(source_path, dest_path, datasets, self.pathManager)
+    def __do_import(self):
+        self.__import_frame.withdraw()
+        self.__read_config_yaml_file()
+        self.__source_path = str(self.__src_path_entry.get())
+        self.__dest_path   = str(self.__dest_path_entry.get())
+        self.__pathManager.set_dest_path(self.__dest_path)
+        self.__pathManager.set_source_path(self.__pathManager.get_row_path())
+
+        datasets = TargetManager(self.__default_rating)
+        self.__import_fn(self.__source_path, self.__dest_path, datasets, self.__pathManager)
+        
 
 
-    def source_path_UI(self, window):
+    def __source_path_UI(self, window:object):
         src_path_label = Label(window, text="Source path", width=10)
         src_path_label.pack( side = LEFT)
 
-        self.src_path_entry = Entry(window, width=100, bd = 1)
-        self.src_path_entry.insert (0, self.pathManager.get_source_path())
-        self.src_path_entry.pack({"side": "left"})
+        self.__src_path_entry = Entry(window, width=100, bd = 1)
+        self.__src_path_entry.insert (0, self.__pathManager.get_source_path())
+        self.__src_path_entry.pack({"side": "left"})
 
         change_src_path_button = Button(window)
         change_src_path_button["text"] = "Open",
-        change_src_path_button["command"] = self.open_dir_src
+        change_src_path_button["command"] = self.__open_dir_source
         change_src_path_button.pack({"side": "left"})
 
-    def destination_path_UI(self, window):
+    def __destination_path_UI(self, window:object):
         dest_path_label = Label(window, text="Dest path", width=10)
         dest_path_label.pack( side = LEFT)
 
-        self.dest_path_entry = Entry(window, width=100, bd = 1)
-        self.dest_path_entry.insert (0, self.pathManager.get_dest_path())
-        self.dest_path_entry.pack({"side": "left"})
+        self.__dest_path_entry = Entry(window, width=100, bd = 1)
+        self.__dest_path_entry.insert (0, self.__pathManager.get_dest_path())
+        self.__dest_path_entry.pack({"side": "left"})
 
         change_dest_path_button = Button(window)
         change_dest_path_button["text"] = "Open",
-        change_dest_path_button["command"] = self.open_dir_dest
+        change_dest_path_button["command"] = self.__open_dir_dest
         change_dest_path_button.pack({"side": "left"})
 
-    def import_button(self, window):
+    def __import_button(self, window:object):
         change_dest_path_button = Button(window)
         change_dest_path_button["text"] = "Import",
-        change_dest_path_button["command"] = self.import_fn
+        change_dest_path_button["command"] = self.__do_import
         change_dest_path_button.pack({"side": "top"})

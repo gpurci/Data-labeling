@@ -11,6 +11,7 @@ class ShowFrame(object):
         self.SHOW_IMAGE = 1
         self.SHOW_SET_TAB = 2
         self.SHOW_NEW_TAB = 3
+        self.SHOW_FILENAMES = 4
         self.__show_option = self.SHOW_NO
 
     def __str__(self):
@@ -27,31 +28,43 @@ class ShowFrame(object):
         elif(self.__show_option == self.SHOW_OBJECT):
             img = self.imageMan.get_image()
             self.editFrame.img_show(img)
+            box = (self.__target_object['coord x0'], self.__target_object['coord y0'], self.__target_object['coord x1'], self.__target_object['coord y1'])
+            box = self.imageMan.calc_coord_from_target(box)
+            self.editFrame.rectange_img_show(box, self.__target_object['names'])
             self.selectObjectFrame.show()
+            self.descriptionFrame.set_text_frame(self.__target_object['names'], self.__target_object['description'])
+            self.ratingFrame.set_rating_frame(self.__target_object['rating'])
             pass
         elif (self.__show_option == self.SHOW_IMAGE):
+            print('SHOW_IMAGE')
             img = self.imageMan.get_image()
             self.editFrame.img_show(img)
             pass
         elif (self.__show_option == self.SHOW_SET_TAB):
+            print('SHOW_SET_TAB')
             img = self.imageMan.get_image()
             self.editFrame.img_show(img)
             self.editFrame.set_work_frame(self.__filename)
             self.selectObjectFrame.show()
             pass
         elif (self.__show_option == self.SHOW_NEW_TAB):
+            print('SHOW_NEW_TAB')
             self.notebookFrame.add(self.__filename)
             img = self.imageMan.get_image()
             self.editFrame.img_show(img)
             self.editFrame.set_work_frame(self.__filename)
             self.selectObjectFrame.show()
             pass
+        elif (self.__show_option == self.SHOW_FILENAMES):
+            print('SHOW_FILENAMES')
+            self.selectFilenameFrame.show()
+            pass
         
         self.__show_option = self.SHOW_NO
 
 
     def set_target_object(self, target_object:dict):
-        print('target_object', target_object)
+        print('target_object \n@{}@'.format(target_object))
         self.__target_object = target_object
 
     def set_item(self, item):
@@ -72,62 +85,14 @@ class ShowFrame(object):
 
 
 
-    def add_object_frame(self, d_new_target:dict):
-        d_new_target['rating'] = self.__default_rating
-        self.add_object(d_new_target, self.get_object_size())
-        
-        self.selectObjectFrame.add(self.get_last_name(), self.get_object_size())
-        self.descriptionFrame.set_text_frame(self.get_last_name(), self.get_last_description())
-        self.ratingFrame.set_rating_frame(self.get_last_rating())
-
-    def select_object_frame(self, item:int):
-        self.save_description_frame()
-        self.set_selected_object(item)
-        self.update_last_name()
-        
-        self.descriptionFrame.set_text_frame(self.get_last_name(), self.get_last_description())
-        self.ratingFrame.set_rating_frame(self.get_last_rating())
-        self.editManager.show()
-
-
-
-    def read_frame(self, filename:str):
-        self.read(filename)
-
-        self.update_description_frame()
-        self.selectObjectFrame.init()
-
-    def crop_last_name_frame(self):
-        self.crop_last_name()
-
-        self.update_description_frame()
-        self.selectObjectFrame.init()
-        self.editManager.show()
-
-    def double_last_name_frame(self):
-        self.double_last_name()
-        
-        self.selectObjectFrame.add(self.last_name, self.__selected_object)
-        self.descriptionFrame.set_text_frame(self.get_last_name(), self.get_last_description())
-        self.ratingFrame.set_rating_frame(self.get_last_rating())
-
-
-    def update_description_frame(self):
-        self.selectObjectFrame.update()
-        self.descriptionFrame.set_text_frame(self.get_last_name(), self.get_last_description())
-        self.ratingFrame.set_rating_frame(self.get_last_rating())
-
-    def update_object_frame(self):
-        self.selectObjectFrame.update()
-        self.descriptionFrame.set_text_frame(self.get_last_name(), self.get_last_description())
-        self.ratingFrame.set_rating_frame(self.get_last_rating())
-
-
     def set_DescriptionFrame(self, descriptionFrame):
         self.descriptionFrame = descriptionFrame
 
     def set_SelectObjectFrame(self, selectObjectFrame):
         self.selectObjectFrame = selectObjectFrame
+
+    def set_SelectFilenameFrame(self, selectFilenameFrame):
+        self.selectFilenameFrame = selectFilenameFrame
 
     def set_RatingFrame(self, ratingFrame):
         self.ratingFrame = ratingFrame

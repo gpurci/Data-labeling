@@ -48,7 +48,7 @@ class SelectObjectFrame(object):
             self.__selected_obj_name.insert(END, name)
 
     def show(self):
-        self.__selected_obj_name.itemconfig(bg='#ffffff')
+        self.__selected_obj_name.config(bg='#ffffff')
         self.__selected_obj_name.delete(0, END)
         self.__print_object(self.__targetMan.get_names())
         self.__selected_obj_name.itemconfig(self.__targetMan.get_selected_object(), bg='OrangeRed3')
