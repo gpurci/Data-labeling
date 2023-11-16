@@ -38,10 +38,10 @@ class DescriptionFrame(object):
     def __get_text_frame(self):
         return self.__text_frame.get(1.0, END)[:-1]
 
-    def set_text_frame(self, selected_object, description):
-        self.__labelframe.config(text=selected_object)
+    def set_text_frame(self, object_image:str, object_description:str):
+        self.__labelframe.config(text=object_image)
         self.__text_frame.delete(1.0, END)
-        self.__text_frame.insert(END, description)
+        self.__text_frame.insert(END, object_description)
 
 
 class CustomText(tk.Text):

@@ -28,7 +28,7 @@ class SelectObjectFrame(object):
         self.__selected_obj_name = Listbox(self.__window, height=30, width=40, yscrollcommand = scrollbar.set, bd=5, bg='#ffffff')
         self.__selected_obj_name.pack( side = LEFT, fill=None )
 
-        self.print_object(['no object'])
+        self.__print_object(['no object'])
         self.__selected_obj_name.bind("<<ListboxSelect>>", self.__on_select_object_name)
         self.__selected_obj_name.bind("<ButtonRelease-3>", self.__on_click_release)
         scrollbar.config( command = self.__selected_obj_name.yview )
@@ -41,7 +41,7 @@ class SelectObjectFrame(object):
 
 
 
-    def print_object(self, lst_object:list):
+    def __print_object(self, lst_object:list):
         # Add items to the Listbox
         for name in lst_object:
             print('object_description {}'.format(name))
@@ -50,7 +50,7 @@ class SelectObjectFrame(object):
     def show(self):
         self.__selected_obj_name.itemconfig(bg='#ffffff')
         self.__selected_obj_name.delete(0, END)
-        self.print_object(self.__targetMan.get_names())
+        self.__print_object(self.__targetMan.get_names())
         self.__selected_obj_name.itemconfig(self.__targetMan.get_selected_object(), bg='OrangeRed3')
 
     def cut(self, item:int):
@@ -77,11 +77,11 @@ class SelectObjectFrame(object):
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
     def __change_cursor(self, item:int):
-        if ((self.__last_item != -1) and 
+        if ((self.__last_item >= 0) and 
             (self.__last_item < self.__selected_obj_name.size())):
             self.__selected_obj_name.itemconfig(self.__last_item, bg='#ffffff')
         
-        if (item != -1):
+        if (item >= 0):
             self.__selected_obj_name.itemconfig(item, bg='OrangeRed3')
         
         self.__last_item = item
@@ -103,7 +103,7 @@ class SelectObjectFrame(object):
     def __on_key_press_rename_obj(self, event):
         #print('event {}'.format(event.keysym))
         if event.keysym == "Return":
-            self.rename_name_object()
+            self.__rename_name_object()
 
     def __rename_object_button(self):
         print('rename_object {}'.format(None))

@@ -64,7 +64,7 @@ class NotebookManager(object):
         return (strRet)
 
     def select_tab(self, idx:int):
-        print('select_tab', type(idx))
+        print('select_tab {}'.format(idx))
         if ((idx >= 0) and (idx < self.get_tab_size())):
             self.__idx_tab = idx
             self.__set_data(self.imageMan(), self.targetMan())

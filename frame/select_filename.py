@@ -7,7 +7,7 @@ from pathlib import Path
 
 class SelectFilenameFrame(object):
     def __init__(self):
-        self.last_item = -1
+        self.__last_item = -1
 
     def set_windows(self, windows):
         self.windows = windows
@@ -42,7 +42,7 @@ class SelectFilenameFrame(object):
             selected_index = self.listbox_files_dataset.curselection()
             if (len(selected_index) != 0):
                 self.filename = self.listbox_files_dataset.get(selected_index[0])
-                self.change_cursor(selected_index[0])
+                self.__change_cursor(selected_index[0])
                 
                 self.notebookMan.add(self.filename)
             else:
@@ -53,19 +53,15 @@ class SelectFilenameFrame(object):
             print("Error SelectFilenameFrame", f"An error occurred: {str(e)}")
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
-    def change_cursor(self, curent_cursor):
-        if ((self.last_item != -1) and 
-            (self.last_item < self.listbox_files_dataset.size()) and 
-            (str(self.listbox_files_dataset.get(self.last_item)[0]) == '>')):
-            selected_file = str(self.listbox_files_dataset.get(self.last_item))
-            self.listbox_files_dataset.insert(self.last_item, selected_file[len('> '):])
-            self.listbox_files_dataset.delete(self.last_item+1)
-            
-        if (curent_cursor != -1):
-            selected_file = str(self.listbox_files_dataset.get(curent_cursor))
-            self.listbox_files_dataset.insert(curent_cursor, '> ' + selected_file)
-            self.listbox_files_dataset.delete(curent_cursor+1)
-        self.last_item = curent_cursor
+    def __change_cursor(self, item:int):
+        if ((self.__last_item >= 0) and 
+            (self.__last_item < self.listbox_files_dataset.size())):
+            self.listbox_files_dataset.itemconfig(self.__last_item, bg='#ffffff')
+        
+        if (item >= 0):
+            self.listbox_files_dataset.itemconfig(item, bg='OrangeRed3')
+        
+        self.__last_item = item
     
 
     def save_yes_fn(self):

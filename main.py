@@ -217,6 +217,7 @@ class Application(Frame):
 
         self.show_frame.set_EditFrame(self.edit_frame)
         self.show_frame.set_NotebookFrame(self.notebook_frame)
+        self.show_frame.set_SelectObjectFrame(self.select_object_frame)
 
 
 
