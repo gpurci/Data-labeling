@@ -51,6 +51,8 @@ class TargetManager(object):
     def set_selected_object(self, item:int):
         if ((item >= 0) and (item < self.get_object_size())):
             self.__selected_object = item
+        elif (item == self.__DEFAULT_OBJECT):
+            self.__selected_object = 0
         else:
             self.__selected_object = self.__DEFAULT_OBJECT
 
@@ -242,7 +244,7 @@ class TargetManager(object):
         self.update_last_name()
 
         self.showFrame.set_target_object(self.get_last_object())
-        self.showFrame.set_show_option(self.showFrame.SHOW_ALL)
+        self.showFrame.set_show_option(self.showFrame.SHOW_OBJECT)
 
     def new(self, x1:int, y1:int):
         self.__delete()
@@ -255,7 +257,7 @@ class TargetManager(object):
         self.update_last_name()
 
         self.showFrame.set_target_object(self.get_last_object())
-        self.showFrame.set_show_option(self.showFrame.SHOW_ALL)
+        self.showFrame.set_show_option(self.showFrame.SHOW_OBJECT)
 
     def set_last_object_name(self, name:str):
         self.__df_targets.at[self.__selected_object, 'names'] = name
@@ -265,27 +267,17 @@ class TargetManager(object):
         self.showFrame.set_show_option(self.showFrame.SHOW_OBJECTS)
 
     def select_object(self, item:int):
-        self.__save_description_frame()
         self.set_selected_object(item)
         self.update_last_name()
         
         self.showFrame.set_target_object(self.get_last_object())
-        self.showFrame.set_show_option(self.showFrame.SHOW_ALL)
+        self.showFrame.set_show_option(self.showFrame.SHOW_OBJECT)
 
 
     def save(self, filename:str):
-        self.__save_description_frame()
         #save target data to csv file
         self.save_targets(filename)
-
-    def __save_description_frame(self):
-        text_description = self.descriptionFrame.get_text_frame()
-        self.set_last_description(text_description)
 
 
     def set_ShowFrame(self, showFrame:object):
         self.showFrame = showFrame
-
-
-    def set_DescriptionFrame(self, descriptionFrame:object):
-        self.descriptionFrame = descriptionFrame

@@ -7,9 +7,10 @@ import numpy as np
 class ShowFrame(object):
     def __init__(self):
         self.SHOW_NO = -1
-        self.SHOW_ALL = 0
+        self.SHOW_OBJECT = 0
         self.SHOW_IMAGE = 1
-        self.SHOW_NEW_TAB = 2
+        self.SHOW_SET_TAB = 2
+        self.SHOW_NEW_TAB = 3
         self.__show_option = self.SHOW_NO
 
     def __str__(self):
@@ -21,20 +22,32 @@ class ShowFrame(object):
         self.targetMan = targetMan
 
     def show(self):
-        if(self.__show_option == self.SHOW_ALL):
+        if(self.__show_option == self.SHOW_NO):
+            pass
+        elif(self.__show_option == self.SHOW_OBJECT):
             img = self.imageMan.get_image()
             self.editFrame.img_show(img)
-            self.__show_option = self.SHOW_NO
+            self.selectObjectFrame.show()
+            pass
         elif (self.__show_option == self.SHOW_IMAGE):
             img = self.imageMan.get_image()
             self.editFrame.img_show(img)
-            self.__show_option = self.SHOW_NO
-        elif (self.__show_option == self.SHOW_NEW_TAB):
+            pass
+        elif (self.__show_option == self.SHOW_SET_TAB):
             img = self.imageMan.get_image()
             self.editFrame.img_show(img)
-
             self.editFrame.set_work_frame(self.__filename)
-            self.__show_option = self.SHOW_NO
+            self.selectObjectFrame.show()
+            pass
+        elif (self.__show_option == self.SHOW_NEW_TAB):
+            self.notebookFrame.add(self.__filename)
+            img = self.imageMan.get_image()
+            self.editFrame.img_show(img)
+            self.editFrame.set_work_frame(self.__filename)
+            self.selectObjectFrame.show()
+            pass
+        
+        self.__show_option = self.SHOW_NO
 
 
     def set_target_object(self, target_object:dict):
@@ -56,6 +69,9 @@ class ShowFrame(object):
     def set_rectangle(self, box):
         self.__box = box
 
+
+
+
     def add_object_frame(self, d_new_target:dict):
         d_new_target['rating'] = self.__default_rating
         self.add_object(d_new_target, self.get_object_size())
@@ -73,6 +89,8 @@ class ShowFrame(object):
         self.ratingFrame.set_rating_frame(self.get_last_rating())
         self.editManager.show()
 
+
+
     def read_frame(self, filename:str):
         self.read(filename)
 
@@ -85,19 +103,6 @@ class ShowFrame(object):
         self.update_description_frame()
         self.selectObjectFrame.init()
         self.editManager.show()
-
-    def save_frame(self, filename):
-        self.save_description_frame()
-        #save target data to csv file
-        self.save_targets(filename)
-
-    def save_description_frame(self):
-        text_description = self.descriptionFrame.get_text_frame()
-        self.set_last_description(text_description)
-
-    def cut_last_name_frame(self):
-        self.cut_last_name()
-        self.selectObjectFrame.cut(self.__selected_object)
 
     def double_last_name_frame(self):
         self.double_last_name()
@@ -132,3 +137,6 @@ class ShowFrame(object):
 
     def set_EditFrame(self, editFrame):
         self.editFrame = editFrame
+
+    def set_NotebookFrame(self, notebookFrame):
+        self.notebookFrame = notebookFrame

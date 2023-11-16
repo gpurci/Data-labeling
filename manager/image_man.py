@@ -76,6 +76,12 @@ class ImageManager:
 
         self.show_data = ImageTk.PhotoImage(self.data.resize(img_size))
 
+    def false_image(self):
+        img = np.ones((10, 10, 3))#d1d8e3
+        img = Image.fromarray(img, mode='RGB')
+        self.show_data = ImageTk.PhotoImage(img)
+
+
     def zoom_image(self, zoom_out, cursor):
         print('zoom_image zoom_out {}, cursor {}'.format(zoom_out, cursor))
         cursor = np.array(cursor, dtype=np.float32)
@@ -110,6 +116,9 @@ class ImageManager:
         self.show_data = ImageTk.PhotoImage(img)
 
     def get_image(self):
+        cursor_x, cursor_y = self.prev_cursor
+        self.coords_fn(cursor_x, cursor_y)
+
         return self.show_data
 
     def get_image_size(self):

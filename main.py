@@ -199,7 +199,6 @@ class Application(Frame):
         self.resolution_man.set_path_parent(self.path_man.get_description_parent())
 
         self.tools_man.set_PathManager(self.path_man)
-        self.tools_man.set_EditManager(self.edit_man)
 
         self.notebook_frame.set_NotebookManager(self.notebook_man)
         
@@ -217,6 +216,7 @@ class Application(Frame):
 
 
         self.show_frame.set_EditFrame(self.edit_frame)
+        self.show_frame.set_NotebookFrame(self.notebook_frame)
 
 
 
@@ -229,12 +229,14 @@ class Application(Frame):
         self.tools_frame.run()
         self.notebook_frame.run()
 
+        self.notebook_man.run()
+
     def on_key_press(self, event):
         #print('event {}'.format(event.keysym))
         if event.state == 4 and event.keysym.lower() == "s":
             # Check if Control key (event.state == 4) and "S" key are pressed
             print("Ctrl + S pressed (Save event)")
-            self.notebook_man.target().save(self.path_man.get_dest_filename())
+            self.notebook_man.targetMan().save(self.path_man.get_dest_filename())
             self.path_man.save()
             self.resolution_man.save()
 
@@ -252,7 +254,7 @@ class Application(Frame):
         self.path_man = PathManager(r'./config/config_path_manager.yaml')
         print(self.path_man)
         self.dataset_dim = WorkFrameDimension(r'./config/config_edit_frame_dim.yaml')
-        self.notebook_man = NotebookManager(r'./config/config_target_manager.yaml')
+        self.notebook_man = NotebookManager(r'./config')
         self.frame_man = FrameManager(windows)
         self.resolution_man = ResolutionManager(r'./', r'config_resolution.yaml', r'./config/config_resolution.yaml')
         self.tools_man = ToolsManager()

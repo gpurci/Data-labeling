@@ -5,136 +5,133 @@ from tkinter import messagebox
 
 class SelectObjectFrame(object):
     def __init__(self):
-        self.last_item = -1
+        self.__last_item = -1
 
     def init(self):
-        self.change_cursor(self.targetMan.get_default_object())
+        self.__change_cursor(self.__targetMan.get_default_object())
 
     def set_windows(self, window):
         print('SelectObjectFrame.set_windows')
-        self.window = window
+        self.__window = window
 
     def set_data(self, imageMan, targetMan):
-        self.imageMan  = imageMan
-        self.targetMan = targetMan
+        self.__imageMan  = imageMan
+        self.__targetMan = targetMan
 
     def none_fn(self):
         pass
 
     def run(self):
-        scrollbar = Scrollbar(self.window)
+        scrollbar = Scrollbar(self.__window)
         scrollbar.pack( side = RIGHT, fill=Y )
         # Create a Listbox with some items
-        self.selected_obj_name = Listbox(self.window, height=30, width=40, yscrollcommand = scrollbar.set, bd=5)
-        self.selected_obj_name.pack( side = LEFT, fill=None )
+        self.__selected_obj_name = Listbox(self.__window, height=30, width=40, yscrollcommand = scrollbar.set, bd=5, bg='#ffffff')
+        self.__selected_obj_name.pack( side = LEFT, fill=None )
 
-        self.show(['no object'])
-        self.selected_obj_name.bind("<<ListboxSelect>>", self.on_select_object_name)
-        self.selected_obj_name.bind("<ButtonRelease-3>", self.on_click_release)
-        scrollbar.config( command = self.selected_obj_name.yview )
+        self.print_object(['no object'])
+        self.__selected_obj_name.bind("<<ListboxSelect>>", self.__on_select_object_name)
+        self.__selected_obj_name.bind("<ButtonRelease-3>", self.__on_click_release)
+        scrollbar.config( command = self.__selected_obj_name.yview )
         
-        self.filemenu = Menu(self.selected_obj_name, tearoff = 0)
-        self.filemenu.add_command(label ="Cut", command=self.cut_object_button) 
-        self.filemenu.add_separator() 
-        self.filemenu.add_command(label ="Rename", command=self.rename_object_button)
-        self.filemenu.add_command(label ="Double", command=self.double_object_button)
+        self.__object_menu = Menu(self.__selected_obj_name, tearoff = 0)
+        self.__object_menu.add_command(label ="Cut", command=self.__cut_object_button) 
+        self.__object_menu.add_separator() 
+        self.__object_menu.add_command(label ="Rename", command=self.__rename_object_button)
+        self.__object_menu.add_command(label ="Double", command=self.__double_object_button)
 
 
 
-    def show(self, lst_object):
+    def print_object(self, lst_object:list):
         # Add items to the Listbox
         for name in lst_object:
             print('object_description {}'.format(name))
-            self.selected_obj_name.insert(END, name)
+            self.__selected_obj_name.insert(END, name)
 
-    def update(self, lst_object):
-        self.selected_obj_name.delete(0, END)
-        self.show(lst_object)
+    def show(self):
+        self.__selected_obj_name.itemconfig(bg='#ffffff')
+        self.__selected_obj_name.delete(0, END)
+        self.print_object(self.__targetMan.get_names())
+        self.__selected_obj_name.itemconfig(self.__targetMan.get_selected_object(), bg='OrangeRed3')
 
-    def cut(self, item):
+    def cut(self, item:int):
         self.init()
-        self.selected_obj_name.delete(item)
+        self.__selected_obj_name.delete(item)
 
-    def add(self, name, cursor):
-        self.selected_obj_name.insert(cursor, name)
-        self.change_cursor(cursor)
+    def add(self, name:str, item:int):
+        self.__selected_obj_name.insert(item, name)
+        self.__change_cursor(cursor)
 
-    def on_select_object_name(self, event):
-        selected_index = self.selected_obj_name.curselection()
+    def __on_select_object_name(self, event:object):
+        selected_index = self.__selected_obj_name.curselection()
         try:
-            print("Selected object index {}, size {}".format(selected_index, self.selected_obj_name.size()))
+            print("Selected object index {}, size {}".format(selected_index, self.__selected_obj_name.size()))
             if (len(selected_index) != 0):
-                print("Selected object index {}, size {}".format(selected_index, self.selected_obj_name.size()))
-                self.change_cursor(selected_index[0])
-                print("Selected object index {}, size {}".format(selected_index, self.selected_obj_name.size()))
-                self.targetMan.select_object(self.last_item)
+                print("Selected object index {}, size {}".format(selected_index, self.__selected_obj_name.size()))
+                self.__change_cursor(selected_index[0])
+                print("Selected object index {}, size {}".format(selected_index, self.__selected_obj_name.size()))
+                self.__targetMan.select_object(self.__last_item)
 
         except Exception as e:
             # Handle the exception
             print(f"Error SelectObjectFrame selected_index #{selected_index}#", f"An error occurred: {str(e)}")
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
-    def change_cursor(self, curent_cursor):
-        if ((self.last_item != -1) and 
-            (self.last_item < self.selected_obj_name.size()) and 
-            (str(self.selected_obj_name.get(self.last_item))[0] == '>')):
-            selected_obj = str(self.selected_obj_name.get(self.last_item))
-            self.selected_obj_name.insert(self.last_item, selected_obj[len('> '):])
-            self.selected_obj_name.delete(self.last_item+1)
+    def __change_cursor(self, item:int):
+        if ((self.__last_item != -1) and 
+            (self.__last_item < self.__selected_obj_name.size())):
+            self.__selected_obj_name.itemconfig(self.__last_item, bg='#ffffff')
         
-        if (curent_cursor != -1):
-            selected_obj = str(self.selected_obj_name.get(curent_cursor))
-            self.selected_obj_name.insert(curent_cursor, '> ' + selected_obj)
-            self.selected_obj_name.delete(curent_cursor+1)
+        if (item != -1):
+            self.__selected_obj_name.itemconfig(item, bg='OrangeRed3')
         
-        self.last_item = curent_cursor
+        self.__last_item = item
 
 
-    def cut_object_button(self):
-        self.targetMan.cut_last_name()
+    def __cut_object_button(self):
+        self.__targetMan.cut_last_name()
 
-    def double_object_button(self):
-        self.targetMan.double_last_name()
+    def __double_object_button(self):
+        self.__targetMan.double_last_name()
 
-    def rename_name_object(self):
-        self.targetMan.set_last_object_name(self.obj_name_entry.get())
-        self.filewin.withdraw()
+    def __rename_name_object(self):
+        self.__targetMan.set_last_object_name(self.__obj_name_entry.get())
+        self.__rename_frame.withdraw()
 
-    def cancel_name_object(self):
-        self.filewin.withdraw()
+    def __cancel_name_object(self):
+        self.__rename_frame.withdraw()
 
-    def on_key_press_rename_obj(self, event):
+    def __on_key_press_rename_obj(self, event):
         #print('event {}'.format(event.keysym))
         if event.keysym == "Return":
             self.rename_name_object()
 
-    def rename_object_button(self):
+    def __rename_object_button(self):
         print('rename_object {}'.format(None))
         
-        self.filewin = Toplevel(self.window)
-        self.filewin.title("Rename object name")
-        self.filewin.bind("<KeyPress>", self.on_key_press_rename_obj)
+        self.__rename_frame = Toplevel(self.__window)
+        self.__rename_frame.title("Rename object name")
+        self.__rename_frame.bind("<KeyPress>", self.__on_key_press_rename_obj)
 
-        obj_name_label = Label(self.filewin, text="Object name")
+        obj_name_label = Label(self.__rename_frame, text="Object name")
         obj_name_label.pack(side = LEFT)
 
-        self.obj_name_entry = Entry(self.filewin, width = 15, bd = 5)
-        self.obj_name_entry.insert (0, '')
-        self.obj_name_entry.pack({"side": "left"})
+        self.__obj_name_entry = Entry(self.__rename_frame, width = 15, bd = 5)
+        self.__obj_name_entry.insert (0, '')
+        self.__obj_name_entry.pack({"side": "left"})
 
-        add_button = Button(self.filewin)
+        add_button = Button(self.__rename_frame)
         add_button["text"] = "Rename"
-        add_button["command"] = self.rename_name_object
+        add_button["command"] = self.__rename_name_object
         add_button.pack({"side": "left"})
         
-        cancel_button = Button(self.filewin)
+        cancel_button = Button(self.__rename_frame)
         cancel_button["text"] = "Cancel"
-        cancel_button["command"] = self.cancel_name_object
+        cancel_button["command"] = self.__cancel_name_object
         cancel_button.pack({"side": "left"})
 
-    def on_click_release(self, event):
+    def __on_click_release(self, event:object):
         print('on_click_release {}'.format(event))
         try: 
-            self.filemenu.tk_popup(event.x_root, event.y_root) 
+            self.__object_menu.tk_popup(event.x_root, event.y_root) 
         finally: 
-            self.filemenu.grab_release()
+            self.__object_menu.grab_release()

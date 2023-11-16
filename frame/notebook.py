@@ -87,7 +87,7 @@ class CustomNotebook(ttk.Notebook):
 
         if self._active == index:
             self.forget(index)
-            self.notebookManager.delete_tab(index)
+            self.notebookMan.delete_tab(index)
             self.event_generate("<<NotebookTabClosed>>")
 
         self.state(["!pressed"])

@@ -1,111 +1,79 @@
-try:
-    import Tkinter as tk
-    import ttk
-except ImportError:  # Python 3
-    import tkinter as tk
-    from tkinter import ttk
+import tkinter as tk
 
-class CustomNotebook(ttk.Notebook):
-    """A ttk Notebook with close buttons on each tab"""
-
-    __initialized = False
+class Texter(tk.Tk):
 
     def __init__(self, *args, **kwargs):
-        if not self.__initialized:
-            self.__initialize_custom_style()
-            self.__inititialized = True
+        tk.Tk.__init__(self, *args, **kwargs)
 
-        kwargs["style"] = "CustomNotebook"
-        ttk.Notebook.__init__(self, *args, **kwargs)
+        container = tk.Frame(self)
+        container.pack()
 
-        self._active = None
+        self.frames = {}
 
-        self.bind("<ButtonPress-1>", self.on_close_press, True)
-        self.bind("<ButtonRelease-1>", self.on_close_release)
+        for F in (ConnectPage, EditorPage):
+            frame = F(container, self)
+            self.frames[F] = frame
+            frame.grid(row=0, column=0, sticky="nsew")
 
-    def on_close_press(self, event):
-        """Called when the button is pressed over the close button"""
+        page_name = EditorPage.__name__
+        self.frames[page_name] = frame
+        self.show_frame(ConnectPage)
 
-        element = self.identify(event.x, event.y)
 
-        if "close" in element:
-            index = self.index("@%d,%d" % (event.x, event.y))
-            self.state(['pressed'])
-            self._active = index
-            return "break"
+    def show_frame(self, cont):
+        frame = self.frames[cont]
+        frame.tkraise()
 
-    def on_close_release(self, event):
-        """Called when the button is released"""
-        if not self.instate(['pressed']):
-            return
+    def get_page(self, page_name):
+        return self.frames[page_name]
 
-        element =  self.identify(event.x, event.y)
-        if "close" not in element:
-            # user moved the mouse off of the close button
-            return
 
-        index = self.index("@%d,%d" % (event.x, event.y))
+class ConnectPage(tk.Frame):
 
-        if self._active == index:
-            self.forget(index)
-            self.event_generate("<<NotebookTabClosed>>")
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
 
-        self.state(["!pressed"])
-        self._active = None
+        button1 = tk.Button(self, text="SecondPage",
+                            command=lambda: controller.show_frame(EditorPage))
+        button1.grid(row=2, column=3, padx=15)
 
-    def __initialize_custom_style(self):
-        style = ttk.Style()
-        self.images = (
-            tk.PhotoImage("img_close", data='''
-                R0lGODlhCAAIAMIBAAAAADs7O4+Pj9nZ2Ts7Ozs7Ozs7Ozs7OyH+EUNyZWF0ZWQg
-                d2l0aCBHSU1QACH5BAEKAAQALAAAAAAIAAgAAAMVGDBEA0qNJyGw7AmxmuaZhWEU
-                5kEJADs=
-                '''),
-            tk.PhotoImage("img_closeactive", data='''
-                R0lGODlhCAAIAMIEAAAAAP/SAP/bNNnZ2cbGxsbGxsbGxsbGxiH5BAEKAAQALAAA
-                AAAIAAgAAAMVGDBEA0qNJyGw7AmxmuaZhWEU5kEJADs=
-                '''),
-            tk.PhotoImage("img_closepressed", data='''
-                R0lGODlhCAAIAMIEAAAAAOUqKv9mZtnZ2Ts7Ozs7Ozs7Ozs7OyH+EUNyZWF0ZWQg
-                d2l0aCBHSU1QACH5BAEKAAQALAAAAAAIAAgAAAMVGDBEA0qNJyGw7AmxmuaZhWEU
-                5kEJADs=
-            ''')
-        )
 
-        style.element_create("close", "image", "img_close",
-                            ("active", "pressed", "!disabled", "img_closepressed"),
-                            ("active", "!disabled", "img_closeactive"), border=8, sticky='')
-        style.layout("CustomNotebook", [("CustomNotebook.client", {"sticky": "nswe"})])
-        style.layout("CustomNotebook.Tab", [
-            ("CustomNotebook.tab", {
-                "sticky": "nswe",
-                "children": [
-                    ("CustomNotebook.padding", {
-                        "side": "top",
-                        "sticky": "nswe",
-                        "children": [
-                            ("CustomNotebook.focus", {
-                                "side": "top",
-                                "sticky": "nswe",
-                                "children": [
-                                    ("CustomNotebook.label", {"side": "left", "sticky": ''}),
-                                    ("CustomNotebook.close", {"side": "left", "sticky": ''}),
-                                ]
-                        })
-                    ]
-                })
-            ]
-        })
-    ])
+class EditorPage(tk.Frame):
 
-if __name__ == "__main__":
-    root = tk.Tk()
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
 
-    notebook = CustomNotebook(width=300, height=200)
-    notebook.pack(side="top", fill="both", expand=True)
+        self.text = CustomText(self, height=25, width=80)
+        self.text.grid(column=0, row=0, sticky="nw")
+        self.text.bind("<<TextModified>>", self.onModification)
 
-    for color in ("red", "orange", "green", "blue", "violet"):
-        frame = tk.Frame(notebook, background=color)
-        notebook.add(frame, text=color)
+        button2 = tk.Button(self, text="FirstPage",
+                            command=lambda: controller.show_frame(ConnectPage))
+        button2.grid(row=2, column=3, padx=15)
 
-    root.mainloop()
+    def onModification(self, event):
+        print("Yellow!")
+
+
+class CustomText(tk.Text):
+    def __init__(self, *args, **kwargs):
+        """A text widget that report on internal widget commands"""
+        tk.Text.__init__(self, *args, **kwargs)
+
+        # create a proxy for the underlying widget
+        self._orig = self._w + "_orig"
+        self.tk.call("rename", self._w, self._orig)
+        self.tk.createcommand(self._w, self._proxy)
+
+    def _proxy(self, command, *args):
+        cmd = (self._orig, command) + args
+        result = self.tk.call(cmd)
+
+        if command in ("insert", "delete", "replace"):
+            self.event_generate("<<TextModified>>")
+
+        return result
+
+if __name__ == '__main__':
+    gui = Texter()
+    gui.mainloop()
