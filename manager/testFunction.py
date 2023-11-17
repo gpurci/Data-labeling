@@ -1,12 +1,8 @@
 # !/usr/bin/env python
 
-import numpy as np
-from numpy import *
-import numpy as np
 import matplotlib.pyplot as plt
-import numpy
+import numpy as np
 
-from calc import *
 
 def PlotAlg(x, d1, d2, d3):
 	print("x ", x)
