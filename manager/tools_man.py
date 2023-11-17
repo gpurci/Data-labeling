@@ -1,17 +1,16 @@
 #!/usr/bin/python
 
-from pathlib import Path
-import numpy as np
-import yaml
-
-class ToolsManager(object):
+class ToolsManager:
     def __init__(self):
+        self.__pathManager = None
+        self.__targetMan = None
+        self.__imageMan = None
         self.idx = 0
         self.is_data = False
 
     def crop(self):
         print('CROP is_data {}'.format(self.is_data))
-        if (self.is_data == True):
+        if self.is_data :
             self.__pathManager.set_file_suffix('_crop')
             box = self.__targetMan.get_last_coord()
             self.__imageMan.crop(box)
@@ -20,7 +19,7 @@ class ToolsManager(object):
             self.is_data = True
 
     def set_data(self, imageMan, targetMan):
-        self.__imageMan  = imageMan
+        self.__imageMan = imageMan
         self.__targetMan = targetMan
 
     def set_PathManager(self, pathManager):

@@ -1,5 +1,6 @@
 import tkinter as tk
 
+
 class Texter(tk.Tk):
 
     def __init__(self, *args, **kwargs):
@@ -19,12 +20,11 @@ class Texter(tk.Tk):
         self.frames[page_name] = frame
         self.show_frame(ConnectPage)
 
-
-    def show_frame(self, cont):
+    def show_frame(self, cont) :
         frame = self.frames[cont]
         frame.tkraise()
 
-    def get_page(self, page_name):
+    def get_page(self, page_name) :
         return self.frames[page_name]
 
 
@@ -34,7 +34,7 @@ class ConnectPage(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         button1 = tk.Button(self, text="SecondPage",
-                            command=lambda: controller.show_frame(EditorPage))
+                            command=lambda : controller.show_frame(EditorPage))
         button1.grid(row=2, column=3, padx=15)
 
 
@@ -48,7 +48,7 @@ class EditorPage(tk.Frame):
         self.text.bind("<<TextModified>>", self.onModification)
 
         button2 = tk.Button(self, text="FirstPage",
-                            command=lambda: controller.show_frame(ConnectPage))
+                            command=lambda : controller.show_frame(ConnectPage))
         button2.grid(row=2, column=3, padx=15)
 
     def onModification(self, event):
@@ -56,7 +56,7 @@ class EditorPage(tk.Frame):
 
 
 class CustomText(tk.Text):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) :
         """A text widget that report on internal widget commands"""
         tk.Text.__init__(self, *args, **kwargs)
 
@@ -65,14 +65,15 @@ class CustomText(tk.Text):
         self.tk.call("rename", self._w, self._orig)
         self.tk.createcommand(self._w, self._proxy)
 
-    def _proxy(self, command, *args):
+    def _proxy(self, command, *args) :
         cmd = (self._orig, command) + args
         result = self.tk.call(cmd)
 
-        if command in ("insert", "delete", "replace"):
+        if command in ("insert", "delete", "replace") :
             self.event_generate("<<TextModified>>")
 
         return result
+
 
 if __name__ == '__main__':
     gui = Texter()
