@@ -56,7 +56,7 @@ class CustomText(tk.Text) :
         tk.Text.__init__(self, *args, **kwargs)
 
         # create a proxy for the underlying widget
-        self._w = None
+        self._w = ""
         self._orig = self._w + "_orig"
         self.tk.call("rename", self._w, self._orig)
         self.tk.createcommand(self._w, self._proxy)
