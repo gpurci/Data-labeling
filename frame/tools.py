@@ -2,14 +2,14 @@
 
 from tkinter import *
 
-from pathlib import Path
 
-class ToolsFrame(object):
+class ToolsFrame:
     def __init__(self, toolsManager):
+        self.windows = None
         self.toolsManager = toolsManager
 
     def set_windows(self, windows):
-        self.windows   = windows
+        self.windows = windows
 
     def run(self):
         tools_frame = LabelFrame(self.windows, text='Tools')
