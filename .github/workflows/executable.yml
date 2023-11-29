@@ -31,4 +31,4 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: application ${{ matrix.os}}
-        path: dist/main
+        path: dist
