@@ -2,3 +2,4 @@ numpy
 pyyaml
 Pillow
 pandas
+pyinstaller
