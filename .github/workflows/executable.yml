@@ -27,3 +27,7 @@ jobs:
     - name: Build application
       run: |
         pyinstaller main.py -F --onefile
+    - uses: actions/upload-artifact@v3
+      with:
+        name: application
+        path: dist/main
