@@ -11,9 +11,10 @@ permissions:
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os}}
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.12
@@ -29,5 +30,5 @@ jobs:
         pyinstaller main.py -F --onefile
     - uses: actions/upload-artifact@v3
       with:
-        name: application
+        name: application ${{ matrix.os}}
         path: dist/main
