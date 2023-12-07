@@ -263,7 +263,7 @@ class TargetManager(object) :
 
     def add_object(self, d_new_target: dict) :
         self.__df_targets.loc[self.get_object_size()] = d_new_target
-        self.set_selected_object(self.get_object_size())
+        self.set_selected_object(self.get_object_size()-1)
         self.update_last_name()
 
         if self.showFrame is not None :

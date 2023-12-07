@@ -7,6 +7,7 @@ import numpy as np
 from PIL import ImageTk, Image
 
 
+
 def hex_to_rgb(value) :
     value = value.lstrip('#')
     lv = len(value)
@@ -22,15 +23,7 @@ class EditFrame(object) :
         self.file_win = None
         self.dataset_dim = None
         self.windows = None
-        self.canvas_obj_circle_3 = None
-        self.canvas_obj_circle_2 = None
-        self.canvas_obj_circle_1 = None
-        self.canvas_obj_circle_0 = None
-        self.canvas_obj_line_1 = None
-        self.canvas_obj_line_0 = None
-        self.canvas_obj_text = None
-        self.canvas_obj_rectangle = None
-        self.canvas_obj_image = None
+
         self.is_canvas_dataset_click_release = True
         self.init_canvas_object()
 
@@ -190,7 +183,7 @@ class EditFrame(object) :
                                    width=self.dataset_dim.get_width(), height=self.dataset_dim.get_height(),
                                    bd=0, bg='#d1d8e3')  # d1d8e3
 
-        img = np.ones((10, 10, 3))  # d1d8e3
+        img = np.ones((4, 4, 3))  # d1d8e3
         img = Image.fromarray(img, mode='RGB')
         self.canvas_obj_image = self.input_canvas.create_image(
             (0, 0),
