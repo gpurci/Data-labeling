@@ -15,6 +15,7 @@ class EditManager :
         self.__box_name_edit = 'edit'
 
         self.__editFrame = None
+        self.__showFrame = None
         self.__targetMan = None
         self.__imageMan  = None
 

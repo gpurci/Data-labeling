@@ -175,6 +175,7 @@ class Application(Frame) :
         self.edit_frame.set_EditManager(self.edit_man)
 
         self.edit_man.set_EditFrame(self.edit_frame)
+        self.edit_man.set_ShowFrame(self.show_frame)
 
         self.path_man.set_ResolutionManager(self.resolution_man)
         self.path_man.set_ShowFrame(self.show_frame)
@@ -198,6 +199,7 @@ class Application(Frame) :
         self.notebook_man.set_ShowFrame(self.show_frame)
 
         self.show_frame.set_EditFrame(self.edit_frame)
+        self.show_frame.set_EditManager(self.edit_man)
         self.show_frame.set_NotebookFrame(self.notebook_frame)
         self.show_frame.set_SelectObjectFrame(self.select_object_frame)
         self.show_frame.set_DescriptionFrame(self.description_frame)

@@ -7,10 +7,10 @@ from manager.target_man.target_man import *
 
 
 class NotebookManager :
-    def __init__(self, config_file) :
+    def __init__(self, config_file: str) :
         self.toolsManager = None
         self.editManager = None
-        self.pathManager = None
+        self.__pathMan = None
         self.editFrame = None
         self.descriptionFrame = None
         self.selectObjectFrame = None
@@ -93,10 +93,13 @@ class NotebookManager :
             self.__idx_tab = -1
 
     def add(self, filename: str) :
-        self.pathManager.set_filename(filename)
-        print('add tab {}'.format(filename))
-        idx_filename = self.get_idx_filename(filename)
+        if (self.__pathMan.is_file(filename) == True):
+            print('add tab {}'.format(filename))
+            idx_filename = self.get_idx_filename(filename)
+        else:
+            idx_filename = self.__idx_tab
         if (idx_filename == -1):
+            print('add idx_filename == -1 {}'.format(filename))
             self.__filenames.append(filename)
             imageMan = ImageManager(frame=[self.dataDimension.get_width(), self.dataDimension.get_height()])
             targetMan = TargetManager(self.__default_rating)
@@ -129,7 +132,7 @@ class NotebookManager :
         if self.__idx_tab >= 0 :
             retVal = self.__filenames[self.__idx_tab]
         else :
-            retVal = None
+            retVal = 'Not files'
         return retVal
 
     def __config(self, imageMan: object, targetMan: object) :
@@ -142,10 +145,11 @@ class NotebookManager :
         targetMan.set_ShowFrame(self.__showFrame)
 
     def __open(self, imageMan: object, targetMan: object) :
-        source_file = self.pathManager.get_source_filename()
+        source_file = self.__pathMan.get_source_filename()
+        print('source_file {}'.format(source_file))
         imageMan.read(source_file)
 
-        dest_file = self.pathManager.get_dest_filename()
+        dest_file = self.__pathMan.get_dest_filename()
         if Path(dest_file).is_file() :
             print('True  -> dest_file {}'.format(dest_file))
             targetMan.read(dest_file)
@@ -187,7 +191,7 @@ class NotebookManager :
         self.editManager = editManager
 
     def set_PathManager(self, pathManager) :
-        self.pathManager = pathManager
+        self.__pathMan = pathManager
 
     def set_EditFrame(self, editFrame) :
         self.editFrame = editFrame

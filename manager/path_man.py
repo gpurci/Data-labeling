@@ -7,36 +7,37 @@ import yaml
 class PathManager :
     def __init__(self, config_file) :
         self.output_suffix = None
-        self.input_suffix = None
+        self.input_suffix  = None
         self.description_parent = None
-        self.output_parent = None
+        self.output_parent    = None
         self.input_parent_man = None
         self.input_parent_row = None
-        self.source_path = None
+        self.source_path   = None
+        self.dest_path     = None
+        self.config_file   = config_file
+        self.read_config_yaml_file(self.config_file)
+        self.filename    = None
+        self.file_suffix = None
+
         self.resolutionMan = None
         self.showFrame = None
-        self.dest_path = None
-        self.config_file = config_file
-        self.read_config_yaml_file(self.config_file)
-        self.filename = None
-        self.file_suffix = None
 
     def __str__(self) :
         strRet = """
         source_path : {}
-        dest_path : {}
+        dest_path   : {}
         input_parent_row : {}
         input_parent_man : {}
-        output_parent : {}
+        output_parent    : {}
         description_parent : {}
-        input_suffix : {}
-        output_suffix : {}
+        input_suffix     : {}
+        output_suffix    : {}
         """.format(self.source_path, self.dest_path,
                    self.input_parent_row, self.input_parent_man, self.output_parent, self.description_parent,
                    self.input_suffix, self.output_suffix)
         return strRet
 
-    def read_config_yaml_file(self, config_file) :
+    def read_config_yaml_file(self, config_file: str) :
         if Path(config_file).is_file() :
             with open(config_file) as file :
                 # The FullLoader parameter handles the conversion from YAML
@@ -90,7 +91,7 @@ class PathManager :
     def save(self) :
         self.save_config(self.config_file)
 
-    def save_config(self, config_file) :
+    def save_config(self, config_file: str) :
         # create a config file
         Path(config_file).touch(mode=0o666, exist_ok=True)
         # save default rating in yaml file
@@ -111,11 +112,11 @@ class PathManager :
         with open(config_file, 'w') as file :
             yaml.dump(names, file)
 
-    def set_source_path(self, source_path) :
+    def set_source_path(self, source_path: str) :
         self.source_path = source_path
         self.showFrame.set_show_option(self.showFrame.SHOW_FILENAMES)
 
-    def set_dest_path(self, dest_path) :
+    def set_dest_path(self, dest_path: str) :
         tmp_path = Path(dest_path)
         if tmp_path.parents[0] != self.output_parent :
             self.dest_path = dest_path
@@ -124,14 +125,27 @@ class PathManager :
         print('set_dest_path {}'.format(self.dest_path))
         self.resolutionMan.set_path_parent(self.get_description_parent())
 
-    def set_filename(self, filename) :
+    def set_filename(self, filename: str) :
         self.filename = filename
 
-    def set_file_suffix(self, file_suffix) :
+    def is_file(self, filename: str) :
+        if (Path(self.source_path).joinpath('name').with_name(filename).is_file() == True):
+            self.filename = filename
+            retVal = True
+        else:
+            retVal = False
+        return retVal
+
+    def set_file_suffix(self, file_suffix: str) :
         self.file_suffix = file_suffix
 
     def get_source_path(self) :
         return self.source_path
+
+    def get_source_files(self) :
+        files = Path(self.source_path).glob('*')
+        files = list(map(lambda file: str(file.name), files))
+        return files
 
     def get_dest_path(self) :
         return self.dest_path
@@ -148,7 +162,7 @@ class PathManager :
     def get_file_suffix(self) :
         return self.file_suffix
 
-    def get_filename_with_suffixname(self, suffix) :
+    def get_filename_with_suffixname(self, suffix:str) :
         filename = Path(self.filename)
         filename = filename.with_stem(filename.stem + suffix)
         # print(filename)
@@ -192,8 +206,8 @@ class PathManager :
         tmp_description_parent = str(Path(self.dest_path).joinpath(self.description_parent))
         return tmp_description_parent
 
-    def set_ResolutionManager(self, resolutionManager) :
-        self.resolutionMan = resolutionManager
+    def set_ResolutionManager(self, resolutionMan: object) :
+        self.resolutionMan = resolutionMan
 
     def set_ShowFrame(self, showFrame: object) :
         self.showFrame = showFrame

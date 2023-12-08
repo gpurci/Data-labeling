@@ -14,7 +14,7 @@ class SelectObjectFrame :
         self.__last_item = -1
 
     def init(self) :
-        self.__change_cursor(self.__targetMan.get_default_object())
+        self.__set_item(self.__targetMan.get_default_object())
 
     def set_windows(self, window) :
         print('SelectObjectFrame.set_windows')
@@ -31,8 +31,8 @@ class SelectObjectFrame :
         scrollbar = Scrollbar(self.__window)
         scrollbar.pack(side=RIGHT, fill=Y)
         # Create a Listbox with some items
-        self.__selected_obj_name = Listbox(self.__window, height=30, width=40, yscrollcommand=scrollbar.set, bd=5,
-                                           bg='#ffffff')
+        self.__selected_obj_name = Listbox(self.__window, height=30, width=40, 
+                                            yscrollcommand=scrollbar.set, bd=5, bg='#ffffff')
         self.__selected_obj_name.pack(side=LEFT, fill=None)
 
         self.__print_object(['no object'])
@@ -64,7 +64,7 @@ class SelectObjectFrame :
 
     def add(self, name: str, item: int) :
         self.__selected_obj_name.insert(item, name)
-        self.__change_cursor(cursor)
+        self.__set_item(cursor)
 
     def __on_select_object_name(self, event: object) :
         selected_index = self.__selected_obj_name.curselection()
@@ -72,7 +72,7 @@ class SelectObjectFrame :
             print("Selected object index {}, size {}".format(selected_index, self.__selected_obj_name.size()))
             if (len(selected_index) != 0) :
                 print("Selected object index {}, size {}".format(selected_index, self.__selected_obj_name.size()))
-                self.__change_cursor(selected_index[0])
+                self.__set_item(selected_index[0])
                 print("Selected object index {}, size {}".format(selected_index, self.__selected_obj_name.size()))
                 self.__targetMan.select_object(self.__last_item)
 
@@ -81,15 +81,15 @@ class SelectObjectFrame :
             print(f"Error SelectObjectFrame selected_index #{selected_index}#", f"An error occurred: {str(e)}")
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
-    def __change_cursor(self, item: int) :
+    def __set_item(self, item: int) :
         if ((self.__last_item >= 0) and
                 (self.__last_item < self.__selected_obj_name.size())) :
             self.__selected_obj_name.itemconfig(self.__last_item, bg='#ffffff')
 
-        if (item >= 0) :
+        if ((item >= 0) and
+                (item < self.__selected_obj_name.size())) :
             self.__selected_obj_name.itemconfig(item, bg='OrangeRed3')
-
-        self.__last_item = item
+            self.__last_item = item
 
     def __cut_object_button(self) :
         self.__targetMan.cut_last_name()
@@ -97,7 +97,7 @@ class SelectObjectFrame :
     def __double_object_button(self) :
         self.__targetMan.double_last_name()
 
-    def __rename_name_object(self) :
+    def __rename_object(self) :
         self.__targetMan.set_last_object_name(self.__obj_name_entry.get())
         self.__rename_frame.withdraw()
 
@@ -107,7 +107,7 @@ class SelectObjectFrame :
     def __on_key_press_rename_obj(self, event) :
         # print('event {}'.format(event.keysym))
         if event.keysym == "Return" :
-            self.__rename_name_object()
+            self.__rename_object()
 
     def __rename_object_button(self) :
         print('rename_object {}'.format(None))
@@ -125,7 +125,7 @@ class SelectObjectFrame :
 
         add_button = Button(self.__rename_frame)
         add_button["text"] = "Rename"
-        add_button["command"] = self.__rename_name_object
+        add_button["command"] = self.__rename_object
         add_button.pack({"side" : "left"})
 
         cancel_button = Button(self.__rename_frame)

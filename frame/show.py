@@ -41,17 +41,20 @@ class ShowFrame :
             self.__editMan.show()
             self.selectObjectFrame.show()
             self.descriptionFrame.set_text_frame(self.__targetMan.get_last_name(), self.__targetMan.get_last_description())
-            self.ratingFrame.set_rating_frame(self.__targetMan.get_last_rating())
+            self.ratingFrame.set_rating(self.__targetMan.get_last_rating())
         elif self.__show_option == self.SHOW_IMAGE :
             print('SHOW_IMAGE')
             self.__editMan.show()
+        elif self.__show_option == self.SHOW_EDIT_MAN :
+            print('SHOW_EDIT_MAN')
+            self.__editMan.show_edit()
         elif self.__show_option == self.SHOW_SET_TAB :
             print('SHOW_SET_TAB')
             self.__editMan.show()
             self.editFrame.set_work_frame(self.__filename)
             self.selectObjectFrame.show()
             self.descriptionFrame.set_text_frame(self.__targetMan.get_last_name(), self.__targetMan.get_last_description())
-            self.ratingFrame.set_rating_frame(self.__targetMan.get_last_rating())
+            self.ratingFrame.set_rating(self.__targetMan.get_last_rating())
             pass
         elif self.__show_option == self.SHOW_NEW_TAB :
             print('SHOW_NEW_TAB')
@@ -60,7 +63,7 @@ class ShowFrame :
             self.editFrame.set_work_frame(self.__filename)
             self.selectObjectFrame.show()
             self.descriptionFrame.set_text_frame(self.__targetMan.get_last_name(), self.__targetMan.get_last_description())
-            self.ratingFrame.set_rating_frame(self.__targetMan.get_last_rating())
+            self.ratingFrame.set_rating(self.__targetMan.get_last_rating())
             pass
         elif self.__show_option == self.SHOW_FILENAMES :
             print('SHOW_FILENAMES')

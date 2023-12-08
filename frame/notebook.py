@@ -9,19 +9,19 @@ from tkinter.ttk import Notebook, Style
 
 class NotebookFrame(object) :
     def __init__(self) :
-        self.notebookMan = None
-        self.note = None
-        self.windows = None
+        self.__notebookMan = None
+        self.__note = None
+        self.__window = None
 
     def set_windows(self, windows) :
-        self.windows = windows
+        self.__window = windows
 
     def select_tab(self, *args) :
-        select_tab_val = self.note.select()
-        if len(select_tab_val) != 0 :
+        select_tab_val = self.__note.select()
+        if (len(select_tab_val) != 0):
             print('select_tab  {}'.format(select_tab_val))
-            print('select_tab index {}'.format(self.note.index(select_tab_val)))
-            self.notebookMan.select_tab(self.note.index(select_tab_val))
+            print('select_tab index {}'.format(self.__note.index(select_tab_val)))
+            self.__notebookMan.select_tab(self.__note.index(select_tab_val))
 
     def run(self) :
         # Create an instance of ttk style
@@ -31,17 +31,17 @@ class NotebookFrame(object) :
         # style.map("TNotebook", background= [("selected", "red")])
 
         # Create a Notebook widget
-        self.note = CustomNotebook(self.windows)
-        self.note.bind('<<NotebookTabChanged>>', self.select_tab)
-        self.note.pack(expand=True, fill=BOTH, padx=5, pady=5)
-        self.note.set_NotebookManager(self.notebookMan)
+        self.__note = CustomNotebook(self.__window)
+        self.__note.bind('<<NotebookTabChanged>>', self.select_tab)
+        self.__note.pack(expand=True, fill=BOTH, padx=5, pady=5)
+        self.__note.set_NotebookManager(self.__notebookMan)
 
-    def add(self, filename) :
+    def add(self, filename: str) :
         # Adding the Tab Name
-        self.note.add(Frame(self.note, width=400, height=5), text=filename)
+        self.__note.add(Frame(self.__note, width=400, height=5), text=filename)
 
-    def set_NotebookManager(self, notebookMan) :
-        self.notebookMan = notebookMan
+    def set_NotebookManager(self, notebookMan: object) :
+        self.__notebookMan = notebookMan
 
 
 class CustomNotebook(ttk.Notebook) :
@@ -50,8 +50,8 @@ class CustomNotebook(ttk.Notebook) :
     __initialized = False
 
     def __init__(self, *args, **kwargs) :
-        self.notebookMan = None
-        if not self.__initialized :
+        self.__notebookMan = None
+        if (self.__initialized == False):
             self.__initialize_custom_style()
             self.__inititialized = True
 
@@ -60,27 +60,27 @@ class CustomNotebook(ttk.Notebook) :
 
         self._active = None
 
-        self.bind("<ButtonPress-1>", self.on_close_press, True)
-        self.bind("<ButtonRelease-1>", self.on_close_release)
+        self.bind("<ButtonPress-1>", self.__on_press, True)
+        self.bind("<ButtonRelease-1>", self.__on_release)
 
-    def on_close_press(self, event) :
+    def __on_press(self, event: object) :
         """Called when the button is pressed over the close button"""
 
         element = self.identify(event.x, event.y)
 
-        if "close" in element :
+        if ("close" in element) :
             index = self.index("@%d,%d" % (event.x, event.y))
             self.state(['pressed'])
             self._active = index
             return "break"
 
-    def on_close_release(self, event) :
+    def __on_release(self, event: object) :
         """Called when the button is released"""
-        if not self.instate(['pressed']) :
+        if (self.instate(['pressed']) == False):
             return
 
         element = self.identify(event.x, event.y)
-        if "close" not in element :
+        if ("close" not in element):
             # user moved the mouse off of the close button
             return
 
@@ -88,7 +88,7 @@ class CustomNotebook(ttk.Notebook) :
 
         if self._active == index :
             self.forget(index)
-            self.notebookMan.delete_tab(index)
+            self.__notebookMan.delete_tab(index)
             self.event_generate("<<NotebookTabClosed>>")
 
         self.state(["!pressed"])
@@ -140,4 +140,4 @@ class CustomNotebook(ttk.Notebook) :
         ])
 
     def set_NotebookManager(self, notebookMan) :
-        self.notebookMan = notebookMan
+        self.__notebookMan = notebookMan
