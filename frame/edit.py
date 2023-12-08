@@ -16,13 +16,13 @@ def hex_to_rgb(value) :
 
 class EditFrame(object) :
     def __init__(self) :
-        self.__o_name_entry  = None
-        self.__edit_frame    = None
-        self.__canvas_frame  = None
-        self.__obj_win       = None
-        self.__workframe_dim = None
-        self.__windows       = None
-        self.__editMan       = None
+        self.__o_name_entry   = None
+        self.__edit_frame     = None
+        self.__canvas_frame   = None
+        self.__add_obj_window = None
+        self.__workframe_dim  = None
+        self.__window         = None
+        self.__editMan        = None
 
         self.__is_canvas_click_release = True
         self.__init_canvas_object()
@@ -37,8 +37,8 @@ class EditFrame(object) :
         self.__cs_circle_2 = None
         self.__cs_circle_3 = None
 
-    def set_windows(self, windows: object) :
-        self.__windows = windows
+    def set_windows(self, window: object) :
+        self.__window = window
 
     def set_dimension(self, workframe_dim: object) :
         self.__workframe_dim = workframe_dim
@@ -51,12 +51,12 @@ class EditFrame(object) :
         self.__canvas_frame.itemconfig(self.__cs_image, image=img)
         self.__delete_selected_box()
 
-    def rectangle(self, box: tuple, text: str) :
+    def rectangle(self, box: tuple, box_name: str) :
         self.__delete_selected_box()
         self.__cs_rectangle = self.__canvas_frame.create_rectangle(box, outline='yellow', width=4)
         x = box[0] + 25
         y = box[1]
-        self.__cs_text      = self.__canvas_frame.create_text(x, y, text=text, fill="red", 
+        self.__cs_text      = self.__canvas_frame.create_text(x, y, text=box_name, fill="red", 
                                                                 font=('Helvetica 15 bold'))
 
     def box_4_circle(self, box: tuple) :
@@ -133,37 +133,38 @@ class EditFrame(object) :
     def get_object_name(self) :
         return self.__o_name_entry.get()
 
-    def destroy_select_object_frame(self) :
-        self.__obj_win.withdraw()
+    def destroy_windows(self) :
+        if (self.__add_obj_window != None):
+            self.__add_obj_window.withdraw()
 
     def __cmd_cancel_object_name(self) :
-        self.destroy_select_object_frame()
+        self.destroy_windows()
         self.__delete_selected_box()
 
-    def select_object_frame(self) :
-        self.__obj_win = Toplevel(self.__windows)
-        self.__obj_win.title("Object name")
-        self.__obj_win.bind("<KeyPress>", self.__on_enter_add_obj_name)
+    def add_object_frame(self) :
+        self.__add_obj_window = Toplevel(self.__window)
+        self.__add_obj_window.title("Object name")
+        self.__add_obj_window.bind("<KeyPress>", self.__on_enter_add_obj_name)
 
-        obj_name_label = Label(self.__obj_win, text="Object name")
+        obj_name_label = Label(self.__add_obj_window, text="Object name")
         obj_name_label.pack(side=LEFT)
 
-        self.__o_name_entry = Entry(self.__obj_win, width=15, bd=5)
+        self.__o_name_entry = Entry(self.__add_obj_window, width=15, bd=5)
         self.__o_name_entry.insert(0, '')
         self.__o_name_entry.pack({"side" : "left"})
 
-        add_button = Button(self.__obj_win)
+        add_button = Button(self.__add_obj_window)
         add_button["text"] = "Add"
         add_button["command"] = self.__editMan.add_object_name
         add_button.pack({"side" : "left"})
 
-        cancel_button = Button(self.__obj_win)
+        cancel_button = Button(self.__add_obj_window)
         cancel_button["text"] = "Cancel"
         cancel_button["command"] = self.__cmd_cancel_object_name
         cancel_button.pack({"side" : "left"})
 
     def run(self) :
-        self.__edit_frame = LabelFrame(self.__windows, text='Not file')
+        self.__edit_frame = LabelFrame(self.__window, text='Not file')
         self.__edit_frame.pack(fill="both", expand="yes")
 
         self.__canvas_frame = Canvas(self.__edit_frame,
@@ -182,7 +183,7 @@ class EditFrame(object) :
         self.__canvas_frame.bind("<Button-4>", self.__on_mouse_wheel)
         self.__canvas_frame.bind("<Button-5>", self.__on_mouse_wheel)
 
-        button_frame = LabelFrame(self.__windows, text='Work mode')
+        button_frame = LabelFrame(self.__window, text='Work mode')
         button_frame.pack(fill="both", expand="yes")
 
         select_btn = Button(button_frame, cursor="tcross")

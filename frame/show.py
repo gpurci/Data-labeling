@@ -48,6 +48,7 @@ class ShowFrame :
         elif self.__show_option == self.SHOW_SET_TAB :
             print('SHOW_SET_TAB')
             self.__editMan.show()
+            self.editFrame.set_work_frame(self.__filename)
             self.selectObjectFrame.show()
             self.descriptionFrame.set_text_frame(self.__targetMan.get_last_name(), self.__targetMan.get_last_description())
             self.ratingFrame.set_rating_frame(self.__targetMan.get_last_rating())
@@ -56,6 +57,7 @@ class ShowFrame :
             print('SHOW_NEW_TAB')
             self.notebookFrame.add(self.__filename)
             self.__editMan.show()
+            self.editFrame.set_work_frame(self.__filename)
             self.selectObjectFrame.show()
             self.descriptionFrame.set_text_frame(self.__targetMan.get_last_name(), self.__targetMan.get_last_description())
             self.ratingFrame.set_rating_frame(self.__targetMan.get_last_rating())

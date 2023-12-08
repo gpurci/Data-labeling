@@ -53,13 +53,10 @@ class EditManager :
         self.__work_mode = work_mode
 
     def __show_edit_mode(self, box:tuple, box_name:str):
-        img = self.__imageMan.get_image()
         if (self.__targetMan.is_rectangle_mod() == True):
-            self.__editFrame.img_show(img)
             box = self.__imageMan.calc_coord_from_target(box)
             self.__editFrame.rectangle(box, box_name)
             self.__editFrame.box_4_circle(box)
-
         elif (self.__targetMan.is_empty_mod() == True):
             self.__editFrame.delete_obj_from_frame()
         elif (self.__targetMan.is_all_mod() == True):
@@ -68,12 +65,9 @@ class EditManager :
             pass
 
     def __show_normal_mode(self, box:tuple, box_name:str):
-        img = self.__imageMan.get_image()
         if (self.__targetMan.is_rectangle_mod() == True):
-            self.__editFrame.img_show(img)
             box = self.__imageMan.calc_coord_from_target(box)
             self.__editFrame.rectangle(box, box_name)
-
         elif (self.__targetMan.is_empty_mod() == True):
             self.__editFrame.delete_obj_from_frame()
         elif (self.__targetMan.is_all_mod() == True):
@@ -87,14 +81,18 @@ class EditManager :
         if (self.__showFrame is not None):
             self.__showFrame.set_show_option(self.__showFrame.SHOW_EDIT_MAN)
         
-    def show(self) :
+    def show(self):
+        img = self.__imageMan.get_image()
+        self.__editFrame.img_show(img)
         box = self.__targetMan.get_last_coord()
         if (self.__work_mode == self.EDIT_MODE):
             self.__show_edit_mode(box, self.__targetMan.get_last_name())
         else :
             self.__show_normal_mode(box, self.__targetMan.get_last_name())
 
-    def show_edit(self) :
+    def show_edit(self):
+        img = self.__imageMan.get_image()
+        self.__editFrame.img_show(img)
         if self.__work_mode == self.EDIT_MODE :
             self.__show_edit_mode(self.__box_edit, self.__box_name_edit)
         else :
@@ -106,7 +104,7 @@ class EditManager :
 
     def set_end_work_coords(self, x1:int, y1:int) :
         self.__pre_x1, self.__pre_y1 = self.__x1, self.__y1
-        self.__x1, self.__y1 = x1, y1
+        self.__x1,     self.__y1     = x1, y1
 
     def __cmd_select_mode(self):
         self.__set_show_edit_mode((self.__x0, self.__y0, self.__x1, self.__y1), 'new')
@@ -119,7 +117,7 @@ class EditManager :
             x0, y0, x1, y1 = box
             print('__cmd_edit_mode box {}, type{}'.format(box, type(box)))
             d_x, d_y = self.__x1 - self.__x0, self.__y1 - self.__y0
-            step_point = 5
+            step_point = 5    #the tolerance in pixel point to select a peak of box
             if (self.__x0 > x0) and (self.__x0 < x1) and (self.__y0 > y0) and (self.__y0 < y1) :
                 self.__edit_point = self.ALL_POINTS
                 box = (x0 + d_x, y0 + d_y, x1 + d_x, y1 + d_y)
@@ -154,7 +152,7 @@ class EditManager :
             self.__showFrame.set_show_option(self.__showFrame.SHOW_IMAGE)
 
     def __cmd_select_mode_release(self) :
-        self.__editFrame.select_object_frame()
+        self.__editFrame.add_object_frame()
 
     def __cmd_edit_mode_release(self) :
         d_x, d_y = self.__x1 - self.__x0, self.__y1 - self.__y0
@@ -181,7 +179,7 @@ class EditManager :
         pass
 
     def add_object_name(self) :
-        self.__editFrame.destroy_select_object_frame()
+        self.__editFrame.destroy_windows()
         object_name = self.__editFrame.get_object_name()
         print('object_name #{}#'.format(object_name))
 
