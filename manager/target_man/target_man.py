@@ -13,7 +13,7 @@ class TargetManager(object) :
         self.__DEFAULT_OBJECT = 1
         self.__default_rating = default_rating
         self.__init()
-        self.showFrame = None
+        self.__showFrame = None
 
     def __delete(self) :
         del self.__df_targets
@@ -217,8 +217,8 @@ class TargetManager(object) :
         print('cut_last_name {}'.format(self.__df_targets))
         print('get_last_name {}, ittem {}, len {}'.format(self.get_last_name(), self.__selected_object,
                                                           self.get_object_size()))
-        if self.showFrame is not None :
-            self.showFrame.set_show_option(self.showFrame.SHOW_IMAGE)
+        if self.__showFrame is not None :
+            self.__showFrame.set_show_option(self.__showFrame.SHOW_OBJECT)
 
     def crop_last_name(self) :
         print('crop_last_name {} item {}'.format(self.get_last_name(), self.get_selected_object()))
@@ -238,8 +238,8 @@ class TargetManager(object) :
             self.set_coord(idx, (x0, y0, x1, y1))
         print('crop_last_name end')
         self.set_selected_object(self.__DEFAULT_OBJECT)
-        if self.showFrame is not None :
-            self.showFrame.set_show_option(self.showFrame.SHOW_IMAGE)
+        if self.__showFrame is not None :
+            self.__showFrame.set_show_option(self.__showFrame.SHOW_OBJECT)
 
     def double_last_name(self) :
         print('double_last_name {}'.format(self.__df_targets))
@@ -252,9 +252,8 @@ class TargetManager(object) :
         self.__df_targets.loc[self.__selected_object] = d_new_target
         self.update_last_name()
 
-        if self.showFrame is not None :
-            self.showFrame.set_target_object(self.get_last_object())
-            self.showFrame.set_show_option(self.showFrame.SHOW_OBJECT)
+        if self.__showFrame is not None :
+            self.__showFrame.set_show_option(self.__showFrame.SHOW_OBJECT)
 
     def new(self, x1: int, y1: int) :
         self.__delete()
@@ -266,29 +265,26 @@ class TargetManager(object) :
         self.set_selected_object(self.get_object_size()-1)
         self.update_last_name()
 
-        if self.showFrame is not None :
-            self.showFrame.set_target_object(self.get_last_object())
-            self.showFrame.set_show_option(self.showFrame.SHOW_OBJECT)
+        if self.__showFrame is not None :
+            self.__showFrame.set_show_option(self.__showFrame.SHOW_OBJECT)
 
     def set_last_object_name(self, name: str) :
         self.__df_targets.at[self.__selected_object, 'names'] = name
         self.update_last_name()
 
-        if self.showFrame is not None :
-            self.showFrame.set_target_object(self.get_last_object())
-            self.showFrame.set_show_option(self.showFrame.SHOW_OBJECTS)
+        if self.__showFrame is not None :
+            self.__showFrame.set_show_option(self.__showFrame.SHOW_OBJECT)
 
     def select_object(self, item: int) :
         self.set_selected_object(item)
         self.update_last_name()
 
-        if self.showFrame is not None :
-            self.showFrame.set_target_object(self.get_last_object())
-            self.showFrame.set_show_option(self.showFrame.SHOW_OBJECT)
+        if self.__showFrame is not None :
+            self.__showFrame.set_show_option(self.__showFrame.SHOW_OBJECT)
 
     def save(self, filename: str) :
         # save target data to csv file
         self.save_targets(filename)
 
     def set_ShowFrame(self, showFrame: object) :
-        self.showFrame = showFrame
+        self.__showFrame = showFrame

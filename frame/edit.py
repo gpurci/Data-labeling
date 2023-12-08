@@ -16,222 +16,209 @@ def hex_to_rgb(value) :
 
 class EditFrame(object) :
     def __init__(self) :
-        self.obj_name_entry = None
-        self.canvas_frame = None
-        self.input_canvas = None
-        self.editManager = None
-        self.file_win = None
-        self.dataset_dim = None
-        self.windows = None
+        self.__o_name_entry  = None
+        self.__edit_frame    = None
+        self.__canvas_frame  = None
+        self.__obj_win       = None
+        self.__workframe_dim = None
+        self.__windows       = None
+        self.__editMan       = None
 
-        self.is_canvas_dataset_click_release = True
-        self.init_canvas_object()
+        self.__is_canvas_click_release = True
+        self.__init_canvas_object()
 
-    def init_canvas_object(self) :
-        self.canvas_obj_image = None
-        self.canvas_obj_rectangle = None
-        self.canvas_obj_text = None
+    def __init_canvas_object(self) :
+        self.__cs_image     = None
+        self.__cs_rectangle = None
+        self.__cs_text      = None
 
-        self.canvas_obj_line_0 = None
-        self.canvas_obj_line_1 = None
-
-        self.canvas_obj_circle_0 = None
-        self.canvas_obj_circle_1 = None
-        self.canvas_obj_circle_2 = None
-        self.canvas_obj_circle_3 = None
+        self.__cs_circle_0 = None
+        self.__cs_circle_1 = None
+        self.__cs_circle_2 = None
+        self.__cs_circle_3 = None
 
     def set_windows(self, windows: object) :
-        self.windows = windows
+        self.__windows = windows
 
-    def set_dimension(self, dataset_dim: object) :
-        self.dataset_dim = dataset_dim
+    def set_dimension(self, workframe_dim: object) :
+        self.__workframe_dim = workframe_dim
 
     def none_fn(self) :
         print('none_fn {}'.format('test'))
         pass
 
     def img_show(self, img: object) :
-        self.input_canvas.itemconfig(self.canvas_obj_image, image=img)
+        self.__canvas_frame.itemconfig(self.__cs_image, image=img)
+        self.__delete_selected_box()
 
-        self.delete_selected_box()
-
-    def move(self, x: int, y: int) :
-        self.input_canvas.move(self.canvas_obj_image, x, y)
-
-    def coords(self, x: int, y: int) :
-        self.input_canvas.coords(self.canvas_obj_image, x, y)
-
-    def delete_selected_box(self) :
-        if self.canvas_obj_rectangle is not None :
-            self.input_canvas.delete(self.canvas_obj_rectangle)
-            self.input_canvas.delete(self.canvas_obj_text)
-        self.canvas_obj_rectangle = None
-        self.canvas_obj_text = None
-
-    def delete_edit_mode(self) :
-        if self.canvas_obj_circle_0 is not None :
-            self.input_canvas.delete(self.canvas_obj_circle_0)
-            self.input_canvas.delete(self.canvas_obj_circle_1)
-            self.input_canvas.delete(self.canvas_obj_circle_2)
-            self.input_canvas.delete(self.canvas_obj_circle_3)
-        self.canvas_obj_circle_0 = None
-        self.canvas_obj_circle_1 = None
-        self.canvas_obj_circle_2 = None
-        self.canvas_obj_circle_3 = None
-
-    def rectange_img_show(self, box: tuple, text: str) :
-        self.delete_selected_box()
-        self.canvas_obj_rectangle = self.input_canvas.create_rectangle(box, outline='yellow', width=4)
+    def rectangle(self, box: tuple, text: str) :
+        self.__delete_selected_box()
+        self.__cs_rectangle = self.__canvas_frame.create_rectangle(box, outline='yellow', width=4)
         x = box[0] + 25
         y = box[1]
-        self.canvas_obj_text = self.input_canvas.create_text(x, y, text=text, fill="red", font=('Helvetica 15 bold'))
+        self.__cs_text      = self.__canvas_frame.create_text(x, y, text=text, fill="red", 
+                                                                font=('Helvetica 15 bold'))
 
-    def edit_mode(self, box: tuple) :
-        self.delete_edit_mode()
+    def box_4_circle(self, box: tuple) :
+        self.__delete_box_4_circle()
         x00, y00 = box[0], box[1]
         x01, y01 = box[2], box[1]
         x10, y10 = box[0], box[3]
         x11, y11 = box[2], box[3]
-        self.canvas_obj_circle_0 = self.input_canvas.create_oval(x00 - 4, y00 - 4, x00 + 4, y00 + 4, outline='yellow',
-                                                                 width=4)
-        self.canvas_obj_circle_1 = self.input_canvas.create_oval(x01 - 4, y01 - 4, x01 + 4, y01 + 4, outline='yellow',
-                                                                 width=4)
-        self.canvas_obj_circle_2 = self.input_canvas.create_oval(x10 - 4, y10 - 4, x10 + 4, y10 + 4, outline='yellow',
-                                                                 width=4)
-        self.canvas_obj_circle_3 = self.input_canvas.create_oval(x11 - 4, y11 - 4, x11 + 4, y11 + 4, outline='yellow',
-                                                                 width=4)
+        self.__cs_circle_0 = self.__canvas_frame.create_oval(x00 - 4, y00 - 4, x00 + 4, y00 + 4, 
+                                                                outline='yellow', width=4)
+        self.__cs_circle_1 = self.__canvas_frame.create_oval(x01 - 4, y01 - 4, x01 + 4, y01 + 4, 
+                                                                outline='yellow', width=4)
+        self.__cs_circle_2 = self.__canvas_frame.create_oval(x10 - 4, y10 - 4, x10 + 4, y10 + 4, 
+                                                                outline='yellow', width=4)
+        self.__cs_circle_3 = self.__canvas_frame.create_oval(x11 - 4, y11 - 4, x11 + 4, y11 + 4, 
+                                                                outline='yellow', width=4)
 
-    def plus(self) :
-        if self.canvas_obj_line_0 is not None :
-            self.input_canvas.delete(self.canvas_obj_line_0)
-            self.input_canvas.delete(self.canvas_obj_line_1)
-            del self.canvas_obj_line_0
-            del self.canvas_obj_line_1
-        # Add a line in canvas widget
-        self.canvas_obj_line_0 = self.input_canvas.create_line(
-            (int(self.dataset_dim.width / 2), 0, int(self.dataset_dim.width / 2), int(self.dataset_dim.height)),
-            fill="green", width=2)
-        self.canvas_obj_line_1 = self.input_canvas.create_line(
-            (0, int(self.dataset_dim.height / 2), int(self.dataset_dim.width), int(self.dataset_dim.height / 2)),
-            fill="green", width=2)
+    def move(self, x: int, y: int) :
+        self.__canvas_frame.move(self.__cs_image, x, y)
 
-    def on_canvas_dataset_click(self, event: object) :
-        if self.is_canvas_dataset_click_release :
-            self.is_canvas_dataset_click_release = False
-            self.editManager.set_start_work_coords(event.x, event.y)
+    def coords(self, x: int, y: int) :
+        self.__canvas_frame.coords(self.__cs_image, x, y)
 
-        self.editManager.set_end_work_coords(event.x, event.y)
+    def __delete_selected_box(self) :
+        if (self.__cs_rectangle is not None):
+            self.__canvas_frame.delete(self.__cs_rectangle)
+            self.__canvas_frame.delete(self.__cs_text)
+        self.__cs_rectangle = None
+        self.__cs_text = None
+
+    def __delete_box_4_circle(self) :
+        if (self.__cs_circle_0 is not None):
+            self.__canvas_frame.delete(self.__cs_circle_0)
+            self.__canvas_frame.delete(self.__cs_circle_1)
+            self.__canvas_frame.delete(self.__cs_circle_2)
+            self.__canvas_frame.delete(self.__cs_circle_3)
+        self.__cs_circle_0 = None
+        self.__cs_circle_1 = None
+        self.__cs_circle_2 = None
+        self.__cs_circle_3 = None
+
+    def delete_obj_from_frame(self):
+        self.__delete_selected_box()
+        self.__delete_box_4_circle()
+
+    def __on_canvas_click(self, event: object) :
+        if (self.__is_canvas_click_release == True):
+            self.__is_canvas_click_release = False
+            self.__editMan.set_start_work_coords(event.x, event.y)
+
+        self.__editMan.set_end_work_coords(event.x, event.y)
         try :
-            self.editManager.run_last_mode()
+            self.__editMan.run_last_mode()
         except Exception as e :
             # Handle the exception
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
-    def on_canvas_dataset_click_release(self, event: object) :
-        self.is_canvas_dataset_click_release = True
+    def __on_canvas_click_release(self, event: object) :
+        self.__is_canvas_click_release = True
         try :
-            self.editManager.run_last_release_mode()
+            self.__editMan.run_last_release_mode()
         except Exception as e :
             # Handle the exception
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
-    def on_key_press_select_obj(self, event: object) :
+    def __on_enter_add_obj_name(self, event: object) :
         # print('event {}'.format(event.keysym))
         if event.keysym == "Return" :
-            self.editManager.add_object_name()
+            self.__editMan.add_object_name()
 
-    def mouse_wheel(self, event: object) :
-        self.editManager.mouse_wheel(event)
+    def __on_mouse_wheel(self, event: object) :
+        self.__editMan.mouse_wheel(event)
 
     def get_object_name(self) :
-        return self.obj_name_entry.get()
+        return self.__o_name_entry.get()
 
     def destroy_select_object_frame(self) :
-        self.file_win.withdraw()
+        self.__obj_win.withdraw()
 
-    def cancel_object_name(self) :
+    def __cmd_cancel_object_name(self) :
         self.destroy_select_object_frame()
-        self.delete_selected_box()
+        self.__delete_selected_box()
 
     def select_object_frame(self) :
-        self.file_win = Toplevel(self.windows)
-        self.file_win.title("Object name")
-        self.file_win.bind("<KeyPress>", self.on_key_press_select_obj)
+        self.__obj_win = Toplevel(self.__windows)
+        self.__obj_win.title("Object name")
+        self.__obj_win.bind("<KeyPress>", self.__on_enter_add_obj_name)
 
-        obj_name_label = Label(self.file_win, text="Object name")
+        obj_name_label = Label(self.__obj_win, text="Object name")
         obj_name_label.pack(side=LEFT)
 
-        self.obj_name_entry = Entry(self.file_win, width=15, bd=5)
-        self.obj_name_entry.insert(0, '')
-        self.obj_name_entry.pack({"side" : "left"})
+        self.__o_name_entry = Entry(self.__obj_win, width=15, bd=5)
+        self.__o_name_entry.insert(0, '')
+        self.__o_name_entry.pack({"side" : "left"})
 
-        add_button = Button(self.file_win)
+        add_button = Button(self.__obj_win)
         add_button["text"] = "Add"
-        add_button["command"] = self.editManager.add_object_name
+        add_button["command"] = self.__editMan.add_object_name
         add_button.pack({"side" : "left"})
 
-        cancel_button = Button(self.file_win)
+        cancel_button = Button(self.__obj_win)
         cancel_button["text"] = "Cancel"
-        cancel_button["command"] = self.cancel_object_name
+        cancel_button["command"] = self.__cmd_cancel_object_name
         cancel_button.pack({"side" : "left"})
 
     def run(self) :
-        self.canvas_frame = LabelFrame(self.windows, text='Not file')
-        self.canvas_frame.pack(fill="both", expand="yes")
+        self.__edit_frame = LabelFrame(self.__windows, text='Not file')
+        self.__edit_frame.pack(fill="both", expand="yes")
 
-        self.input_canvas = Canvas(self.canvas_frame,
-                                   width=self.dataset_dim.get_width(), height=self.dataset_dim.get_height(),
+        self.__canvas_frame = Canvas(self.__edit_frame,
+                                   width=self.__workframe_dim.get_width(), height=self.__workframe_dim.get_height(),
                                    bd=0, bg='#d1d8e3')  # d1d8e3
 
         img = np.ones((4, 4, 3))  # d1d8e3
         img = Image.fromarray(img, mode='RGB')
-        self.canvas_obj_image = self.input_canvas.create_image(
+        self.__cs_image = self.__canvas_frame.create_image(
             (0, 0),
             anchor=NW,
             image=ImageTk.PhotoImage(img))
-        self.input_canvas.pack()
-        self.input_canvas.bind("<B1-Motion>", self.on_canvas_dataset_click)
-        self.input_canvas.bind("<ButtonRelease-1>", self.on_canvas_dataset_click_release)
-        self.input_canvas.bind("<Button-4>", self.mouse_wheel)
-        self.input_canvas.bind("<Button-5>", self.mouse_wheel)
+        self.__canvas_frame.pack()
+        self.__canvas_frame.bind("<B1-Motion>", self.__on_canvas_click)
+        self.__canvas_frame.bind("<ButtonRelease-1>", self.__on_canvas_click_release)
+        self.__canvas_frame.bind("<Button-4>", self.__on_mouse_wheel)
+        self.__canvas_frame.bind("<Button-5>", self.__on_mouse_wheel)
 
-        button_frame = LabelFrame(self.windows, text='Work mode')
+        button_frame = LabelFrame(self.__windows, text='Work mode')
         button_frame.pack(fill="both", expand="yes")
 
-        select_button = Button(button_frame, cursor="tcross")
-        select_button["text"] = "Select"
-        select_button["command"] = self.select_button
-        select_button.pack({"side" : "left"})
+        select_btn = Button(button_frame, cursor="tcross")
+        select_btn["text"] = "Select"
+        select_btn["command"] = self.__cmd_select_mode
+        select_btn.pack({"side" : "left"})
 
-        edit_button = Button(button_frame, cursor="plus")
-        edit_button["text"] = "Edit"
-        edit_button["command"] = self.edit_button
-        edit_button.pack({"side" : "left"})
+        edit_btn = Button(button_frame, cursor="plus")
+        edit_btn["text"] = "Edit"
+        edit_btn["command"] = self.__cmd_edit_mode
+        edit_btn.pack({"side" : "left"})
 
-        normal_button = Button(button_frame, cursor="arrow")
-        normal_button["text"] = "Normal"
-        normal_button["command"] = self.normal_button
-        normal_button.pack({"side" : "left"})
+        normal_btn = Button(button_frame, cursor="arrow")
+        normal_btn["text"] = "Normal"
+        normal_btn["command"] = self.__cmd_normal_mode
+        normal_btn.pack({"side" : "left"})
 
     def set_work_frame(self, filename: str) :
-        self.canvas_frame.config(text=filename)
+        self.__edit_frame.config(text=filename)
 
-    def select_button(self) :
-        self.editManager.set_work_mode(self.editManager.SELECT_MODE)
-        self.input_canvas.config(cursor="tcross")
-        self.delete_selected_box()
-        self.delete_edit_mode()
+    def __cmd_select_mode(self) :
+        self.__editMan.set_work_mode(self.__editMan.SELECT_MODE)
+        self.__canvas_frame.config(cursor="tcross")
+        self.__delete_selected_box()
+        self.__delete_box_4_circle()
 
-    def edit_button(self) :
-        self.editManager.set_work_mode(self.editManager.EDIT_MODE)
-        self.input_canvas.config(cursor="plus")
-        self.delete_selected_box()
-        self.editManager.object_edit()
+    def __cmd_edit_mode(self) :
+        self.__editMan.set_work_mode(self.__editMan.EDIT_MODE)
+        self.__canvas_frame.config(cursor="plus")
+        self.__delete_selected_box()
+        self.__editMan.object_edit()
 
-    def normal_button(self) :
-        self.editManager.set_work_mode(self.editManager.NORMAL_MODE)
-        self.input_canvas.config(cursor="arrow")
-        self.delete_edit_mode()
+    def __cmd_normal_mode(self) :
+        self.__editMan.set_work_mode(self.__editMan.NORMAL_MODE)
+        self.__canvas_frame.config(cursor="arrow")
+        self.__delete_box_4_circle()
 
     def set_EditManager(self, editManager: object) :
-        self.editManager = editManager
+        self.__editMan = editManager
