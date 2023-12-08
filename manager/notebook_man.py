@@ -97,7 +97,10 @@ class NotebookManager :
             print('add tab {}'.format(filename))
             idx_filename = self.get_idx_filename(filename)
         else:
-            idx_filename = self.__idx_tab
+            if (self.__idx_tab == -1):
+                idx_filename = -2
+            else:
+                idx_filename = self.__idx_tab
         if (idx_filename == -1):
             print('add idx_filename == -1 {}'.format(filename))
             self.__filenames.append(filename)
