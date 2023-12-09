@@ -213,7 +213,6 @@ class EditFrame(object) :
     def __cmd_edit_mode(self) :
         self.__editMan.set_work_mode(self.__editMan.EDIT_MODE)
         self.__canvas_frame.config(cursor="plus")
-        self.__delete_selected_box()
         self.__editMan.object_edit()
 
     def __cmd_normal_mode(self) :

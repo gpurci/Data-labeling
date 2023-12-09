@@ -53,7 +53,10 @@ class EditManager :
     def set_work_mode(self, work_mode:int):
         self.__work_mode = work_mode
 
-    def __show_rectangle_mod(self, box:tuple, box_name:str):
+    def __show_object(self, box:tuple, box_name:str):
+        self.__editFrame.rectangle(box, box_name)
+
+    def __show_object_edit_mode(self, box:tuple, box_name:str):
         self.__editFrame.rectangle(box, box_name)
         self.__editFrame.box_4_circle(box)
 
@@ -114,9 +117,7 @@ class EditManager :
         self.__x1,     self.__y1     = x1, y1
 
     def __cmd_select_mode(self):
-        self.__set_show_edit_mode((self.__x0, self.__y0, self.__x1, self.__y1), 'new')
-        self.__show_rectangle_mod((self.__x0, self.__y0, self.__x1, self.__y1), 'new')
-
+        self.__show_object((self.__x0, self.__y0, self.__x1, self.__y1), 'new')
 
     def __cmd_edit_mode(self) :
         if (self.__targetMan.is_rectangle_mod()):
@@ -149,8 +150,7 @@ class EditManager :
                 self.__edit_point = self.NOT_POINTS
                 pass
 
-            self.__set_show_edit_mode(box, self.__targetMan.get_last_name())
-            self.show_edit()
+            self.__show_object_edit_mode(box, self.__targetMan.get_last_name())
         else :  # 'do nothing'
             pass
 
