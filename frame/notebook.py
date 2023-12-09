@@ -10,18 +10,23 @@ from tkinter.ttk import Notebook, Style
 class NotebookFrame(object) :
     def __init__(self) :
         self.__notebookMan = None
-        self.__note = None
-        self.__window = None
+        self.__note        = None
+        self.__window      = None
 
-    def set_windows(self, windows) :
-        self.__window = windows
+    def set_windows(self, window: object) :
+        self.__window = window
 
-    def select_tab(self, *args) :
+    def __change_tab(self, *args) :
         select_tab_val = self.__note.select()
         if (len(select_tab_val) != 0):
-            print('select_tab  {}'.format(select_tab_val))
-            print('select_tab index {}'.format(self.__note.index(select_tab_val)))
-            self.__notebookMan.select_tab(self.__note.index(select_tab_val))
+            print('__change_tab  {}'.format(select_tab_val))
+            index = self.__note.index(select_tab_val)
+            print('__change_tab index {}'.format(index))
+            self.__notebookMan.select_tab(index)
+
+    def select_tab(self, index: int):
+        self.__note.select(index)
+
 
     def run(self) :
         # Create an instance of ttk style
@@ -32,7 +37,7 @@ class NotebookFrame(object) :
 
         # Create a Notebook widget
         self.__note = CustomNotebook(self.__window)
-        self.__note.bind('<<NotebookTabChanged>>', self.select_tab)
+        self.__note.bind('<<NotebookTabChanged>>', self.__change_tab)
         self.__note.pack(expand=True, fill=BOTH, padx=5, pady=5)
         self.__note.set_NotebookManager(self.__notebookMan)
 
@@ -110,7 +115,7 @@ class CustomNotebook(ttk.Notebook) :
                 R0lGODlhCAAIAMIEAAAAAOUqKv9mZtnZ2Ts7Ozs7Ozs7Ozs7OyH+EUNyZWF0ZWQg
                 d2l0aCBHSU1QACH5BAEKAAQALAAAAAAIAAgAAAMVGDBEA0qNJyGw7AmxmuaZhWEU
                 5kEJADs=
-            ''')
+                ''')
         )
 
         style.element_create("close", "image", "img_close",

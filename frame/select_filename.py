@@ -15,6 +15,7 @@ class SelectFilenameFrame(object) :
         self.__window            = None
 
         self.__filename  = None
+        self.__files     = None
         self.__last_item = -1
 
     def set_windows(self, window:object) :
@@ -33,10 +34,10 @@ class SelectFilenameFrame(object) :
         scrollbar.config(command=self.__win_listbox_files.yview)
 
     def __print_filenames(self) :
-        filenames = self.__pathMan.get_source_files()
-        print('print_filenames {}'.format(filenames))
+        self.__files = self.__pathMan.get_source_files()
+        print('print_filenames {}'.format(self.__files))
         # Add items to the Listbox
-        for filename in filenames :
+        for filename in self.__files :
             print('items {}'.format(filename))
             self.__win_listbox_files.insert(END, filename)
 
@@ -44,6 +45,14 @@ class SelectFilenameFrame(object) :
         print('update {}'.format('SelectFilenameFrame'))
         self.__win_listbox_files.delete(0, END)
         self.__print_filenames()
+
+    def set_filename(self, filename: str):
+        try:
+            idx = self.__files.index(filename)
+            self.__set_item(idx)
+        except:
+            pass
+
 
     def __on_item_select(self, event: object) :
         try :

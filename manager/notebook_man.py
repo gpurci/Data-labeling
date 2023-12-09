@@ -9,22 +9,22 @@ from manager.target_man.target_man import *
 class NotebookManager :
     def __init__(self, config_file: str) :
         self.toolsManager = None
-        self.editManager = None
+        self.editManager  = None
         self.__pathMan = None
         self.editFrame = None
-        self.descriptionFrame = None
+        self.descriptionFrame  = None
         self.selectObjectFrame = None
-        self.ratingFrame = None
-        self.notebookFrame = None
-        self.__showFrame = None
-        self.dataDimension = None
+        self.ratingFrame     = None
+        self.__notebookFrame = None
+        self.__showFrame     = None
+        self.dataDimension   = None
         self.__default_rating = None
-        self.config_file = config_file + '/default_rating.yaml'
+        self.config_file         = config_file + '/default_rating.yaml'
         self.default_target_file = config_file + '/default_target.csv'
-        self.__images = []
-        self.__targets = []
+        self.__images    = []
+        self.__targets   = []
         self.__filenames = []
-        self.__idx_tab = -1
+        self.__idx_tab   = -1
         self.__read_config_yaml_file()
 
     def run(self) :
@@ -89,6 +89,7 @@ class NotebookManager :
             self.__set_data(self.imageMan(), self.targetMan())
             self.__showFrame.set_filename(self.get_filename())
             self.__showFrame.set_show_option(self.__showFrame.SHOW_SET_TAB)
+            self.__notebookFrame.select_tab(self.__idx_tab)
         else :
             self.__idx_tab = -1
 
@@ -110,6 +111,7 @@ class NotebookManager :
             self.__targets.append(targetMan)
             self.__config(imageMan, targetMan)
             self.__open(imageMan, targetMan)
+            self.__notebookFrame.add(filename)
             self.select_tab(self.get_tab_size() - 1)
             self.__showFrame.set_filename(self.get_filename())
             self.__showFrame.set_show_option(self.__showFrame.SHOW_NEW_TAB)
@@ -209,7 +211,7 @@ class NotebookManager :
         self.ratingFrame = ratingFrame
 
     def set_NotebookFrame(self, notebookFrame) :
-        self.notebookFrame = notebookFrame
+        self.__notebookFrame = notebookFrame
 
     def set_ShowFrame(self, showFrame: object) :
         self.__showFrame = showFrame

@@ -79,8 +79,11 @@ class EditManager :
     def __set_show_edit_mode(self, box:tuple, box_name:str):
         self.__box_edit = box
         self.__box_name_edit = box_name
+        self.show_edit()
+        '''
         if (self.__showFrame is not None):
             self.__showFrame.set_show_option(self.__showFrame.SHOW_EDIT_MAN)
+        '''
         
     def show(self):
         img = self.__imageMan.get_image()
@@ -149,8 +152,11 @@ class EditManager :
     def __cmd_normal_mode(self) :
         x, y = self.__x1 - self.__pre_x1, self.__y1 - self.__pre_y1
         self.__imageMan.move_image(x, y)
+        self.show_edit()
+        '''
         if (self.__showFrame is not None):
             self.__showFrame.set_show_option(self.__showFrame.SHOW_IMAGE)
+        '''
 
     def __cmd_select_mode_release(self) :
         self.__editFrame.add_object_frame()

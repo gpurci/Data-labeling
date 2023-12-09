@@ -1,80 +1,35 @@
+import time
+from tkinter import ttk
 import tkinter as tk
 
+root=tk.Tk()
 
-class Texter(tk.Tk):
+root.config(width=300,height=220)
 
-    def __init__(self, *args, **kwargs):
-        tk.Tk.__init__(self, *args, **kwargs)
+notebook=ttk.Notebook(root)
+notebook.place(x=0,y=0)
 
-        container = tk.Frame(self)
-        container.pack()
+tabList=[]
+i=0
+while i<6:    
+     tabList.append(tk.Frame(root))
+     tabList[i].config(width=300,height=150,background='white')
+     i+=1
 
-        self.frames = {}
+i=0
+while i<6: 
+    notebook.add(tabList[i],text='tab'+str(i))
+    i+=1
 
-        for F in (ConnectPage, EditorPage):
-            frame = F(container, self)
-            self.frames[F] = frame
-            frame.grid(row=0, column=0, sticky="nsew")
+def fLoopTabs():
+    select_tab_val = notebook.select()
+    if (len(select_tab_val) != 0):
+        print('select_tab  {}'.format(select_tab_val))
+        index = notebook.index(select_tab_val)
+        print('select_tab index {}'.format(index))
+        notebook.select(index+1)
 
-        page_name = EditorPage.__name__
-        self.frames[page_name] = frame
-        self.show_frame(ConnectPage)
+button=ttk.Button(root,text='Loop',command=fLoopTabs)
+button.place(x=20,y=180)
 
-    def show_frame(self, cont) :
-        frame = self.frames[cont]
-        frame.tkraise()
-
-    def get_page(self, page_name) :
-        return self.frames[page_name]
-
-
-class ConnectPage(tk.Frame):
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-
-        button1 = tk.Button(self, text="SecondPage",
-                            command=lambda : controller.show_frame(EditorPage))
-        button1.grid(row=2, column=3, padx=15)
-
-
-class EditorPage(tk.Frame):
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-
-        self.text = CustomText(self, height=25, width=80)
-        self.text.grid(column=0, row=0, sticky="nw")
-        self.text.bind("<<TextModified>>", self.onModification)
-
-        button2 = tk.Button(self, text="FirstPage",
-                            command=lambda : controller.show_frame(ConnectPage))
-        button2.grid(row=2, column=3, padx=15)
-
-    def onModification(self, event):
-        print("Yellow!")
-
-
-class CustomText(tk.Text):
-    def __init__(self, *args, **kwargs) :
-        """A text widget that report on internal widget commands"""
-        tk.Text.__init__(self, *args, **kwargs)
-
-        # create a proxy for the underlying widget
-        self._orig = self._w + "_orig"
-        self.tk.call("rename", self._w, self._orig)
-        self.tk.createcommand(self._w, self._proxy)
-
-    def _proxy(self, command, *args) :
-        cmd = (self._orig, command) + args
-        result = self.tk.call(cmd)
-
-        if command in ("insert", "delete", "replace") :
-            self.event_generate("<<TextModified>>")
-
-        return result
-
-
-if __name__ == '__main__':
-    gui = Texter()
-    gui.mainloop()
+root.mainloop()
