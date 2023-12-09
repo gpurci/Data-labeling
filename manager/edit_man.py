@@ -53,6 +53,10 @@ class EditManager :
     def set_work_mode(self, work_mode:int):
         self.__work_mode = work_mode
 
+    def __show_rectangle_mod(self, box:tuple, box_name:str):
+        self.__editFrame.rectangle(box, box_name)
+        self.__editFrame.box_4_circle(box)
+
     def __show_edit_mode(self, box:tuple, box_name:str):
         if (self.__targetMan.is_rectangle_mod() == True):
             box = self.__imageMan.calc_coord_from_target(box)
@@ -77,9 +81,8 @@ class EditManager :
             pass
 
     def __set_show_edit_mode(self, box:tuple, box_name:str):
-        self.__box_edit = box
+        self.__box_edit      = box
         self.__box_name_edit = box_name
-        self.show_edit()
         '''
         if (self.__showFrame is not None):
             self.__showFrame.set_show_option(self.__showFrame.SHOW_EDIT_MAN)
@@ -112,6 +115,7 @@ class EditManager :
 
     def __cmd_select_mode(self):
         self.__set_show_edit_mode((self.__x0, self.__y0, self.__x1, self.__y1), 'new')
+        self.__show_rectangle_mod((self.__x0, self.__y0, self.__x1, self.__y1), 'new')
 
 
     def __cmd_edit_mode(self) :
@@ -146,13 +150,14 @@ class EditManager :
                 pass
 
             self.__set_show_edit_mode(box, self.__targetMan.get_last_name())
+            self.show_edit()
         else :  # 'do nothing'
             pass
 
     def __cmd_normal_mode(self) :
         x, y = self.__x1 - self.__pre_x1, self.__y1 - self.__pre_y1
         self.__imageMan.move_image(x, y)
-        self.show_edit()
+        self.show()
         '''
         if (self.__showFrame is not None):
             self.__showFrame.set_show_option(self.__showFrame.SHOW_IMAGE)
@@ -166,15 +171,15 @@ class EditManager :
         box = self.__targetMan.get_last_coord()
         box = self.__imageMan.calc_coord_from_target(box)
         x0, y0, x1, y1 = box
-        if self.__edit_point == self.ALL_POINTS :
+        if (self.__edit_point == self.ALL_POINTS) :
             box = (int(x0 + d_x), int(y0 + d_y), int(x1 + d_x), int(y1 + d_y))
-        elif self.__edit_point == self.POINT_00 :
+        elif (self.__edit_point == self.POINT_00) :
             box = (int(x0 + d_x), int(y0 + d_y), x1, y1)
-        elif self.__edit_point == self.POINT_01 :
+        elif (self.__edit_point == self.POINT_01) :
             box = (x0, int(y0 + d_y), int(x1 + d_x), y1)
-        elif self.__edit_point == self.POINT_10 :
+        elif (self.__edit_point == self.POINT_10) :
             box = (int(x0 + d_x), y0, x1, int(y1 + d_y))
-        elif self.__edit_point == self.POINT_11 :
+        elif (self.__edit_point == self.POINT_11) :
             box = (x0, y0, int(x1 + d_x), int(y1 + d_y))
         else :
             pass
