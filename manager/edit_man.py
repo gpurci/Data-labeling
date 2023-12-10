@@ -156,7 +156,7 @@ class EditManager :
 
     def __cmd_normal_mode(self) :
         x, y = self.__x1 - self.__pre_x1, self.__y1 - self.__pre_y1
-        self.__imageMan.move_image(x, y)
+        self.__imageMan.move(x, y)
         self.show()
         '''
         if (self.__showFrame is not None):
@@ -214,10 +214,10 @@ class EditManager :
         # print('event {}'.format(event))
         if event.num == 5 :
             print(-1)
-            self.__imageMan.zoom_image(-1, (event.x, event.y))
+            self.__imageMan.zoom(-1, (event.x, event.y))
         if event.num == 4 :
             print(1)
-            self.__imageMan.zoom_image(1, (event.x, event.y))
+            self.__imageMan.zoom(1, (event.x, event.y))
 
         if (self.__showFrame is not None):
             self.__showFrame.set_show_option(self.__showFrame.SHOW_IMAGE)

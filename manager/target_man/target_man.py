@@ -15,6 +15,17 @@ class TargetManager(object) :
         self.__init()
         self.__showFrame = None
 
+    def copy(self):
+        targetMan = TargetManager(self.get_default_rating())
+        targetMan.set_local_data(self.get_local_data())
+        return targetMan
+
+    def get_local_data(self):
+        return (self.__df_targets.copy(deep=True), self.__last_name, self.__selected_object, self.__showFrame)
+
+    def set_local_data(self, lcl_data: tuple):
+        self.__df_targets, self.__last_name, self.__selected_object, self.__showFrame = lcl_data
+
     def __delete(self) :
         del self.__df_targets
 
@@ -154,10 +165,10 @@ class TargetManager(object) :
         self.__df_targets.to_csv(filename, sep=',', index=False)
 
     def __cut(self, indexes: "array_int") :
-        tolerance = np.arange(self.__DEFAULT_OBJECT + 1)
+        tolerance       = np.arange(self.__DEFAULT_OBJECT + 1)
         tolerance_index = np.argwhere(list(map(lambda t : t in indexes, tolerance))).reshape(-1)
         # print('tolerance_index', tolerance_index)
-        invalid_idx = np.delete(arr=indexes, obj=tolerance_index)
+        invalid_idx     = np.delete(arr=indexes, obj=tolerance_index)
         print('invalid_idx', invalid_idx)
 
         self.__df_targets.drop(index=invalid_idx, inplace=True)
@@ -231,8 +242,9 @@ class TargetManager(object) :
         self.set_size(cx1 - cx0, cy1 - cy0)
         print('size {}, object size {}'.format(self.get_size(), self.get_object_size()))
         for idx in range(self.__DEFAULT_OBJECT + 1, self.get_object_size()) :
-            print(idx)
+            print('idx {}, name {}'.format(idx, self.get_names()[idx]))
             x0, y0, x1, y1 = self.get_coord(idx)
+            print('x0 {}, y0 {}, x1 {}, y1 {}'.format(x0, y0, x1, y1))
             x0, x1 = x0 - cx0, x1 - cx0
             y0, y1 = y0 - cy0, y1 - cy0
             self.set_coord(idx, (x0, y0, x1, y1))

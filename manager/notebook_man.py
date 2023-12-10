@@ -2,6 +2,7 @@
 
 import yaml
 
+import copy
 from manager.image_man import *
 from manager.target_man.target_man import *
 
@@ -11,7 +12,7 @@ class NotebookManager :
         self.toolsManager = None
         self.editManager  = None
         self.__pathMan = None
-        self.editFrame = None
+        self.__editFrame = None
         self.descriptionFrame  = None
         self.selectObjectFrame = None
         self.ratingFrame     = None
@@ -44,7 +45,7 @@ class NotebookManager :
 
         self.__def_targetMan = TargetManager(self.__default_rating)
         self.__config(self.__def_imageMan, self.__def_targetMan)
-        self.__def_imageMan.false_image()
+        self.__def_imageMan.do_RGB_image((10, 10), (255, 255, 255))#to do
         self.__def_targetMan.read(self.default_target_file)
 
     def get_idx_filename(self, filename) :
@@ -113,6 +114,7 @@ class NotebookManager :
             self.__open(imageMan, targetMan)
             self.__notebookFrame.add(filename)
             self.select_tab(self.get_tab_size() - 1)
+
             self.__showFrame.set_filename(self.get_filename())
             self.__showFrame.set_show_option(self.__showFrame.SHOW_NEW_TAB)
         else:
@@ -141,11 +143,7 @@ class NotebookManager :
         return retVal
 
     def __config(self, imageMan: object, targetMan: object) :
-        imageMan.set_img_show_fn(self.editFrame.img_show)
-        imageMan.set_rectangle_img_show_fn(self.editFrame.rectangle)
-        imageMan.set_move_fn(self.editFrame.move)
-        imageMan.set_coords_fn(self.editFrame.coords)
-        imageMan.set_edit_mode_fn(self.editFrame.box_4_circle)
+        imageMan.set_EditFrame(self.__editFrame)
 
         targetMan.set_ShowFrame(self.__showFrame)
 
@@ -160,7 +158,7 @@ class NotebookManager :
             targetMan.read(dest_file)
         else :
             print('False -> dest_file {}'.format(dest_file))
-            x, y = imageMan.get_image_size()
+            x, y = imageMan.get_size()
             targetMan.new(x, y)
         print('datasets {}'.format(targetMan))
 
@@ -184,6 +182,23 @@ class NotebookManager :
         else :
             pass
 
+    def double(self, suffixname: str):
+        self.__pathMan.set_filename(self.get_filename())
+        filename = self.__pathMan.get_filename_with_suffixname(suffixname)
+        print('double {}'.format(filename))
+
+        imageMan  = self.imageMan().copy()
+        targetMan = self.targetMan().copy()
+
+        self.__filenames.append(filename)
+        self.__images.append(imageMan)
+        self.__targets.append(targetMan)
+
+        self.__notebookFrame.add(filename)
+        self.select_tab(self.get_tab_size() - 1)
+        self.__showFrame.set_filename(self.get_filename())
+        self.__showFrame.set_show_option(self.__showFrame.SHOW_NEW_TAB)
+
 
 
     def set_DataDimension(self, dataDimension) :
@@ -199,7 +214,7 @@ class NotebookManager :
         self.__pathMan = pathManager
 
     def set_EditFrame(self, editFrame) :
-        self.editFrame = editFrame
+        self.__editFrame = editFrame
 
     def set_DescriptionFrame(self, descriptionFrame) :
         self.descriptionFrame = descriptionFrame

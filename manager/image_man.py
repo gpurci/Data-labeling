@@ -12,195 +12,169 @@ class ImageManager :
     """
 
     def __init__(self, frame=(600, 600)) :
-        self.move_fn = None
-        self.img_show_fn = None
-        self.coords_fn = None
-        self.edit_mode_fn = None
-        self.editFrame = None
-        self.show_data = None
-        self.rectangle_img_show_fn = None
-        self.image_size = None
-        self.y = 0
-        self.x = 0
-        self.size_frame = np.array(frame, dtype=np.float32)
-        self.zoom = 1
-        self.zoom_normal = 1
-        self.zoom_step = 0.05
-        self.prev_cursor = np.array((0, 0), dtype=np.float32)
-        self.data = None
-        self.flag = 0
+        self.__editFrame = None
+        self.__show_data = None
+        self.__size = None
+        self.__size_frame = np.array(frame, dtype=np.float32)
+        self.__zoom = 1
+        self.__zoom_normal = 1
+        self.__zoom_step = 0.05
+        self.__prev_cursor = np.array((0, 0), dtype=np.float32)
+        self.__data = None
+
+    def copy(self):
+        imageMan = ImageManager(self.get_frame_size())
+        imageMan.set_local_data(self.get_local_data())
+        return imageMan
+
+    def set_local_data(self, data: tuple):
+        self.__editFrame, self.__zoom_step, self.__data = data
+
+    def get_local_data(self):
+        return self.__editFrame, self.__zoom_step, self.__data.copy()
 
     def __str__(self) :
-        returnStr = "ImageManager\n linii:  " + str(self.y)
-        returnStr += "\n coloane:  " + str(self.x)
-        returnStr += "\n" + str(self.data)
+        returnStr = "ImageManager"
         return returnStr
 
+    def get_image(self) :
+        cursor_x, cursor_y = self.__prev_cursor
+        self.__editFrame.coords(cursor_x, cursor_y)
+        return self.__show_data
+
+    def get_zoom(self) :
+        return self.__zoom
+
+    def get_frame_size(self) :
+        return self.__size_frame
+
+    def get_size(self) :
+        return self.__data.size
+
     def __do_calc_zoom(self) :
-        fX, fY = self.size_frame / self.image_size
-        print('do_calc_zoom size_frame {} WH format'.format(self.size_frame))
-        print('do_calc_zoom image_size {} WH format'.format(self.image_size))
+        fX, fY = self.__size_frame / self.__size
+        print('do_calc_zoom size_frame {} WH format'.format(self.__size_frame))
+        print('do_calc_zoom image_size {} WH format'.format(self.__size))
         print('do_calc_zoom zoom W {} H {}'.format(fX, fY))
         if fY >= 1 and fX >= 1 :
             if fY > fX :
-                self.zoom = fY
+                self.__zoom = fY
             else :
-                self.zoom = fX
+                self.__zoom = fX
 
         if fY < 1 or fX < 1 :
             if fY < fX :
-                self.zoom = fY
+                self.__zoom = fY
             else :
-                self.zoom = fX
-        self.zoom_normal = self.zoom
-        print('do_calc_zoom zoom {}'.format(self.zoom))
-
-    def get_zoom(self) :
-        return self.zoom
+                self.__zoom = fX
+        self.__zoom_normal = self.__zoom
+        print('do_calc_zoom zoom {}'.format(self.__zoom))
 
     def get_start_cursor(self) :
-        img_size = np.array(self.image_size * self.zoom, dtype=np.int32)
+        img_size = np.array(self.__size * self.__zoom, dtype=np.int32)
         print("W {}, H {}".format(*img_size))
         img_width, img_height = img_size
-        fr_width, fr_height = self.size_frame
+        fr_width, fr_height = self.__size_frame
         cursor_x, cursor_y = (fr_width - img_width) / 2., (fr_height - img_height) / 2.
         cursor_x, cursor_y = int(cursor_x), int(cursor_y)
-        self.prev_cursor = np.array((cursor_x, cursor_y), dtype=np.float32)
+        self.__prev_cursor = np.array((cursor_x, cursor_y), dtype=np.float32)
         print('cursor_x {}, cursor_y {}'.format(cursor_x, cursor_y))
         return cursor_x, cursor_y
 
-    def read(self, name) :
-        self.data = Image.open(name)
-        self.image_size = np.array(self.data.size, dtype=np.float32)
-        print("image_size W {}, H {}".format(*self.image_size))
+    def __do_for_tkinter(self):
+        img_size = np.array(self.__size * self.__zoom, dtype=np.int32)
+        print("W {}, H {}".format(*img_size))
+        img = self.__data.resize(img_size)
+        self.__show_data = ImageTk.PhotoImage(img)
+
+
+    def read(self, filename: str) :
+        self.__data = Image.open(filename)
+        self.__size = np.array(self.__data.size, dtype=np.float32)
+        print("image_size W {}, H {}".format(*self.__size))
         self.__do_calc_zoom()
-        self.prev_cursor = np.array((0, 0), dtype=np.float32)
-        img_size = np.array(self.image_size * self.zoom, dtype=np.int32)
 
         cursor_x, cursor_y = self.get_start_cursor()
-        self.coords_fn(cursor_x, cursor_y)
+        self.__editFrame.coords(cursor_x, cursor_y)
+        self.__do_for_tkinter()
 
-        self.show_data = ImageTk.PhotoImage(self.data.resize(img_size))
-
-    def false_image(self) :
+    def do_RGB_image(self, shape: tuple, color: tuple) :
+        #to do
         img = np.ones((10, 10, 3))  # d1d8e3
         img = Image.fromarray(img, mode='RGB')
-        self.show_data = ImageTk.PhotoImage(img)
+        self.__show_data = ImageTk.PhotoImage(img)
 
-    def zoom_image(self, zoom_out, cursor) :
-        print('zoom_image zoom_out {}, cursor {}'.format(zoom_out, cursor))
+    def __move_on_edit_frame(self, x: int, y: int) :
+        print('__move_on_edit_frame x {}, y {}'.format(x, y))
+        self.__prev_cursor += (x, y)
+        cursor_x, cursor_y = self.__prev_cursor
+        self.__editFrame.coords(cursor_x, cursor_y)
+
+    def zoom(self, zoom_out: int, cursor: tuple) :
+        # zoom_out is zoom in (-1) or zoom out (1)
+        # cursor is the point from where do you do the zoom
+        print('zoom zoom_out {}, cursor {}'.format(zoom_out, cursor))
         cursor = np.array(cursor, dtype=np.float32)
         cursor_x, cursor_y = cursor
-        prev_zoom = self.zoom
-        img_0 = cursor - self.prev_cursor
+        prev_zoom = self.__zoom
+        img_0 = cursor - self.__prev_cursor
         x0, y0 = img_0
         print("x0 {}, y0 {}".format(x0, y0))
 
-        self.zoom += (zoom_out * self.zoom_normal * self.zoom_step)
-        x1, y1 = img_0 * (self.zoom / prev_zoom)
+        self.__zoom += (zoom_out * self.__zoom_normal * self.__zoom_step)
+        x1, y1 = img_0 * (self.__zoom / prev_zoom)
         print("x1 {}, y1 {}".format(x1, y1))
 
         x, y = x0 - x1, y0 - y1
         print("x {}, y {}".format(x, y))
-        print('zoom {}'.format(self.zoom / self.zoom_normal))
-        # Size of the image in pixels (size of original image)
-        # (This is not mandatory)
-        self.move_image(x, y)
+        print('zoom {}'.format(self.__zoom / self.__zoom_normal))
+        
+        self.__move_on_edit_frame(x, y)
+        self.__do_for_tkinter()
 
-    def move_image(self, x, y) :
-        print('move_image x {}, y {}'.format(x, y))
-        # Size of the image in pixels (size of original image)
-        # (This is not mandatory)
-        self.prev_cursor += (x, y)
-        cursor_x, cursor_y = self.prev_cursor
-        self.coords_fn(cursor_x, cursor_y)
-        img_size = np.array(self.image_size * self.zoom, dtype=np.int32)
-        print("W {}, H {}".format(*img_size))
-        img = self.data.resize(img_size)
+    def move(self, x: int, y: int) :
+        self.__move_on_edit_frame(x, y)
 
-        self.show_data = ImageTk.PhotoImage(img)
-
-    def get_image(self) :
-        cursor_x, cursor_y = self.prev_cursor
-        self.coords_fn(cursor_x, cursor_y)
-
-        return self.show_data
-
-    def get_image_size(self) :
-        return self.data.size
-
-    def get_image_size(self) :
-        return np.array(self.image_size * self.zoom, dtype=np.int32)
-
-    def calc_coord_from_target(self, box) :
+    def calc_coord_from_target(self, box: tuple) :
         print('calc_coord_from_target (x0 {}, y0 {}, x1 {}, y1 {})'.format(*box))
-        dW, dH = self.prev_cursor
+        dW, dH = self.__prev_cursor
         print('dW {}, dH {}'.format(dW, dH))
-        (x0, y0, x1, y1) = np.array(box, dtype=np.float32) * self.get_zoom()
+        (x0, y0, x1, y1) = np.array(box, dtype=np.float32) * self.__zoom
         x0, x1 = x0 + dW, x1 + dW
         y0, y1 = y0 + dH, y1 + dH
 
         print('(x0 {}, y0 {}, x1 {}, y1 {})'.format(x0, y0, x1, y1))
         return x0, y0, x1, y1
 
-    def calc_coord_to_target(self, box) :
+    def calc_coord_to_target(self, box: tuple) :
         print('calc_coord_to_target (x0 {}, y0 {}, x1 {}, y1 {})'.format(*box))
-        dW, dH = self.prev_cursor
+        dW, dH = self.__prev_cursor
         print('dW {}, dH {}'.format(dW, dH))
         (x0, y0, x1, y1) = box
         x0, x1 = x0 - dW, x1 - dW
         y0, y1 = y0 - dH, y1 - dH
 
-        box = np.array((x0, y0, x1, y1), dtype=np.float32) / self.get_zoom()
+        box = np.array((x0, y0, x1, y1), dtype=np.float32) / self.__zoom
         print('return (x0 {}, y0 {}, x1 {}, y1 {})'.format(*box))
         return box
 
-    def crop(self, box) :
+    def crop(self, box: tuple) :
         print('crop (x0 {}, y0 {}, x1 {}, y1 {})'.format(*box))
         # Cropped image of above dimension
         # (It will not change original image)
-        img = self.data.crop(box)
+        img = self.__data.crop(box)
 
-        self.image_size = np.array(img.size, dtype=np.float32)
-        print("image_size W {}, H {}".format(*self.image_size))
-        self.data = img
+        self.__size = np.array(img.size, dtype=np.float32)
+        print("image_size W {}, H {}".format(*self.__size))
+        self.__data = img
         self.__do_calc_zoom()
-        self.prev_cursor = np.array((0, 0), dtype=np.float32)
-        img_size = np.array(self.image_size * self.zoom, dtype=np.int32)
 
         cursor_x, cursor_y = self.get_start_cursor()
-        self.coords_fn(cursor_x, cursor_y)
-
-        self.show_data = ImageTk.PhotoImage(self.data.resize(img_size))
+        self.__editFrame.coords(cursor_x, cursor_y)
+        self.__do_for_tkinter()
 
     def save(self, filename) :
-        self.data.save(filename)
-
-    def set_img_show_fn(self, fn) :
-        self.img_show_fn = fn
-
-    def set_move_fn(self, fn) :
-        self.move_fn = fn
-
-    def set_coords_fn(self, fn) :
-        self.coords_fn = fn
-
-    def set_edit_mode_fn(self, fn) :
-        self.edit_mode_fn = fn
-
-    def set_rectangle_img_show_fn(self, fn) :
-        self.rectangle_img_show_fn = fn
-
-    def img_show(self) :
-        self.img_show_fn(self.show_data)
-
-    def rectangle_img_show(self, box, text) :
-        box = self.calc_coord_from_target(box)
-        self.rectangle_img_show_fn(box, text)
-
-    def edit_mode(self, box) :
-        box = self.calc_coord_from_target(box)
-        self.edit_mode_fn(box)
+        self.__data.save(filename)
 
     def set_EditFrame(self, editFrame) :
-        self.editFrame = editFrame
+        self.__editFrame = editFrame

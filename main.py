@@ -183,6 +183,7 @@ class Application(Frame) :
         self.resolution_man.set_path_parent(self.path_man.get_description_parent())
 
         self.tools_man.set_PathManager(self.path_man)
+        self.tools_man.set_NotebookManager(self.notebook_man)
 
         self.notebook_frame.set_NotebookManager(self.notebook_man)
 
@@ -262,7 +263,7 @@ class Application(Frame) :
         self.run()
         # Bind the key press event to the windows root
         self.windows.bind("<KeyPress>", self.on_key_press)
-        self.windows.after(500, self.display)
+        self.windows.after(100, self.display)
         self.pack()
 
 

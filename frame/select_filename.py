@@ -119,8 +119,8 @@ class SelectFilenameFrame(object) :
         self.openFilenameMan = openFilenameMan
     '''
 
-    def set_PathManager(self, pathManager) :
-        self.__pathMan = pathManager
+    def set_PathManager(self, pathMan: object):
+        self.__pathMan = pathMan
 
-    def set_NotebookManager(self, notebookMan) :
+    def set_NotebookManager(self, notebookMan: object) :
         self.__notebookMan = notebookMan
