@@ -20,7 +20,6 @@ class ShowFrame :
         self.SHOW_IMAGE     = 1
         self.SHOW_SET_TAB   = 2
         self.SHOW_FILENAMES = 3
-        self.SHOW_EDIT_MAN  = 4
 
         self.__show_option = self.SHOW_NO
 
@@ -44,9 +43,6 @@ class ShowFrame :
         elif (self.__show_option == self.SHOW_IMAGE):
             print('SHOW_IMAGE')
             self.__editMan.show()
-        elif (self.__show_option == self.SHOW_EDIT_MAN) :
-            print('SHOW_EDIT_MAN')
-            self.__editMan.show_edit()
         elif (self.__show_option == self.SHOW_SET_TAB) :
             print('SHOW_SET_TAB')
             self.__editMan.show()

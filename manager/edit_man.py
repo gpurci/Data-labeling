@@ -86,10 +86,6 @@ class EditManager :
     def __set_show_edit_mode(self, box:tuple, box_name:str):
         self.__box_edit      = box
         self.__box_name_edit = box_name
-        '''
-        if (self.__showFrame is not None):
-            self.__showFrame.set_show_option(self.__showFrame.SHOW_EDIT_MAN)
-        '''
         
     def show(self):
         img = self.__imageMan.get_image()
