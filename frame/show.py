@@ -19,9 +19,8 @@ class ShowFrame :
         self.SHOW_OBJECT    = 0
         self.SHOW_IMAGE     = 1
         self.SHOW_SET_TAB   = 2
-        self.SHOW_NEW_TAB   = 3
-        self.SHOW_FILENAMES = 4
-        self.SHOW_EDIT_MAN  = 5
+        self.SHOW_FILENAMES = 3
+        self.SHOW_EDIT_MAN  = 4
 
         self.__show_option = self.SHOW_NO
 
@@ -53,14 +52,6 @@ class ShowFrame :
             self.__editMan.show()
             self.editFrame.set_work_frame(self.__filename)
             self.selectFilenameFrame.set_filename(self.__filename)
-            self.selectObjectFrame.show()
-            self.descriptionFrame.set_text_frame(self.__targetMan.get_last_name(), self.__targetMan.get_last_description())
-            self.ratingFrame.set_rating(self.__targetMan.get_last_rating())
-            pass
-        elif (self.__show_option == self.SHOW_NEW_TAB) :
-            print('SHOW_NEW_TAB')
-            self.__editMan.show()
-            self.editFrame.set_work_frame(self.__filename)
             self.selectObjectFrame.show()
             self.descriptionFrame.set_text_frame(self.__targetMan.get_last_name(), self.__targetMan.get_last_description())
             self.ratingFrame.set_rating(self.__targetMan.get_last_rating())

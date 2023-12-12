@@ -114,9 +114,6 @@ class NotebookManager :
             self.__open(imageMan, targetMan)
             self.__notebookFrame.add(filename)
             self.select_tab(self.get_tab_size() - 1)
-
-            self.__showFrame.set_filename(self.get_filename())
-            self.__showFrame.set_show_option(self.__showFrame.SHOW_NEW_TAB)
         else:
             self.select_tab(idx_filename)
 
@@ -196,8 +193,6 @@ class NotebookManager :
 
         self.__notebookFrame.add(filename)
         self.select_tab(self.get_tab_size() - 1)
-        self.__showFrame.set_filename(self.get_filename())
-        self.__showFrame.set_show_option(self.__showFrame.SHOW_NEW_TAB)
 
     def save(self):
         filename = self.__pathMan.get_target_filename(self.get_filename())
