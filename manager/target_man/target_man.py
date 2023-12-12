@@ -67,8 +67,10 @@ class TargetManager(object) :
     def set_selected_object(self, item: int) :
         if (item >= 0) and (item < self.get_object_size()) :
             self.__selected_object = item
-        elif item == self.__DEFAULT_OBJECT :
+        elif (item == self.__DEFAULT_OBJECT) :
             self.__selected_object = 0
+        elif (item == self.get_object_size()) :
+            self.__selected_object = self.get_object_size()-1
         else :
             self.__selected_object = self.__DEFAULT_OBJECT
 
@@ -232,7 +234,7 @@ class TargetManager(object) :
             self.__showFrame.set_show_option(self.__showFrame.SHOW_OBJECT)
 
     def crop_last_name(self) :
-        print('crop_last_name {} item {}'.format(self.get_last_name(), self.get_selected_object()))
+        print('crop_last_name {} item {}'.format(self.get_last_name(), self.__selected_object))
         cx0, cy0, cx1, cy1 = self.get_last_coord()
 
         invalid_index = self.__get_invalid_obj_man((cx0, cy0, cx1, cy1))
@@ -254,15 +256,17 @@ class TargetManager(object) :
             self.__showFrame.set_show_option(self.__showFrame.SHOW_OBJECT)
 
     def double_last_name(self) :
-        print('double_last_name {}'.format(self.__df_targets))
-        print('get_last_name {}, ittem {}, len {}'.format(self.get_last_name(), self.__selected_object,
+        print('DOUBLE_last_name {} item {}, len {}'.format(self.get_last_name(), self.__selected_object,
                                                           self.get_object_size()))
-        d_new_target = self.__df_targets.loc[self.__selected_object]
-        print('double_last_name selected_object {}, data'.format(self.__selected_object, d_new_target))
-        self.set_selected_object(self.get_object_size())
+        print('{}'.format(self))
 
-        self.__df_targets.loc[self.__selected_object] = d_new_target
+        d_new_target = self.__df_targets.loc[self.__selected_object]
+        print('dataset {}'.format(d_new_target))
+
+        self.__df_targets.loc[self.get_object_size()] = d_new_target
+        self.set_selected_object(self.get_object_size()-1)
         self.update_last_name()
+        print('{}'.format(self))
 
         if self.__showFrame is not None :
             self.__showFrame.set_show_option(self.__showFrame.SHOW_OBJECT)

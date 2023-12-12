@@ -49,7 +49,7 @@ class EditFrame(object) :
 
     def img_show(self, img: object) :
         self.__canvas_frame.itemconfig(self.__cs_image, image=img)
-        self.__delete_selected_box()
+        self.delete_obj_from_frame()
 
     def rectangle(self, box: tuple, box_name: str) :
         self.__delete_selected_box()
@@ -65,13 +65,19 @@ class EditFrame(object) :
         x01, y01 = box[2], box[1]
         x10, y10 = box[0], box[3]
         x11, y11 = box[2], box[3]
-        self.__cs_circle_0 = self.__canvas_frame.create_oval(x00 - 4, y00 - 4, x00 + 4, y00 + 4, 
+
+        step_point = 4    #the tolerance in pixel point to select a peak of box
+        self.__cs_circle_0 = self.__canvas_frame.create_oval(x00 - step_point, y00 - step_point, 
+                                                                x00 + step_point, y00 + step_point, 
                                                                 outline='yellow', width=4)
-        self.__cs_circle_1 = self.__canvas_frame.create_oval(x01 - 4, y01 - 4, x01 + 4, y01 + 4, 
+        self.__cs_circle_1 = self.__canvas_frame.create_oval(x01 - step_point, y01 - step_point, 
+                                                                x01 + step_point, y01 + step_point, 
                                                                 outline='yellow', width=4)
-        self.__cs_circle_2 = self.__canvas_frame.create_oval(x10 - 4, y10 - 4, x10 + 4, y10 + 4, 
+        self.__cs_circle_2 = self.__canvas_frame.create_oval(x10 - step_point, y10 - step_point, 
+                                                                x10 + step_point, y10 + step_point, 
                                                                 outline='yellow', width=4)
-        self.__cs_circle_3 = self.__canvas_frame.create_oval(x11 - 4, y11 - 4, x11 + 4, y11 + 4, 
+        self.__cs_circle_3 = self.__canvas_frame.create_oval(x11 - step_point, y11 - step_point, 
+                                                                x11 + step_point, y11 + step_point, 
                                                                 outline='yellow', width=4)
 
     def move(self, x: int, y: int) :
