@@ -234,7 +234,7 @@ class TargetManager(object) :
             self.__showFrame.set_show_option(self.__showFrame.SHOW_OBJECT)
 
     def crop_last_name(self) :
-        print('crop_last_name {} item {}'.format(self.get_last_name(), self.__selected_object))
+        print('CROP_last_name {} item {}'.format(self.get_last_name(), self.__selected_object))
         cx0, cy0, cx1, cy1 = self.get_last_coord()
 
         invalid_index = self.__get_invalid_obj_man((cx0, cy0, cx1, cy1))

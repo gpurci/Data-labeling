@@ -2,7 +2,7 @@
 
 import yaml
 
-import copy
+from pathlib import Path
 from manager.image_man import *
 from manager.target_man.target_man import *
 
@@ -198,6 +198,17 @@ class NotebookManager :
         self.select_tab(self.get_tab_size() - 1)
         self.__showFrame.set_filename(self.get_filename())
         self.__showFrame.set_show_option(self.__showFrame.SHOW_NEW_TAB)
+
+    def save(self):
+        filename = self.__pathMan.get_target_filename(self.get_filename())
+        print('target_filename {}'.format(filename))
+        self.targetMan().save(filename)
+        filename = self.__pathMan.get_row_filename(self.get_filename())
+        print('row_filename {}'.format(filename))
+        if (Path(filename).is_file() == False):
+            print('Save row_filename {}'.format(filename))
+            self.imageMan().save(filename)
+
 
 
 

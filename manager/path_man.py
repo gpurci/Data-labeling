@@ -189,18 +189,35 @@ class PathManager :
             source_file = None
         return str(source_file)
 
-    def get_row_filename(self) :
-        file = Path(self.dest_path).joinpath(self.input_parent_row, 'name').with_name(self.filename)
+    def get_row_filename(self, filename=None) :
+        if (filename is not None) :
+            file = Path(self.dest_path).joinpath(self.input_parent_row, 'name').with_name(filename)
+            #file.parent.mkdir(parents=True, exist_ok=True)
+        elif (self.filename is not None) :
+            file = Path(self.dest_path).joinpath(self.input_parent_row, 'name').with_name(self.filename)
+            #file.parent.mkdir(parents=True, exist_ok=True)
+        else :
+            file = None
+        return str(file)
+
+    def get_target_filename(self, filename=None) :
+        if (filename is not None) :
+            file = Path(self.dest_path).joinpath(self.output_parent, 'name').with_name(filename).with_suffix(self.output_suffix)
+            Path(file).parent.mkdir(parents=True, exist_ok=True)
+        elif (self.filename is not None) :
+            file = Path(self.dest_path).joinpath(self.output_parent, 'name').with_name(self.filename).with_suffix(self.output_suffix)
+            Path(file).parent.mkdir(parents=True, exist_ok=True)
+        else :
+            file = None
         return str(file)
 
     def get_dest_filename(self) :
-        if self.filename is not None :
-            dest_file = Path(self.dest_path).joinpath(self.output_parent, 'name').with_name(self.filename).with_suffix(
-                self.output_suffix)
-            dest_file.parent.mkdir(parents=True, exist_ok=True)
+        if (self.filename is not None) :
+            file = Path(self.dest_path).joinpath(self.output_parent, 'name').with_name(self.filename).with_suffix(self.output_suffix)
+            Path(file).parent.mkdir(parents=True, exist_ok=True)
         else :
-            dest_file = None
-        return str(dest_file)
+            file = None
+        return str(file)
 
     def get_description_parent(self) :
         tmp_description_parent = str(Path(self.dest_path).joinpath(self.description_parent))

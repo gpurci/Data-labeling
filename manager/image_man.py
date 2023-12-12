@@ -173,8 +173,8 @@ class ImageManager :
         self.__editFrame.coords(cursor_x, cursor_y)
         self.__do_for_tkinter()
 
-    def save(self, filename) :
+    def save(self, filename: str) :
         self.__data.save(filename)
 
-    def set_EditFrame(self, editFrame) :
+    def set_EditFrame(self, editFrame: object) :
         self.__editFrame = editFrame

@@ -218,19 +218,19 @@ class Application(Frame) :
 
         self.notebook_man.run()
 
-    def on_key_press(self, event) :
+    def __on_press_save(self, event: object) :
         # print('event {}'.format(event.keysym))
         if event.state == 4 and event.keysym.lower() == "s" :
             # Check if Control key (event.state == 4) and "S" key are pressed
             print("Ctrl + S pressed (Save event)")
-            self.notebook_man.targetMan().save(self.path_man.get_dest_filename())
+            self.notebook_man.save()
             self.path_man.save()
             self.resolution_man.save()
 
     # Display all
-    def display(self) :
+    def __display(self) :
         self.show_frame.show()
-        self.windows.after(500, self.display)
+        self.windows.after(100, self.__display)
 
     def __init__(self, windows=None) :
         Frame.__init__(self, windows)
@@ -262,8 +262,8 @@ class Application(Frame) :
         self.config()
         self.run()
         # Bind the key press event to the windows root
-        self.windows.bind("<KeyPress>", self.on_key_press)
-        self.windows.after(100, self.display)
+        self.windows.bind("<KeyPress>", self.__on_press_save)
+        self.windows.after(100, self.__display)
         self.pack()
 
 
