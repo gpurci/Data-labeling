@@ -1,35 +1,22 @@
-import time
+from tkinter import * 
 from tkinter import ttk
-import tkinter as tk
 
-root=tk.Tk()
+class GUI():                              
+    def __init__(self):  
+        self.root = Tk()
+        self.sv = StringVar() 
+        self.prevlaue=''
+        #entry
+        self.entry = ttk.Entry(self.root, width=30, textvariable =self.sv)
+        self.entry.grid(pady=20,padx=20) 
+        self.entry.bind("<KeyRelease>", self.OnEntryClick) #keyup                  
+        self.root.mainloop()       
 
-root.config(width=300,height=220)
+    def OnEntryClick(self, event):
+        value=self.sv.get().strip()
+        changed = True if self.prevlaue != value else False
+        print(value, 'Text has changed ? {}'.format(changed))
+        self.prevlaue = value
 
-notebook=ttk.Notebook(root)
-notebook.place(x=0,y=0)
-
-tabList=[]
-i=0
-while i<6:    
-     tabList.append(tk.Frame(root))
-     tabList[i].config(width=300,height=150,background='white')
-     i+=1
-
-i=0
-while i<6: 
-    notebook.add(tabList[i],text='tab'+str(i))
-    i+=1
-
-def fLoopTabs():
-    select_tab_val = notebook.select()
-    if (len(select_tab_val) != 0):
-        print('select_tab  {}'.format(select_tab_val))
-        index = notebook.index(select_tab_val)
-        print('select_tab index {}'.format(index))
-        notebook.select(index+1)
-
-button=ttk.Button(root,text='Loop',command=fLoopTabs)
-button.place(x=20,y=180)
-
-root.mainloop()
+#create the gui
+GUI()

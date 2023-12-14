@@ -80,45 +80,6 @@ class SelectFilenameFrame(object) :
             self.__win_listbox_files.itemconfig(item, bg='OrangeRed3')
             self.__last_item = item
 
-
-    '''
-    def __save_yes_fn(self) :
-        self.__pathMan.set_filename(self.obj_name_entry.get())
-        self.openFilenameMan.save()
-        print('save_yes_fn open {}'.format(self.__filename))
-        self.openFilenameMan.open(self.__filename)
-        self.filewin.withdraw()
-
-    def __save_no_fn(self) :
-        print('save_no_fn open {}'.format(self.__filename))
-        self.openFilenameMan.open(self.__filename)
-        self.filewin.withdraw()
-
-    def save_frame(self) :
-        self.filewin = Toplevel(self.__window)
-        self.filewin.title("Save")
-
-        obj_name_label = Label(self.filewin, text="Save file")
-        obj_name_label.pack(side=LEFT)
-
-        self.obj_name_entry = Entry(self.filewin, width=70, bd=5)
-        self.obj_name_entry.insert(50, self.__pathMan.get_source_filename())
-        self.obj_name_entry.pack({"side" : "left"})
-
-        save_button = Button(self.filewin)
-        save_button["text"] = "Yes"
-        save_button["command"] = self.__save_yes_fn
-        save_button.pack({"side" : "left"})
-
-        no_button = Button(self.filewin)
-        no_button["text"] = "No"
-        no_button["command"] = self.__save_no_fn
-        no_button.pack({"side" : "left"})
-
-    def set_OpenFilenameMan(self, openFilenameMan) :
-        self.openFilenameMan = openFilenameMan
-    '''
-
     def set_PathManager(self, pathMan: object):
         self.__pathMan = pathMan
 

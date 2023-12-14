@@ -40,9 +40,11 @@ class ShowFrame :
             self.selectObjectFrame.show()
             self.descriptionFrame.set_text_frame(self.__targetMan.get_last_name(), self.__targetMan.get_last_description())
             self.ratingFrame.set_rating(self.__targetMan.get_last_rating())
+            pass
         elif (self.__show_option == self.SHOW_IMAGE):
             print('SHOW_IMAGE')
             self.__editMan.show()
+            pass
         elif (self.__show_option == self.SHOW_SET_TAB) :
             print('SHOW_SET_TAB')
             self.__editMan.show()

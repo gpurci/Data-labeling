@@ -112,9 +112,6 @@ class TargetManager(object) :
     def get_default_rating(self) :
         return self.__default_rating
 
-    def get_last_name(self) :
-        return str(self.__last_name)
-
     def get_names(self) :
         return list(self.__df_targets['names'])
 
@@ -160,6 +157,9 @@ class TargetManager(object) :
 
     def get_last_object(self) :
         return self.__df_targets.loc[self.__selected_object]
+
+    def get_last_name(self) :
+        return str(self.__last_name)
 
     def save_targets(self, filename: str) :
         # save target data to csv file

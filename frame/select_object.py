@@ -16,11 +16,11 @@ class SelectObjectFrame :
     def init(self) :
         self.__set_item(self.__targetMan.get_default_object())
 
-    def set_windows(self, window) :
+    def set_windows(self, window:object) :
         print('SelectObjectFrame.set_windows')
         self.__window = window
 
-    def set_data(self, imageMan, targetMan) :
+    def set_data(self, imageMan:object, targetMan:object) :
         self.__imageMan = imageMan
         self.__targetMan = targetMan
 

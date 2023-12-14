@@ -11,15 +11,17 @@ class NotebookManager :
     def __init__(self, config_file: str) :
         self.toolsManager = None
         self.editManager  = None
-        self.__pathMan = None
-        self.__editFrame = None
+        self.__pathMan    = None
+        self.__editFrame  = None
         self.descriptionFrame  = None
         self.selectObjectFrame = None
         self.ratingFrame     = None
         self.__notebookFrame = None
         self.__showFrame     = None
+        self.__addNameFrame  = None
         self.dataDimension   = None
         self.__default_rating = None
+
         self.config_file         = config_file + '/default_rating.yaml'
         self.default_target_file = config_file + '/default_target.csv'
         self.__images    = []
@@ -48,7 +50,7 @@ class NotebookManager :
         self.__def_imageMan.do_RGB_image((10, 10), (255, 255, 255))#to do
         self.__def_targetMan.read(self.default_target_file)
 
-    def get_idx_filename(self, filename) :
+    def get_idx_filename(self, filename: str) :
         try:
             idx = self.__filenames.index(filename)
         except:
@@ -96,7 +98,7 @@ class NotebookManager :
 
     def add(self, filename: str) :
         if (self.__pathMan.is_file(filename) == True):
-            print('add tab {}'.format(filename))
+            print('ADD tab {}'.format(filename))
             idx_filename = self.get_idx_filename(filename)
         else:
             if (self.__idx_tab == -1):
@@ -104,7 +106,7 @@ class NotebookManager :
             else:
                 idx_filename = self.__idx_tab
         if (idx_filename == -1):
-            print('add idx_filename == -1 {}'.format(filename))
+            print('ADD idx_filename == -1 {}'.format(filename))
             self.__filenames.append(filename)
             imageMan = ImageManager(frame=[self.dataDimension.get_width(), self.dataDimension.get_height()])
             targetMan = TargetManager(self.__default_rating)
@@ -179,11 +181,8 @@ class NotebookManager :
         else :
             pass
 
-    def double(self, suffixname: str):
-        self.__pathMan.set_filename(self.get_filename())
-        filename = self.__pathMan.get_filename_with_suffixname(suffixname)
-        print('double {}'.format(filename))
-
+    def double(self, filename: str):
+        print('DOUBLE {}'.format(filename))
         imageMan  = self.imageMan().copy()
         targetMan = self.targetMan().copy()
 
@@ -236,3 +235,4 @@ class NotebookManager :
 
     def set_ShowFrame(self, showFrame: object) :
         self.__showFrame = showFrame
+

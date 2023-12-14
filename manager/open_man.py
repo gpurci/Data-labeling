@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 class OpenFilenameManager :
-    def __init__(self, datasets) :
+    def __init__(self, datasets: object) :
         self.selectFilenameFrame = None
         self.imageManager = None
         self.pathManager = None

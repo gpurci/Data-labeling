@@ -13,6 +13,8 @@ from frame.select_filename import *
 from frame.select_object import *
 from frame.show import *
 from frame.tools import *
+
+
 from manager.edit_man import *
 from manager.hyperparameters_man import *
 from manager.import_man.yolo_v5_format import *
@@ -237,25 +239,25 @@ class Application(Frame) :
         self.windows = windows
 
         self.filetypes = (("Type files", "*.png"), ("Type files", "*.jpg"), ("All files", "*.*"))
-        self.path_man = PathManager(r'./config/config_path_manager.yaml')
+        self.path_man  = PathManager(r'./config/config_path_manager.yaml')
         print(self.path_man)
-        self.dataset_dim = WorkFrameDimension(r'./config/config_edit_frame_dim.yaml')
+        self.dataset_dim  = WorkFrameDimension(r'./config/config_edit_frame_dim.yaml')
         self.notebook_man = NotebookManager(r'./config')
-        self.frame_man = FrameManager(windows)
+        self.frame_man    = FrameManager(windows)
         self.resolution_man = ResolutionManager(r'./', r'config_resolution.yaml', r'./config/config_resolution.yaml')
         self.tools_man = ToolsManager()
-        self.edit_man = EditManager()
+        self.edit_man  = EditManager()
 
-        self.description_frame = DescriptionFrame()
-        self.select_object_frame = SelectObjectFrame()
+        self.description_frame     = DescriptionFrame()
+        self.select_object_frame   = SelectObjectFrame()
         self.select_filename_frame = SelectFilenameFrame()
-        self.edit_frame = EditFrame()
+        self.edit_frame     = EditFrame()
         self.notebook_frame = NotebookFrame()
-        self.rating_frame = RatingFrame(self.notebook_man)
-        self.tools_frame = ToolsFrame(self.tools_man)
-        self.show_frame = ShowFrame()
+        self.rating_frame   = RatingFrame(self.notebook_man)
+        self.tools_frame    = ToolsFrame(self.tools_man, self.notebook_man)
+        self.show_frame     = ShowFrame()
 
-        self.import_frame = ImportFrame(windows, self.path_man, r'./config/config_target_manager.yaml')
+        self.import_frame   = ImportFrame(windows, self.path_man, r'./config/config_target_manager.yaml')
 
         self.menubar_fn()
         self.set_windows()

@@ -8,9 +8,9 @@ class ToolsManager:
         self.__imageMan  = None
         
 
-    def crop(self):
-        print('CROP is_data {}'.format('_crop'))
-        self.__notebookMan.double('_'+self.__targetMan.get_last_name())
+    def crop(self, filename: str):
+        print('CROP filename {}'.format(filename))
+        self.__notebookMan.double(filename)
         box = self.__targetMan.get_last_coord()
         self.__imageMan.crop(box)
         self.__targetMan.crop_last_name()
