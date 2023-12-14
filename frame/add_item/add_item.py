@@ -7,11 +7,11 @@ import numpy as np
 
 class AddItemFrame :
     def __init__(self) :
-        self.__frame_title = None
-        self.__label_title = None
-        self.__entry_text  = None
-        self.__prev_value  = ''
-        self.__items       = []
+        self.__s_frame_title = None
+        self.__s_label_title = None
+        self.__s_search_item = None
+        self.__s_prev_value  = ''
+        self.__as_items      = []
         self._is_check_item = True
 
         self.__add_fn     = None
@@ -21,21 +21,21 @@ class AddItemFrame :
         self.__window = None
 
     def set_arg(self, frame_title: str, label_title: str, entry_text: str, add_fn: 'function', cancel_fn: 'function') :
-        self.__frame_title = frame_title
-        self.__label_title = label_title
-        self.__entry_text  = entry_text
+        self.__s_frame_title = frame_title
+        self.__s_label_title = label_title
+        self.__s_search_item = entry_text
 
         self.__add_fn     = add_fn
         self.__cancel_fn  = cancel_fn
 
-    def set_entry_text(self, entry_text: str):
-        self.__entry_text = entry_text
+    def set_search_item(self, item: str):
+        self.__s_search_item = item
 
     def set_add_fn(self, add_fn: 'function'):
         self.__add_fn = add_fn
 
-    def set_names(self, names):
-        self.__items = np.array(names)
+    def set_items(self, items):
+        self.__as_items = np.array(items)
 
     def set_check_fn(self, check_fn):
         self.__check_fn = check_fn
@@ -49,20 +49,20 @@ class AddItemFrame :
     def run(self) :
         print('AddNameFrame run'.format(None))
         # open new window
-        self.__add_name_frame = Toplevel(self.__window)
-        self.__add_name_frame.title(self.__frame_title)
-        self.__add_name_frame.bind("<KeyPress>", self.__on_key_press_save)
+        self.__add_item_frame = Toplevel(self.__window)
+        self.__add_item_frame.title(self.__s_frame_title)
+        self.__add_item_frame.bind("<KeyPress>", self.__on_key_press_save_item)
         # window to put name
-        add_frame      = Frame(self.__add_name_frame)
+        add_frame      = Frame(self.__add_item_frame)
         add_frame.pack(side=TOP)
         # name of title
-        obj_name_label = Label(add_frame, text=self.__label_title)
+        obj_name_label = Label(add_frame, text=self.__s_label_title)
         obj_name_label.pack(side=LEFT)
         # frame to write name
-        self.__w_name_entry = Entry(add_frame, width=35, bd=5)
-        self.__w_name_entry.bind("<KeyRelease>", self.__on_name_modification)
-        self.__w_name_entry.insert(0, self.__entry_text)
-        self.__w_name_entry.pack({"side" : "left"})
+        self.__w_search_item = Entry(add_frame, width=35, bd=5)
+        self.__w_search_item.bind("<KeyRelease>", self.__on_name_modification)
+        self.__w_search_item.insert(0, self.__s_search_item)
+        self.__w_search_item.pack({"side" : "left"})
         # add name button
         add_button    = Button(add_frame)
         add_button["text"]    = "Add"
@@ -75,7 +75,7 @@ class AddItemFrame :
         cancel_button.pack({"side" : "left"})
 
         # window to print predicted name
-        listbox_frame = Frame(self.__add_name_frame)
+        listbox_frame = Frame(self.__add_item_frame)
         listbox_frame.pack(side=TOP)
         # scrool of frame where you put predicted name
         scrollbar = Scrollbar(listbox_frame)
@@ -93,15 +93,15 @@ class AddItemFrame :
 
 
     def __get_similary_names(self, name: str):
-        is_name_idx = np.array(list(map(lambda val: name in val, self.__items)))
-        similary_names = self.__items[is_name_idx]
+        is_name_idx = np.array(list(map(lambda val: name in val, self.__as_items)))
+        similary_names = self.__as_items[is_name_idx]
         print('similary_names {}'.format(similary_names))
         return similary_names
 
     def __set_entry_name(self, name: str):
-        self.__w_name_entry.delete(0, END)
-        self.__w_name_entry.insert(0, name)
-        self.__entry_text = name
+        self.__w_search_item.delete(0, END)
+        self.__w_search_item.insert(0, name)
+        self.__s_search_item = name
 
     def __print_names(self, lst_object: list) :
         self.__w_similar_item.delete(0, END)
@@ -128,46 +128,46 @@ class AddItemFrame :
         self.__name_modification()
 
     def __name_modification(self):
-        value = str(self.__w_name_entry.get())
-        if (self.__prev_value != value):
+        value = str(self.__w_search_item.get())
+        if (self.__s_prev_value != value):
             names = self.__get_similary_names(value)
             self.__print_names(names)
         else:
             pass
-        self.__prev_value = value
+        self.__s_prev_value = value
 
 
-    def get_name(self):
-        return str(self.__w_name_entry.get())
+    def get_item(self):
+        return str(self.__w_search_item.get())
 
     def __add_item_to_items(self, item: str):
         if (self.__is_item_in_items(item) == False):
-            self.__items = np.append(self.__items, item)
+            self.__as_items = np.append(self.__as_items, item)
 
     def __cmd_add_item(self) :
         print('ADD_item')
-        str_item = str(self.__w_name_entry.get())
+        str_item = str(self.__w_search_item.get())
         if (self.__check_fn(str_item) == True):
             self.__ask_window_frame(str_item)
         else:
             self.__add_fn(str_item)
 
-            self.__add_name_frame.withdraw()
+            self.__add_item_frame.withdraw()
         self._is_check_item = True
 
     def __cmd_cancel_add_item(self) :
         print('cancel_add_object')
         self.__cancel_fn()
-        self.__add_name_frame.withdraw()
+        self.__add_item_frame.withdraw()
 
-    def __on_key_press_save(self, event: object) :
+    def __on_key_press_save_item(self, event: object) :
         # print('event {}'.format(event.keysym))
         if event.keysym == "Return" :
             self.__cmd_add_item()
 
 
     def __is_item_in_items(self, item: str):
-        size_similar_item = np.argwhere(self.__items == item).reshape(-1).shape[0]
+        size_similar_item = np.argwhere(self.__as_items == item).reshape(-1).shape[0]
         print('size_similar_item {}'.format(size_similar_item))
         return (size_similar_item > 0)
 
