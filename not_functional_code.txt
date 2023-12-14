@@ -1,0 +1,37 @@
+
+    def __none_fn(self):
+        pass
+
+    def __none_add_fn(self, filename:str):
+        pass
+
+    def __add_name_fn(self, filename:str):
+        print('__add_name_fn {}'.format(filename))
+        if (self.__pathMan.exist_filename(self.__filenames, filename) == True):
+            self.__addNameFrame.error_message('The @{}@ filename exist, CHANGE NAME'.format(filename))
+            self.__addNameFrame.run()
+        else:
+            self.___test_ffff(filename)
+
+    def new_file(self, suffixname: str, fn):
+        print('new_file actual filename{} suffixname {}'.format(self.get_filename(), suffixname))
+        filename = self.__pathMan.get_filename_with_suffixname('_'+suffixname, self.get_filename())
+        print('file with suffix {}'.format(filename))
+        filename = self.__pathMan.filename_generator(self.__filenames, filename)
+        print('filename_generator {}'.format(filename))
+        self.__addNameFrame.set_entry_text(filename)
+        self.___test_ffff = fn
+        self.__addNameFrame.set_add_fn(self.__add_name_fn)
+        self.__addNameFrame.run()
+
+
+    def set_AddNameFrame(self, addNameFrame: object) :
+        self.__addNameFrame = addNameFrame
+
+        frame_title = 'Add filename'
+        label_title = 'Add filename'
+        entry_text  = ''
+
+        add_fn     = self.__none_add_fn
+        cancel_fn  = self.__none_fn
+        self.__addNameFrame.set_arg(frame_title, label_title, entry_text, add_fn, cancel_fn)

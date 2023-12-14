@@ -5,13 +5,13 @@ from tkinter import messagebox
 import numpy as np
 
 
-class AddNameFrame :
+class AddItemFrame :
     def __init__(self) :
         self.__frame_title = None
         self.__label_title = None
         self.__entry_text  = None
         self.__prev_value  = ''
-        self.__names       = []
+        self.__items       = []
         self._is_check_item = True
 
         self.__add_fn     = None
@@ -35,7 +35,7 @@ class AddNameFrame :
         self.__add_fn = add_fn
 
     def set_names(self, names):
-        self.__names = np.array(names)
+        self.__items = np.array(names)
 
     def set_check_fn(self, check_fn):
         self.__check_fn = check_fn
@@ -93,8 +93,8 @@ class AddNameFrame :
 
 
     def __get_similary_names(self, name: str):
-        is_name_idx = np.array(list(map(lambda val: name in val, self.__names)))
-        similary_names = self.__names[is_name_idx]
+        is_name_idx = np.array(list(map(lambda val: name in val, self.__items)))
+        similary_names = self.__items[is_name_idx]
         print('similary_names {}'.format(similary_names))
         return similary_names
 
@@ -140,6 +140,10 @@ class AddNameFrame :
     def get_name(self):
         return str(self.__w_name_entry.get())
 
+    def __add_item_to_items(self, item: str):
+        if (self.__is_item_in_items(item) == False):
+            self.__items = np.append(self.__items, item)
+
     def __cmd_add_item(self) :
         print('ADD_item')
         str_item = str(self.__w_name_entry.get())
@@ -147,6 +151,7 @@ class AddNameFrame :
             self.__ask_window_frame(str_item)
         else:
             self.__add_fn(str_item)
+
             self.__add_name_frame.withdraw()
         self._is_check_item = True
 
@@ -161,15 +166,18 @@ class AddNameFrame :
             self.__cmd_add_item()
 
 
-    def ask_check_name(self, name: str):
-        print('ask_check_name run'.format(None))
+    def __is_item_in_items(self, item: str):
+        size_similar_item = np.argwhere(self.__items == item).reshape(-1).shape[0]
+        print('size_similar_item {}'.format(size_similar_item))
+        return (size_similar_item > 0)
+
+    def ask_check_item(self, item: str):
+        print('ask_check_item run'.format(None))
         if (self._is_check_item == True):
-            size_similar_item = np.argwhere(self.__names == name).reshape(-1).shape[0]
-            print('size_similar_item {}'.format(size_similar_item))
-            self._is_check_item = (size_similar_item > 0)
+            self._is_check_item = self.__is_item_in_items(item)
         return self._is_check_item
 
-    def not_ask_check_name(self, name: str):
+    def not_ask_check_item(self, name: str):
         return False
         
 
@@ -199,6 +207,7 @@ class AddNameFrame :
 
     def __cmd_save_name(self):
         self._is_check_item = False # if the item is find in list of items, the name will be save
+        self.__cmd_add_item()
         self.__ask_check_frame.withdraw()
 
     def __cmd_not_save_name(self):
