@@ -66,6 +66,9 @@ class NotebookManager :
     def get_default_rating(self) :
         return self.__default_rating
 
+    def get_tabs(self) :
+        return self.__filenames
+
     def save_configs(self) :
         # save default rating in yaml file
         names_yaml = """default_rating : {}""".format(self.__default_rating)

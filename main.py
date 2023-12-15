@@ -1,7 +1,5 @@
 #!/usr/bin/python
 
-# import filedialog module
-
 from frame.description import *
 from frame.edit import *
 from frame.import_frame import *
@@ -13,7 +11,6 @@ from frame.select_filename import *
 from frame.select_object import *
 from frame.show import *
 from frame.tools import *
-
 
 from manager.edit_man import *
 from manager.hyperparameters_man import *
