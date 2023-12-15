@@ -3,6 +3,7 @@
 import yaml
 
 from pathlib import Path
+import numpy as np
 from manager.image_man import *
 from manager.target_man.target_man import *
 
@@ -67,7 +68,7 @@ class NotebookManager :
         return self.__default_rating
 
     def get_tabs(self) :
-        return self.__filenames
+        return np.array(self.__filenames)
 
     def save_configs(self) :
         # save default rating in yaml file

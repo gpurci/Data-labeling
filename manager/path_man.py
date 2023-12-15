@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import yaml
+import numpy as np
 
 
 class PathManager :
@@ -145,7 +146,12 @@ class PathManager :
     def get_source_files(self) :
         files = Path(self.source_path).glob('*')
         files = list(map(lambda file: str(file.name), files))
-        return files
+        return np.array(files)
+
+    def get_dest_files(self) :
+        files = Path(self.dest_path).joinpath(self.output_parent).glob('*')
+        files = list(map(lambda file: str(file.name), files))
+        return np.array(files)
 
     def get_dest_path(self) :
         return self.dest_path
@@ -227,23 +233,15 @@ class PathManager :
         tmp_description_parent = str(Path(self.dest_path).joinpath(self.description_parent))
         return tmp_description_parent
 
-    def get_idx_list(self, exist_filenames: list, filename: str) :
-        try:
-            idx = exist_filenames.index(filename)
-        except:
-            idx = -1
-            pass
-        return idx
-
-    def exist_filename(self, exist_filenames: list, filename:str):
-        if ((self.get_idx_list(exist_filenames, filename) != -1) or 
-            (self.is_file(filename) == True)):
+    def exist_filename(self, exist_filenames: 'array', filename:str):
+        size_similar_item = np.argwhere(exist_filenames == filename).reshape(-1).shape[0]
+        if (size_similar_item > 0):
             retVal = True
         else:
             retVal = False
         return retVal
 
-    def filename_generator(self, exist_filenames: list, filename:str):
+    def filename_generator(self, exist_filenames: 'array', filename:str):
         printStr = '''START filename_generator exist_filenames {}
         filename   : {}'''.format(exist_filenames, filename)
         print(printStr)

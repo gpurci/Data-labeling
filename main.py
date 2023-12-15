@@ -251,7 +251,7 @@ class Application(Frame) :
         self.edit_frame     = EditFrame()
         self.notebook_frame = NotebookFrame()
         self.rating_frame   = RatingFrame(self.notebook_man)
-        self.tools_frame    = ToolsFrame(self.tools_man, self.notebook_man)
+        self.tools_frame    = ToolsFrame(self.tools_man, self.notebook_man, self.path_man)
         self.show_frame     = ShowFrame()
 
         self.import_frame   = ImportFrame(windows, self.path_man, r'./config/config_target_manager.yaml')

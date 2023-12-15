@@ -21,17 +21,23 @@ def __none_add_fn(filename:str):
     print('ADD test {}'.format(filename))
     pass
 
-def add_frame_check():
+def add_frame_check_no():
+    add_name_frame.ask_is_item(False)
+
+def add_frame_check_yes():
     add_name_frame.ask_is_item(True)
-    add_name_frame.run()
 
 def add_frame():
-    add_name_frame.ask_is_item(False)
     add_name_frame.run()
 
 add_button    = Button(root)
-add_button["text"]    = "Add check filename"
-add_button["command"] = add_frame
+add_button["text"]    = "Check filename"
+add_button["command"] = add_frame_check_yes
+add_button.pack({"side" : "left"})
+
+add_button    = Button(root)
+add_button["text"]    = "Not check filename"
+add_button["command"] = add_frame_check_no
 add_button.pack({"side" : "left"})
 
 add_button    = Button(root)

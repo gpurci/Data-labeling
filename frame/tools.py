@@ -1,30 +1,49 @@
 #!/usr/bin/python
 
 from tkinter import *
-from add_item import *
+from frame.add_item import *
+import numpy as np
 
 
 class ToolsFrame:
-    def __init__(self, toolsMan: object, notebookMan: object):
+    def __init__(self, toolsMan: object, notebookMan: object, pathMan: object):
         self.__window       = None
         self.__toolsMan     = toolsMan
         self.__notebookMan  = notebookMan
+        self.__pathMan      = pathMan
 
         frame_title  = 'Add filename'
         search_title = 'Current filename'
         search_item  = ''
         self.__addItemFrame = AddItemFrame(frame_title, search_title, search_item, True)
 
-        add_name_frame.set_search_item("filename")
-        add_name_frame.set_items(lst_names)
-
     def set_windows(self, window: object):
         self.__window = window
         self.__addItemFrame.set_windows(self.__window)
 
+    def __cancel_fn(self):
+        pass
+
     def __crop(self):
-        self.__notebookMan.new_file(self.__notebookMan.targetMan().get_last_name(), self.__toolsMan.crop)
-        #self.__toolsMan.crop(filename)
+        suffixname = self.__notebookMan.targetMan().get_last_name()
+        filename   = self.__notebookMan.get_filename()
+        print('TOOLS CROP actual filename {} suffixname {}'.format(filename, suffixname))
+        filename   = self.__pathMan.get_filename_with_suffixname('_'+suffixname, filename)
+        print('file with suffix {}'.format(filename))
+        _tabs_file   = self.__notebookMan.get_tabs()
+        _source_file = self.__pathMan.get_source_files()
+        _dest_file   = self.__pathMan.get_dest_files()
+        _files = np.concatenate((_tabs_file, _source_file, _dest_file), axis=None)
+        _files = np.unique(_files, return_index=False, return_inverse=False, return_counts=False, axis=None, equal_nan=False)
+        print('_files {}'.format(_files))
+        filename     = self.__pathMan.filename_generator(_files, filename)
+
+        self.__addItemFrame.set_search_item(filename)
+        self.__addItemFrame.set_items(_files)
+        self.__addItemFrame.set_add_fn(self.__toolsMan.crop)
+        self.__addItemFrame.set_cancel_fn(self.__cancel_fn)
+
+        self.__addItemFrame.run()
 
     def run(self):
         tools_frame = LabelFrame(self.__window, text='Tools')
@@ -34,6 +53,3 @@ class ToolsFrame:
         crop_button["text"] = "Crop",
         crop_button["command"] = self.__crop
         crop_button.pack({"side": "left"})
-
-    def not_run(self):
-        pass

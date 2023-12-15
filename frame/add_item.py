@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 from tkinter import *
-from tkinter import messagebox
 import numpy as np
 
 
@@ -14,6 +13,7 @@ class AddItemFrame :
         self.__s_prev_item   = ''
         self.__as_items      = []
         self.__ask_is_item   = is_item
+        self.__CHECK_SIMILARLY_ITEM = is_item
 
         self.__add_fn     = None
         self.__cancel_fn  = None
@@ -21,6 +21,7 @@ class AddItemFrame :
         self.__window = None
 
     def ask_is_item(self, is_item: bool):
+        print('ask_is_item {}'.format(is_item))
         self.__ask_is_item = is_item
 
     def set_search_item(self, item: str):
@@ -140,7 +141,7 @@ class AddItemFrame :
             self.__as_items = np.append(self.__as_items, item)
 
     def __cmd_add_item(self) :
-        print('ADD_item')
+        print('ADD_item ask_check_item {}'.format(self.__ask_is_item))
         _item = str(self.__w_search_item.get())
         if (self.__ask_check_item(_item) == True):
             self.__ask_window_frame(_item)
@@ -149,6 +150,7 @@ class AddItemFrame :
             self.__add_item_to_items(_item)
             self.set_search_item(_item)
             self.__add_item_frame.withdraw()
+        self.__ask_is_item = self.__CHECK_SIMILARLY_ITEM
 
     def __cmd_cancel_add_item(self) :
         print('cancel_add_object')
@@ -167,7 +169,7 @@ class AddItemFrame :
         return (size_similar_item > 0)
 
     def __ask_check_item(self, item: str):
-        print('ask_check_item run'.format(None))
+        print('ask_check_item {}'.format(self.__ask_is_item))
         if (self.__ask_is_item == True):
             self.__ask_is_item = self.__is_item_in_items(item)
         return self.__ask_is_item
@@ -197,12 +199,13 @@ class AddItemFrame :
             self.__cmd_save_item()
 
     def __cmd_save_item(self):
+        self.__ask_check_frame.withdraw()
+        print('START cmd_save_item {}'.format(self.__ask_is_item))
         self.__ask_is_item = False # if the item is find in list of items, the item will be save
         self.__cmd_add_item()
-        self.__ask_is_item = True # if the item is find in list of items, the item will be save
-        self.__ask_check_frame.withdraw()
+        print('END cmd_save_item {}'.format(self.__ask_is_item))
 
     def __cmd_not_save_item(self):
-        self.__ask_is_item = True  # if the item is find in list of items, write another item
         self.__ask_check_frame.withdraw()
+        self.__ask_is_item = True  # if the item is find in list of items, write another item
 
