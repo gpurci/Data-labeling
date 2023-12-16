@@ -34,21 +34,12 @@ class NotebookManager :
     def run(self) :
         self.__default_data()
 
-    def __read_config_yaml_file(self) :
-        if Path(self.config_file).is_file() :
-            with open(self.config_file) as file :
-                config_list = yaml.load(file, Loader=yaml.FullLoader)
-            self.set_default_rating(config_list['default_rating'])
-            print(config_list)
-        else :
-            self.set_default_rating(0)
-
     def __default_data(self) :
         self.__def_imageMan = ImageManager(frame=[self.dataDimension.get_width(), self.dataDimension.get_height()])
 
         self.__def_targetMan = TargetManager(self.__default_rating)
         self.__config(self.__def_imageMan, self.__def_targetMan)
-        self.__def_imageMan.do_RGB_image((10, 10), (255, 255, 255))#to do
+        self.__def_imageMan.do_RGB_image((4, 4), (255, 255, 255))#to do
         self.__def_targetMan.read(self.default_target_file)
 
     def get_idx_filename(self, filename: str) :
@@ -69,15 +60,6 @@ class NotebookManager :
 
     def get_tabs(self) :
         return np.array(self.__filenames)
-
-    def save_configs(self) :
-        # save default rating in yaml file
-        names_yaml = """default_rating : {}""".format(self.__default_rating)
-        names = yaml.safe_load(names_yaml)
-
-        with open(self.config_file, 'w') as file :
-            yaml.dump(names, file)
-        print('default_rating {}, read {}'.format(self.__default_rating, open(self.config_file).read()))
 
     def get_tab_size(self) :
         return int(len(self.__images))
@@ -147,7 +129,6 @@ class NotebookManager :
 
     def __config(self, imageMan: object, targetMan: object) :
         imageMan.set_EditFrame(self.__editFrame)
-
         targetMan.set_ShowFrame(self.__showFrame)
 
     def __open(self, imageMan: object, targetMan: object) :
@@ -197,7 +178,25 @@ class NotebookManager :
         self.__notebookFrame.add(filename)
         self.select_tab(self.get_tab_size() - 1)
 
-    def save(self):
+    def __read_config_yaml_file(self) :
+        if (Path(self.config_file).is_file()):
+            with open(self.config_file) as file :
+                config_list = yaml.load(file, Loader=yaml.FullLoader)
+            self.set_default_rating(config_list['default_rating'])
+            print(config_list)
+        else :
+            self.set_default_rating(0)
+
+    def __save_configs(self) :
+        # save default rating in yaml file
+        names_yaml = """default_rating : {}""".format(self.__default_rating)
+        names = yaml.safe_load(names_yaml)
+
+        with open(self.config_file, 'w') as file :
+            yaml.dump(names, file)
+        print('default_rating {}, read {}'.format(self.__default_rating, open(self.config_file).read()))
+
+    def __save_dataset(self):
         filename = self.__pathMan.get_target_filename(self.get_filename())
         print('target_filename {}'.format(filename))
         self.targetMan().save(filename)
@@ -206,6 +205,10 @@ class NotebookManager :
         if (Path(filename).is_file() == False):
             print('Save row_filename {}'.format(filename))
             self.imageMan().save(filename)
+
+    def save(self):
+        self.__save_configs()
+        self.__save_dataset()
 
 
 

@@ -15,7 +15,9 @@ class ToolsFrame:
         frame_title  = 'Add filename'
         search_title = 'Current filename'
         search_item  = ''
-        self.__addItemFrame = AddItemFrame(frame_title, search_title, search_item, True)
+        check_similarly_item = True
+        self.__addItemFrame = AddItemFrame(frame_title, search_title, search_item, check_similarly_item)
+        self.__addItemFrame.set_cancel_fn(lambda : print('CANCEL'))
 
     def set_windows(self, window: object):
         self.__window = window
@@ -24,10 +26,27 @@ class ToolsFrame:
     def __cancel_fn(self):
         pass
 
+
+
     def __crop(self):
+        print('TOOLS CROP')
+        self.__new_file()
+        self.__addItemFrame.set_add_fn(self.__toolsMan.crop)
+        self.__addItemFrame.run()
+
+    def run(self):
+        tools_frame = LabelFrame(self.__window, text='Tools')
+        tools_frame.pack(fill="both", expand="yes")
+
+        crop_button = Button(tools_frame)
+        crop_button["text"] = "Crop",
+        crop_button["command"] = self.__crop
+        crop_button.pack({"side": "left"})
+
+    def __new_file(self):
         suffixname = self.__notebookMan.targetMan().get_last_name()
         filename   = self.__notebookMan.get_filename()
-        print('TOOLS CROP actual filename {} suffixname {}'.format(filename, suffixname))
+        print('TOOLS NEW FILE, actual filename {} suffixname {}'.format(filename, suffixname))
         filename   = self.__pathMan.get_filename_with_suffixname('_'+suffixname, filename)
         print('file with suffix {}'.format(filename))
         _tabs_file   = self.__notebookMan.get_tabs()
@@ -40,16 +59,3 @@ class ToolsFrame:
 
         self.__addItemFrame.set_search_item(filename)
         self.__addItemFrame.set_items(_files)
-        self.__addItemFrame.set_add_fn(self.__toolsMan.crop)
-        self.__addItemFrame.set_cancel_fn(self.__cancel_fn)
-
-        self.__addItemFrame.run()
-
-    def run(self):
-        tools_frame = LabelFrame(self.__window, text='Tools')
-        tools_frame.pack(fill="both", expand="yes")
-
-        crop_button = Button(tools_frame)
-        crop_button["text"] = "Crop",
-        crop_button["command"] = self.__crop
-        crop_button.pack({"side": "left"})

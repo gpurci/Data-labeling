@@ -149,7 +149,7 @@ class PathManager :
         return np.array(files)
 
     def get_dest_files(self) :
-        files = Path(self.dest_path).joinpath(self.output_parent).glob('*')
+        files = Path(self.dest_path).joinpath(self.input_parent_row).glob('*')
         files = list(map(lambda file: str(file.name), files))
         return np.array(files)
 
@@ -228,6 +228,10 @@ class PathManager :
         else :
             file = None
         return str(file)
+
+    def get_object_info_file(self) :
+        file = str(Path(self.dest_path).joinpath(self.description_parent, 'object_info.yaml'))
+        return file
 
     def get_description_parent(self) :
         tmp_description_parent = str(Path(self.dest_path).joinpath(self.description_parent))

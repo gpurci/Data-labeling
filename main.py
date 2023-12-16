@@ -175,6 +175,7 @@ class Application(Frame) :
 
         self.edit_man.set_EditFrame(self.edit_frame)
         self.edit_man.set_ShowFrame(self.show_frame)
+        self.edit_man.set_PathManager(self.path_man)
 
         self.path_man.set_ResolutionManager(self.resolution_man)
         self.path_man.set_ShowFrame(self.show_frame)
@@ -217,19 +218,30 @@ class Application(Frame) :
 
         self.notebook_man.run()
 
+    def __save(self):
+        self.notebook_man.save()
+        self.path_man.save()
+        self.resolution_man.save()
+        self.edit_man.save()
+
+
     def __on_press_save(self, event: object) :
         # print('event {}'.format(event.keysym))
         if event.state == 4 and event.keysym.lower() == "s" :
             # Check if Control key (event.state == 4) and "S" key are pressed
             print("Ctrl + S pressed (Save event)")
-            self.notebook_man.save()
-            self.path_man.save()
-            self.resolution_man.save()
+            self.__save()
 
     # Display all
     def __display(self) :
         self.show_frame.show()
         self.windows.after(100, self.__display)
+
+    # Auto save
+    def __auto_save(self) :
+        self.__save()
+        # automaticaly saving data after 5 min
+        self.windows.after(300000, self.__auto_save)
 
     def __init__(self, windows=None) :
         Frame.__init__(self, windows)
@@ -263,6 +275,7 @@ class Application(Frame) :
         # Bind the key press event to the windows root
         self.windows.bind("<KeyPress>", self.__on_press_save)
         self.windows.after(100, self.__display)
+        self.windows.after(5000, self.__auto_save)
         self.pack()
 
 

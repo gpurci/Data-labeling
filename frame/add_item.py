@@ -23,6 +23,7 @@ class AddItemFrame :
     def ask_is_item(self, is_item: bool):
         print('ask_is_item {}'.format(is_item))
         self.__ask_is_item = is_item
+        self.__CHECK_SIMILARLY_ITEM = is_item
 
     def set_search_item(self, item: str):
         self.__s_search_item = item
@@ -33,12 +34,18 @@ class AddItemFrame :
     def set_cancel_fn(self, _fn: 'function'):
         self.__cancel_fn = _fn
 
-    def set_items(self, items):
+    def set_items(self, items: 'array'):
         self.__as_items = np.array(items)
 
     def set_windows(self, window: object) :
         print('AddItemFrame.set_window')
         self.__window = window
+
+    def get_items(self):
+        return self.__as_items
+
+    def get_item(self):
+        return str(self.__w_search_item.get())
 
 
 
@@ -132,9 +139,6 @@ class AddItemFrame :
             pass
         self.__s_prev_item = _item
 
-
-    def get_item(self):
-        return str(self.__w_search_item.get())
 
     def __add_item_to_items(self, item: str):
         if (self.__is_item_in_items(item) == False):

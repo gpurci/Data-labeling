@@ -16,10 +16,8 @@ def hex_to_rgb(value) :
 
 class EditFrame(object) :
     def __init__(self) :
-        self.__o_name_entry   = None
         self.__edit_frame     = None
         self.__canvas_frame   = None
-        self.__add_obj_window = None
         self.__workframe_dim  = None
         self.__window         = None
         self.__editMan        = None
@@ -128,46 +126,8 @@ class EditFrame(object) :
             # Handle the exception
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
-    def __on_enter_add_obj_name(self, event: object) :
-        # print('event {}'.format(event.keysym))
-        if event.keysym == "Return" :
-            self.__editMan.add_object_name()
-
     def __on_mouse_wheel(self, event: object) :
         self.__editMan.mouse_wheel(event)
-
-    def get_object_name(self) :
-        return self.__o_name_entry.get()
-
-    def destroy_windows(self) :
-        if (self.__add_obj_window != None):
-            self.__add_obj_window.withdraw()
-
-    def __cmd_cancel_object_name(self) :
-        self.destroy_windows()
-        self.__delete_selected_box()
-
-    def add_object_frame(self) :
-        self.__add_obj_window = Toplevel(self.__window)
-        self.__add_obj_window.title("Object name")
-        self.__add_obj_window.bind("<KeyPress>", self.__on_enter_add_obj_name)
-
-        obj_name_label = Label(self.__add_obj_window, text="Object name")
-        obj_name_label.pack(side=LEFT)
-
-        self.__o_name_entry = Entry(self.__add_obj_window, width=15, bd=5)
-        self.__o_name_entry.insert(0, '')
-        self.__o_name_entry.pack({"side" : "left"})
-
-        add_button = Button(self.__add_obj_window)
-        add_button["text"] = "Add"
-        add_button["command"] = self.__editMan.add_object_name
-        add_button.pack({"side" : "left"})
-
-        cancel_button = Button(self.__add_obj_window)
-        cancel_button["text"] = "Cancel"
-        cancel_button["command"] = self.__cmd_cancel_object_name
-        cancel_button.pack({"side" : "left"})
 
     def run(self) :
         self.__edit_frame = LabelFrame(self.__window, text='Not file')

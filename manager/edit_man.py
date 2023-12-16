@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
-from tkinter import messagebox
+from frame.add_item import *
+from pathlib import Path
+import yaml
+
 
 
 class EditManager :
@@ -11,13 +14,22 @@ class EditManager :
         self.__y0 = 0
         self.__x1 = 0
         self.__x0 = 0
-        self.__box_edit = (0, 0, 0, 0)
+        self.__box_edit      = (0, 0, 0, 0)
         self.__box_name_edit = 'edit'
 
         self.__editFrame = None
         self.__showFrame = None
         self.__targetMan = None
         self.__imageMan  = None
+
+
+        frame_title  = 'Make an object'
+        search_title = 'Object name'
+        search_item  = ''
+        check_similarly_item = False
+        self.__make_object = AddItemFrame(frame_title, search_title, search_item, check_similarly_item)
+        self.__make_object.set_cancel_fn(lambda : print('CANCEL'))
+        self.__make_object.set_add_fn(self.__add_object_name)
 
         self.set_start_work_coords(0, 0)
         self.set_end_work_coords(0, 0)
@@ -43,6 +55,25 @@ class EditManager :
         EditManager : {}
         """.format('test')
         return str_ret
+
+    def __get_object_names(self):
+        if (Path(self.__pathMan.get_object_info_file()).is_file()) :
+            with open(self.__pathMan.get_object_info_file()) as file :
+                config_list = yaml.load(file, Loader=yaml.FullLoader)
+            retVal = config_list['object_names']
+            print('get_object_names {}'.format(config_list))
+        else :
+            retVal = []
+        return retVal
+
+    def save(self) :
+        # save default rating in yaml file
+        names_yaml = """object_names : {}""".format(list(self.__make_object.get_items()))
+        print(names_yaml)
+        names = yaml.safe_load(names_yaml)
+
+        with open(self.__pathMan.get_object_info_file(), 'w') as file :
+            yaml.dump(names, file)
 
     def run_last_mode(self):
         self.__mode_fn[self.__work_mode]()
@@ -160,7 +191,8 @@ class EditManager :
         '''
 
     def __cmd_select_mode_release(self) :
-        self.__editFrame.add_object_frame()
+        self.__make_object.set_search_item('')
+        self.__make_object.run()
 
     def __cmd_edit_mode_release(self) :
         d_x, d_y = self.__x1 - self.__x0, self.__y1 - self.__y0
@@ -186,10 +218,8 @@ class EditManager :
     def __cmd_normal_mode_release(self) :
         pass
 
-    def add_object_name(self) :
-        self.__editFrame.destroy_windows()
-        object_name = self.__editFrame.get_object_name()
-        print('object_name #{}#'.format(object_name))
+    def __add_object_name(self, object_name: str) :
+        print('add_object_name #{}#'.format(object_name))
 
         print('datasets {}'.format(self.__targetMan))
 
@@ -230,3 +260,7 @@ class EditManager :
 
     def set_ShowFrame(self, showFrame: object) :
         self.__showFrame = showFrame
+
+    def set_PathManager(self, pathManager) :
+        self.__pathMan = pathManager
+        self.__make_object.set_items(self.__get_object_names())

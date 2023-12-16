@@ -174,7 +174,8 @@ class ImageManager :
         self.__do_for_tkinter()
 
     def save(self, filename: str) :
-        self.__data.save(filename)
+        if (self.__data != None)
+            self.__data.save(filename)
 
     def set_EditFrame(self, editFrame: object) :
         self.__editFrame = editFrame

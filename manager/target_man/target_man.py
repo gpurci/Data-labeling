@@ -230,6 +230,7 @@ class TargetManager(object) :
         print('cut_last_name {}'.format(self.__df_targets))
         print('get_last_name {}, ittem {}, len {}'.format(self.get_last_name(), self.__selected_object,
                                                           self.get_object_size()))
+        self.update_last_name()
         if self.__showFrame is not None :
             self.__showFrame.set_show_option(self.__showFrame.SHOW_OBJECT)
 
@@ -252,6 +253,7 @@ class TargetManager(object) :
             self.set_coord(idx, (x0, y0, x1, y1))
         print('crop_last_name end')
         self.set_selected_object(self.__DEFAULT_OBJECT)
+        self.update_last_name()
         if self.__showFrame is not None :
             self.__showFrame.set_show_option(self.__showFrame.SHOW_OBJECT)
 
