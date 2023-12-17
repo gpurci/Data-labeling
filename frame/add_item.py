@@ -18,7 +18,8 @@ class AddItemFrame :
         self.__add_fn     = None
         self.__cancel_fn  = None
 
-        self.__window = None
+        self.__window         = None
+        self.__add_item_frame = None
 
     def ask_is_item(self, is_item: bool):
         print('ask_is_item {}'.format(is_item))
@@ -45,13 +46,16 @@ class AddItemFrame :
         return self.__as_items
 
     def get_item(self):
-        return str(self.__w_search_item.get())
+        return self.__s_search_item
 
 
 
     def run(self) :
         print('AddItemFrame run'.format(None))
         # open new window
+        if (self.__add_item_frame != None):
+            self.__add_item_frame.withdraw()
+
         self.__add_item_frame = Toplevel(self.__window)
         self.__add_item_frame.title(self.__s_frame_title)
         self.__add_item_frame.bind("<KeyPress>", self.__on_key_press_save_item)

@@ -84,7 +84,11 @@ class TargetManager(object) :
         self.__df_targets.at[key, 'rating'] = rating
 
     def set_coord(self, key: int, coord: tuple) :
-        x0, y0, x1, y1 = coord
+        (x0, y0, x1, y1) = coord
+        if (x0 > x1):
+            x0, x1 = x1, x0
+        if (y0 > y1):
+            y0, y1 = y1, y0
         self.__df_targets.at[key, 'coord x0'] = int(x0)
         self.__df_targets.at[key, 'coord x1'] = int(x1)
         self.__df_targets.at[key, 'coord y0'] = int(y0)
@@ -129,7 +133,7 @@ class TargetManager(object) :
         x1 = self.__df_targets['coord x1'][key]
         y0 = self.__df_targets['coord y0'][key]
         y1 = self.__df_targets['coord y1'][key]
-        return x0, y0, x1, y1
+        return (x0, y0, x1, y1)
 
     def get_all_coords(self) :
         x0 = self.__df_targets['coord x0']
@@ -161,7 +165,7 @@ class TargetManager(object) :
     def get_last_name(self) :
         return str(self.__last_name)
 
-    def save_targets(self, filename: str) :
+    def __save_targets(self, filename: str) :
         # save target data to csv file
         Path(filename).touch(mode=0o666, exist_ok=True)
         self.__df_targets.to_csv(filename, sep=',', index=False)
@@ -283,6 +287,10 @@ class TargetManager(object) :
         self.set_selected_object(self.get_object_size()-1)
         self.update_last_name()
 
+        self.set_description(self.__selected_object, self.get_last_description())
+        self.set_rating(self.__selected_object, self.get_last_rating())
+        self.set_coord(self.__selected_object, self.get_last_coord())
+
         if self.__showFrame is not None :
             self.__showFrame.set_show_option(self.__showFrame.SHOW_OBJECT)
 
@@ -302,7 +310,8 @@ class TargetManager(object) :
 
     def save(self, filename: str) :
         # save target data to csv file
-        self.save_targets(filename)
+        self.__save_targets(filename)
 
     def set_ShowFrame(self, showFrame: object) :
         self.__showFrame = showFrame
+

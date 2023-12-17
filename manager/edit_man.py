@@ -144,7 +144,12 @@ class EditManager :
         self.__x1,     self.__y1     = x1, y1
 
     def __cmd_select_mode(self):
-        self.__show_object((self.__x0, self.__y0, self.__x1, self.__y1), 'new')
+        x0, y0, x1, y1 = self.__x0, self.__y0, self.__x1, self.__y1
+        if (x0 > x1):
+            x0, x1 = x1, x0
+        if (y0 > y1):
+            y0, y1 = y1, y0
+        self.__show_object((x0, y0, x1, y1), 'new')
 
     def __cmd_edit_mode(self) :
         if (self.__targetMan.is_rectangle_mod()):

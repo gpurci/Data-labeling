@@ -185,7 +185,7 @@ def yolo_v5_format_import_fn(source_path, dest_path, targets, path_man) :
             print('targets {}'.format(targets.get_object_size()))
         path_man.set_filename(str(filename.name))
         to_file_T = path_man.get_dest_filename()
-        targets.save_targets(to_file_T)
+        targets.save(to_file_T)
 
         print('filename {}'.format(filename))
         print('to file {}'.format(to_file_F))

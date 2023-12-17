@@ -23,10 +23,6 @@ class ToolsFrame:
         self.__window = window
         self.__addItemFrame.set_windows(self.__window)
 
-    def __cancel_fn(self):
-        pass
-
-
 
     def __crop(self):
         print('TOOLS CROP')
@@ -59,3 +55,4 @@ class ToolsFrame:
 
         self.__addItemFrame.set_search_item(filename)
         self.__addItemFrame.set_items(_files)
+

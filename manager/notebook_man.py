@@ -29,6 +29,7 @@ class NotebookManager :
         self.__targets   = []
         self.__filenames = []
         self.__idx_tab   = -1
+        self.__tabs      = {}
         self.__read_config_yaml_file()
 
     def run(self) :
