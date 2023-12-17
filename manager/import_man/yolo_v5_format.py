@@ -5,7 +5,7 @@ import re
 from PIL import Image
 
 from manager.path_man import *
-from manager.target_man.target_man import *
+from manager.target_man import *
 
 
 def rename_dir(path, src, dst) :

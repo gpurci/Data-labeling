@@ -5,7 +5,7 @@ import yaml
 from pathlib import Path
 import numpy as np
 from manager.image_man import *
-from manager.target_man.target_man import *
+from manager.target_man import *
 
 
 class NotebookManager :
