@@ -1,22 +1,35 @@
-from tkinter import * 
-from tkinter import ttk
+import tkinter as tk
 
-class GUI():                              
-    def __init__(self):  
-        self.root = Tk()
-        self.sv = StringVar() 
-        self.prevlaue=''
-        #entry
-        self.entry = ttk.Entry(self.root, width=30, textvariable =self.sv)
-        self.entry.grid(pady=20,padx=20) 
-        self.entry.bind("<KeyRelease>", self.OnEntryClick) #keyup                  
-        self.root.mainloop()       
+class Example(tk.Frame):
+    def __init__(self, root):
+        tk.Frame.__init__(self, root)
 
-    def OnEntryClick(self, event):
-        value=self.sv.get().strip()
-        changed = True if self.prevlaue != value else False
-        print(value, 'Text has changed ? {}'.format(changed))
-        self.prevlaue = value
+        self.menubar = tk.Menu()
+        self.test1Menu = tk.Menu()
+        self.test2Menu = tk.Menu()
+        self.menubar.add_cascade(label="Test1", menu=self.test1Menu)
+        self.menubar.add_cascade(label="Test2", menu=self.test2Menu)
 
-#create the gui
-GUI()
+        self.test1Menu.add_command(label="Enable Test2", command=self.enable_menu)
+        self.test1Menu.add_command(label="Disable Test2", command=self.disable_menu)
+        self.test2Menu.add_command(label="One")
+        self.test2Menu.add_command(label="Two")
+        self.test2Menu.add_command(label="Three")
+        self.test2Menu.add_separator()
+        self.test2Menu.add_command(label="Four")
+        self.test2Menu.add_command(label="Five")
+
+        root.configure(menu=self.menubar)
+
+    def enable_menu(self):
+        self.menubar.entryconfig("Test2", state="normal")
+
+    def disable_menu(self):
+        self.menubar.entryconfig("Test2", state="disabled")
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.geometry("500x500")
+    app = Example(root)
+    app.pack(fill="both", expand=True)
+    root.mainloop()

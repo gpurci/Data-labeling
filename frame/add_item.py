@@ -154,9 +154,9 @@ class AddItemFrame :
         if (self.__ask_check_item(_item) == True):
             self.__ask_window_frame(_item)
         else:
-            self.__add_fn(_item)
             self.__add_item_to_items(_item)
             self.set_search_item(_item)
+            self.__add_fn(_item)
             self.__add_item_frame.withdraw()
         self.__ask_is_item = self.__CHECK_SIMILARLY_ITEM
 

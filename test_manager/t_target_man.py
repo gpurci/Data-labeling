@@ -2,7 +2,7 @@
 
 from target_manager import *
 
-from manager.target_man.target_man import TargetManager
+from manager.target_man import TargetManager
 
 target_man = TargetManager(r'./config/config_target_manager.yaml')
 

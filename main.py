@@ -17,6 +17,7 @@ from manager.hyperparameters_man import *
 from manager.import_man.yolo_v5_format import *
 from manager.notebook_man import *
 from manager.tools_man import *
+from manager.object_man import *
 
 
 class TimeMonitor(object) :
@@ -170,12 +171,14 @@ class Application(Frame) :
         self.select_filename_frame.set_PathManager(self.path_man)
         self.select_filename_frame.set_NotebookManager(self.notebook_man)
 
+        self.select_object_frame.set_ObjectManager(self.object_man)
+
         self.edit_frame.set_dimension(self.dataset_dim)
         self.edit_frame.set_EditManager(self.edit_man)
 
         self.edit_man.set_EditFrame(self.edit_frame)
         self.edit_man.set_ShowFrame(self.show_frame)
-        self.edit_man.set_PathManager(self.path_man)
+        self.edit_man.set_ObjectManager(self.object_man)
 
         self.path_man.set_ResolutionManager(self.resolution_man)
         self.path_man.set_ShowFrame(self.show_frame)
@@ -222,7 +225,7 @@ class Application(Frame) :
         self.notebook_man.save()
         self.path_man.save()
         self.resolution_man.save()
-        self.edit_man.save()
+        self.object_man.save()
 
 
     def __on_press_save(self, event: object) :
@@ -254,8 +257,9 @@ class Application(Frame) :
         self.notebook_man = NotebookManager(r'./config')
         self.frame_man    = FrameManager(windows)
         self.resolution_man = ResolutionManager(r'./', r'config_resolution.yaml', r'./config/config_resolution.yaml')
-        self.tools_man = ToolsManager()
-        self.edit_man  = EditManager()
+        self.tools_man  = ToolsManager()
+        self.edit_man   = EditManager()
+        self.object_man = ObjectManager(self.path_man)
 
         self.description_frame     = DescriptionFrame()
         self.select_object_frame   = SelectObjectFrame()

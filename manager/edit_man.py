@@ -1,10 +1,6 @@
 #!/usr/bin/python
 
 from frame.add_item import *
-from pathlib import Path
-import yaml
-
-
 
 class EditManager :
     def __init__(self) :
@@ -55,25 +51,6 @@ class EditManager :
         EditManager : {}
         """.format('test')
         return str_ret
-
-    def __get_object_names(self):
-        if (Path(self.__pathMan.get_object_info_file()).is_file()) :
-            with open(self.__pathMan.get_object_info_file()) as file :
-                config_list = yaml.load(file, Loader=yaml.FullLoader)
-            retVal = config_list['object_names']
-            print('get_object_names {}'.format(config_list))
-        else :
-            retVal = []
-        return retVal
-
-    def save(self) :
-        # save default rating in yaml file
-        names_yaml = """object_names : {}""".format(list(self.__make_object.get_items()))
-        print(names_yaml)
-        names = yaml.safe_load(names_yaml)
-
-        with open(self.__pathMan.get_object_info_file(), 'w') as file :
-            yaml.dump(names, file)
 
     def run_last_mode(self):
         self.__mode_fn[self.__work_mode]()
@@ -197,6 +174,7 @@ class EditManager :
 
     def __cmd_select_mode_release(self) :
         self.__make_object.set_search_item('')
+        self.__make_object.set_items(self.__objectMan.get_object_names())
         self.__make_object.run()
 
     def __cmd_edit_mode_release(self) :
@@ -240,6 +218,8 @@ class EditManager :
         self.__targetMan.add_object(d_new_targets)
         print('datasets {}'.format(self.__targetMan))
 
+        self.__objectMan.set_object_names(self.__make_object.get_items())
+
     def mouse_wheel(self, event: object) :
         # respond to Linux or Windows wheel event
         # print('event {}'.format(event))
@@ -266,6 +246,6 @@ class EditManager :
     def set_ShowFrame(self, showFrame: object) :
         self.__showFrame = showFrame
 
-    def set_PathManager(self, pathManager) :
-        self.__pathMan = pathManager
-        self.__make_object.set_items(self.__get_object_names())
+    def set_ObjectManager(self, objectManager) :
+        self.__objectMan = objectManager
+        self.__make_object.set_items(self.__objectMan.get_object_names())

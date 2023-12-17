@@ -3,15 +3,25 @@
 from tkinter import *
 from tkinter import messagebox
 
+from frame.add_item import *
+
 
 class SelectObjectFrame :
     def __init__(self) :
-        self.__object_menu = None
+        self.__object_menu       = None
         self.__selected_obj_name = None
         self.__targetMan = None
-        self.__imageMan = None
-        self.__window = None
+        self.__imageMan  = None
+        self.__window    = None
         self.__last_item = -1
+
+        frame_title  = 'Rename object name'
+        search_title = 'New name'
+        search_item  = ''
+        check_similarly_item = False
+        self.__make_object = AddItemFrame(frame_title, search_title, search_item, check_similarly_item)
+        self.__make_object.set_cancel_fn(lambda : print('CANCEL'))
+        self.__make_object.set_add_fn(self.__rename_object)
 
     def init(self) :
         self.__set_item(self.__targetMan.get_default_object())
@@ -46,6 +56,7 @@ class SelectObjectFrame :
         self.__object_menu.add_command(label="Rename", command=self.__rename_object_button)
         self.__object_menu.add_command(label="Double", command=self.__double_object_button)
 
+
     def __print_object(self, lst_object: list) :
         # Add items to the Listbox
         for name in lst_object :
@@ -67,6 +78,8 @@ class SelectObjectFrame :
         self.__set_item(cursor)
 
     def __on_select_object_name(self, event: object) :
+        self.__object_menu.pack_forget()
+
         selected_index = self.__selected_obj_name.curselection()
         try :
             print("Selected object index {}, size {}".format(selected_index, self.__selected_obj_name.size()))
@@ -97,41 +110,17 @@ class SelectObjectFrame :
     def __double_object_button(self) :
         self.__targetMan.double_last_name()
 
-    def __rename_object(self) :
-        self.__targetMan.set_last_object_name(self.__obj_name_entry.get())
-        self.__rename_frame.withdraw()
-
-    def __cancel_name_object(self) :
-        self.__rename_frame.withdraw()
-
-    def __on_key_press_rename_obj(self, event) :
-        # print('event {}'.format(event.keysym))
-        if event.keysym == "Return" :
-            self.__rename_object()
+    def __rename_object(self, name: str) :
+        self.__targetMan.set_last_object_name(name)
+        self.__objectMan.set_object_names(self.__make_object.get_items())
 
     def __rename_object_button(self) :
-        print('rename_object {}'.format(None))
+        print('rename_object {}'.format(self.__targetMan.get_last_name()))
+        self.__make_object.set_search_item('')
+        self.__make_object.set_items(self.__objectMan.get_object_names())
+        self.__make_object.run()
 
-        self.__rename_frame = Toplevel(self.__window)
-        self.__rename_frame.title("Rename object name")
-        self.__rename_frame.bind("<KeyPress>", self.__on_key_press_rename_obj)
 
-        obj_name_label = Label(self.__rename_frame, text="Object name")
-        obj_name_label.pack(side=LEFT)
-
-        self.__obj_name_entry = Entry(self.__rename_frame, width=15, bd=5)
-        self.__obj_name_entry.insert(0, '')
-        self.__obj_name_entry.pack({"side" : "left"})
-
-        add_button = Button(self.__rename_frame)
-        add_button["text"] = "Rename"
-        add_button["command"] = self.__rename_object
-        add_button.pack({"side" : "left"})
-
-        cancel_button = Button(self.__rename_frame)
-        cancel_button["text"] = "Cancel"
-        cancel_button["command"] = self.__cancel_name_object
-        cancel_button.pack({"side" : "left"})
 
     def __on_click_release(self, event: object) :
         print('on_click_release {}'.format(event))
@@ -139,3 +128,8 @@ class SelectObjectFrame :
             self.__object_menu.tk_popup(event.x_root, event.y_root)
         finally :
             self.__object_menu.grab_release()
+
+    def set_ObjectManager(self, objectManager) :
+        self.__objectMan = objectManager
+        self.__make_object.set_items(self.__objectMan.get_object_names())
+
