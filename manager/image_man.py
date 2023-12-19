@@ -1,6 +1,7 @@
 #!/usr/local/bin/python
 
 import numpy as np
+from pathlib import Path
 from PIL import Image, ImageTk
 
 
@@ -199,6 +200,7 @@ class ImageManager :
 
     def save(self, filename: str) :
         if (self.__data != None):
+            Path(filename).touch(mode=0o666, exist_ok=True)
             self.__data.save(filename)
 
     def set_EditFrame(self, editFrame: object) :

@@ -150,9 +150,8 @@ def transformCartesian2Center(x0, y0, x1, y1, height, width) :
 
 def yolo_v5_format_import_fn(source_path, dest_path, targets, path_man) :
     filenames = Path(source_path).glob('*/images/*.*')
-    # dest_path = Path(dest_path)
-    row_file_path = Path(path_man.get_row_path())
-    target_file_path = Path(path_man.get_target_path())
+    row_file_path    = Path(path_man.get_row_input_path())
+    target_file_path = Path(path_man.get_row_target_path())
     print('row_file_path {}/ntarget_file_path {}'.format(row_file_path, target_file_path))
     row_file_path.mkdir(parents=True, exist_ok=True)
     target_file_path.mkdir(parents=True, exist_ok=True)
@@ -161,9 +160,6 @@ def yolo_v5_format_import_fn(source_path, dest_path, targets, path_man) :
     # filenames = list(map(lambda s: str(s), filenames))
     for filename in filenames :
         to_file_F = row_file_path.joinpath('name').with_name(filename.name)
-        # shutil.copy(str(filename), str(to_file))
-        # to_file.parent.mkdir(parents=True, exist_ok=True)
-        # to_file_F.touch(mode=0o666, exist_ok=True)
         to_file_F.write_bytes(filename.read_bytes())
         from_file_T = filename.with_suffix('.txt')
         from_file_T = rename_dir(from_file_T, 'images', 'labels')
@@ -183,13 +179,12 @@ def yolo_v5_format_import_fn(source_path, dest_path, targets, path_man) :
                              'coord y1' : y1}
             targets.add_object(d_new_targets)
             print('targets {}'.format(targets.get_object_size()))
-        to_file_T = path_man.get_target_filename(str(filename.name))
+        to_file_T = path_man.get_row_target_filename(str(filename.name))
         targets.save(to_file_T)
 
         print('filename {}'.format(filename))
         print('to file {}'.format(to_file_F))
         print('targets {}'.format(targets))
-    # print('import_fn {}'.format(filenames))
 
 
 def get_object_names(config_file) :

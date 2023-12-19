@@ -80,7 +80,7 @@ class ImportFrame :
         self.__source_path = str(self.__src_path_entry.get())
         self.__dest_path = str(self.__dest_path_entry.get())
         self.__pathManager.set_dest_path(self.__dest_path)
-        self.__pathManager.set_source_path(self.__pathManager.get_row_path())
+        self.__pathManager.set_source_path(self.__pathManager.get_row_input_path())
 
         datasets = TargetManager(self.__default_rating)
         self.__import_fn(self.__source_path, self.__dest_path, datasets, self.__pathManager)

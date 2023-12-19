@@ -18,7 +18,7 @@ class PathManager :
         self.__source_path = None
         self.__dest_path   = None
         self.__config_file = config_file
-        self.read_config_yaml_file()
+        self.__read_config_yaml_file()
 
         self.__filename    = None
 
@@ -43,8 +43,8 @@ class PathManager :
                    self.__input_suffix, self.__output_suffix)
         return strRet
 
-    def read_config_yaml_file(self) :
-        if (Path(self.__config_file).is_file()) :
+    def __read_config_yaml_file(self) :
+        if (Path(self.__config_file).is_file()):
             with open(self.__config_file) as file :
                 # The FullLoader parameter handles the conversion from YAML
                 # scalar values to Python the dictionary format
@@ -97,7 +97,7 @@ class PathManager :
             self.__description_path = 'description'
             self.__input_suffix  = '.png'
             self.__output_suffix = '.csv'
-            self.save_config(self.__config_file)
+            self.__save_config(self.__config_file)
 
     def save(self) :
         self.__save_config(self.__config_file)
@@ -169,11 +169,25 @@ class PathManager :
     def get_dest_path(self) :
         return self.__dest_path
 
-    def get_row_path(self) :
-        return str(Path(self.__dest_path).joinpath(self.__row_path, self.__input_path))
+    def get_row_input_path(self) :
+        path = Path(self.__dest_path).joinpath(self.__row_path, self.__input_path)
+        path.mkdir(parents=True, exist_ok=True)
+        return str(path)
 
-    def get_target_path(self) :
-        return str(Path(self.__dest_path).joinpath(self.__row_path, self.__target_path))
+    def get_row_target_path(self) :
+        path = Path(self.__dest_path).joinpath(self.__row_path, self.__target_path)
+        path.mkdir(parents=True, exist_ok=True)
+        return str(path)
+
+    def get_man_input_path(self) :
+        path = Path(self.__dest_path).joinpath(self.__man_path, self.__input_path)
+        path.mkdir(parents=True, exist_ok=True)
+        return str(path)
+
+    def get_man_target_path(self) :
+        path = Path(self.__dest_path).joinpath(self.__man_path, self.__target_path)
+        path.mkdir(parents=True, exist_ok=True)
+        return str(path)
 
     def get_filename(self) :
         return self.__filename
@@ -190,21 +204,32 @@ class PathManager :
         # print(filename)
         return str(filename)
 
+    def get_source_filename(self, filename=None):
+        if (filename is not None):
+            file = Path(self.__source_path).joinpath('name').with_name(filename)
+        elif (self.__filename is not None):
+            file = Path(self.__source_path).joinpath('name').with_name(self.__filename)
+        else:
+            file = None
+        # print(filename)
+        return str(file)
+
+
     def get_row_input_filename(self, filename=None): #filename: str
         if (filename is not None) :
-            file = Path(self.get_row_path()).joinpath('name').with_name(filename)
+            file = Path(self.get_row_input_path()).joinpath('name').with_name(filename)
         elif (self.__filename is not None) :
-            file = Path(self.get_row_path()).joinpath('name').with_name(self.__filename)
+            file = Path(self.get_row_input_path()).joinpath('name').with_name(self.__filename)
         else :
             file = None
         return str(file)
 
     def get_row_target_filename(self, filename=None): #filename: str
         if (filename is not None):
-            file = Path(self.get_target_path()).joinpath('name').with_name(filename).with_suffix(self.__output_suffix)
+            file = Path(self.get_row_target_path()).joinpath('name').with_name(filename).with_suffix(self.__output_suffix)
             Path(file).parent.mkdir(parents=True, exist_ok=True)
         elif (self.__filename is not None) :
-            file = Path(self.get_target_path()).joinpath('name').with_name(self.__filename).with_suffix(self.__output_suffix)
+            file = Path(self.get_row_target_path()).joinpath('name').with_name(self.__filename).with_suffix(self.__output_suffix)
             Path(file).parent.mkdir(parents=True, exist_ok=True)
         else :
             file = None
@@ -212,18 +237,18 @@ class PathManager :
 
     def get_man_input_filename(self, filename=None): #filename: str
         if (filename is not None) :
-            file = Path(self.__dest_path).joinpath(self.__man_path, self.__input_path, 'name').with_name(filename)
+            file = Path(self.get_man_input_path()).joinpath('name').with_name(filename)
         elif (self.__filename is not None) :
-            file = Path(self.__dest_path).joinpath(self.__man_path, self.__input_path, 'name').with_name(self.__filename)
+            file = Path(self.get_man_input_path()).joinpath('name').with_name(self.__filename)
         else :
             file = None
         return str(file)
 
     def get_man_target_filename(self, filename=None): #filename: str
         if (filename is not None) :
-            file = Path(self.__dest_path).joinpath(self.__man_path, self.__target_path, 'name').with_name(filename)
+            file = Path(self.get_man_target_path()).joinpath('name').with_name(filename)
         elif (self.__filename is not None) :
-            file = Path(self.__dest_path).joinpath(self.__man_path, self.__target_path, 'name').with_name(self.__filename)
+            file = Path(self.get_man_target_path()).joinpath('name').with_name(self.__filename)
         else :
             file = None
         return str(file)

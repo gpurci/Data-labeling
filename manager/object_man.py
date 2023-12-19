@@ -36,3 +36,4 @@ class ObjectManager :
 
         with open(self.__pathMan.get_object_info_file(), 'w') as file :
             yaml.dump(names, file)
+

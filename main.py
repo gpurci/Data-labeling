@@ -184,7 +184,7 @@ class Application(Frame) :
         self.path_man.set_ResolutionManager(self.resolution_man)
         self.path_man.set_ShowFrame(self.show_frame)
 
-        self.resolution_man.set_path_parent(self.path_man.get_description_parent())
+        self.resolution_man.set_path_parent(self.path_man.get_description_path())
 
         self.tools_man.set_PathManager(self.path_man)
         self.tools_man.set_NotebookManager(self.notebook_man)

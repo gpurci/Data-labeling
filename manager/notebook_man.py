@@ -84,6 +84,7 @@ class NotebookManager :
             self.__idx_tab = -1
 
     def add(self, filename: str) :
+        print('ADD filename {}'.format(filename))
         if (self.__pathMan.is_file(filename) == True):
             print('ADD tab {}'.format(filename))
             idx_filename = self.get_idx_filename(filename)
@@ -133,12 +134,13 @@ class NotebookManager :
         targetMan.set_ShowFrame(self.__showFrame)
 
     def __open(self, imageMan: object, targetMan: object) :
-        source_file = self.__pathMan.get_row_input_filename()
+        print('NotebookManager OPEN')
+        source_file = self.__pathMan.get_source_filename()
         print('source_file {}'.format(source_file))
         imageMan.read(source_file)
 
         dest_file = self.__pathMan.get_row_target_filename()
-        if Path(dest_file).is_file() :
+        if (Path(dest_file).is_file() == True) :
             print('True  -> dest_file {}'.format(dest_file))
             targetMan.read(dest_file)
         else :
@@ -198,7 +200,7 @@ class NotebookManager :
         print('default_rating {}, read {}'.format(self.__default_rating, open(self.config_file).read()))
 
     def __save_dataset(self):
-        filename = self.__pathMan.get_target_filename(self.get_filename())
+        filename = self.__pathMan.get_row_target_filename(self.get_filename())
         print('target_filename {}'.format(filename))
         self.targetMan().save(filename)
         filename = self.__pathMan.get_row_input_filename(self.get_filename())

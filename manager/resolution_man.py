@@ -27,7 +27,7 @@ class ResolutionManager :
             self.__width      = 512
             self.__height     = 384
             self.__resolution = self.__width / self.__height
-            self.save_config(self.__config_file)
+            self.__save_config(self.__config_file)
 
     def __get_config_filename(self) :
         return str(Path(self.__path_parent).joinpath('name').with_name(self.__filename))
