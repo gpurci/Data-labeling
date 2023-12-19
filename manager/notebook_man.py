@@ -36,7 +36,7 @@ class NotebookManager :
         self.__default_data()
 
     def __default_data(self) :
-        self.__def_imageMan = ImageManager(frame=[self.dataDimension.get_width(), self.dataDimension.get_height()])
+        self.__def_imageMan  = ImageManager(frame=self.dataDimension.get_size())
 
         self.__def_targetMan = TargetManager(self.__default_rating)
         self.__config(self.__def_imageMan, self.__def_targetMan)
@@ -95,7 +95,7 @@ class NotebookManager :
         if (idx_filename == -1):
             print('ADD idx_filename == -1 {}'.format(filename))
             self.__filenames.append(filename)
-            imageMan = ImageManager(frame=[self.dataDimension.get_width(), self.dataDimension.get_height()])
+            imageMan  = ImageManager(frame=self.dataDimension.get_size())
             targetMan = TargetManager(self.__default_rating)
             self.__images.append(imageMan)
             self.__targets.append(targetMan)
@@ -133,11 +133,11 @@ class NotebookManager :
         targetMan.set_ShowFrame(self.__showFrame)
 
     def __open(self, imageMan: object, targetMan: object) :
-        source_file = self.__pathMan.get_source_filename()
+        source_file = self.__pathMan.get_row_input_filename()
         print('source_file {}'.format(source_file))
         imageMan.read(source_file)
 
-        dest_file = self.__pathMan.get_dest_filename()
+        dest_file = self.__pathMan.get_row_target_filename()
         if Path(dest_file).is_file() :
             print('True  -> dest_file {}'.format(dest_file))
             targetMan.read(dest_file)
@@ -201,7 +201,7 @@ class NotebookManager :
         filename = self.__pathMan.get_target_filename(self.get_filename())
         print('target_filename {}'.format(filename))
         self.targetMan().save(filename)
-        filename = self.__pathMan.get_row_filename(self.get_filename())
+        filename = self.__pathMan.get_row_input_filename(self.get_filename())
         print('row_filename {}'.format(filename))
         if (Path(filename).is_file() == False):
             print('Save row_filename {}'.format(filename))

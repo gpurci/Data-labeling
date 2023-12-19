@@ -13,7 +13,7 @@ from frame.show import *
 from frame.tools import *
 
 from manager.edit_man import *
-from manager.hyperparameters_man import *
+from manager.resolution_man import *
 from manager.import_man.yolo_v5_format import *
 from manager.notebook_man import *
 from manager.tools_man import *
@@ -41,7 +41,7 @@ class TimeMonitor(object) :
 
 
 class FrameManager(object) :
-    def __init__(self, window) :
+    def __init__(self, window: object) :
         self.frame_files = Frame(window, height=800, width=50, bd=5)
         self.frame_files.pack(side=LEFT)
 
@@ -62,25 +62,26 @@ class FrameManager(object) :
 
 
 class WorkFrameDimension(object) :
-    def __init__(self, config_file) :
+    def __init__(self, config_file: str) :
         self.__height = None
-        self.__width = None
-        self.config_file = config_file
-        self.read_config_yaml_file(self.config_file)
+        self.__width  = None
+        self.__config_file = config_file
+        self.__read_config_yaml_file()
 
-    def read_config_yaml_file(self, config_file) :
-        if Path(config_file).is_file() :
-            with open(config_file) as file :
+    def __read_config_yaml_file(self) :
+        if (Path(self.__config_file).is_file()):
+            with open(self.__config_file) as file :
                 config_list = yaml.load(file, Loader=yaml.FullLoader)
-            self.__width = config_list['width']
+
+            self.__width  = config_list['width']
             self.__height = config_list['height']
             print(config_list)
         else :
-            self.__width = 1100
+            self.__width  = 1100
             self.__height = 550
 
     def get_size(self) :
-        return self.__width, self.__height
+        return (self.__width, self.__height)
 
     def get_center(self) :
         return int(self.__width / 2.), int(self.__height / 2.)

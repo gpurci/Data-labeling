@@ -98,6 +98,30 @@ class ImageManager :
         self.__editFrame.coords(cursor_x, cursor_y)
         self.__do_for_tkinter()
 
+
+    def read_standardization(self, filename: str, color: tuple) :
+        self.__data = Image.open(filename)
+        self.__size = np.array(self.__data.size, dtype=np.float32)
+        print("image_size W {}, H {}".format(*self.__size))
+        self.__do_calc_zoom()
+
+        cursor_x, cursor_y = self.get_start_cursor()
+
+        new_size    = np.array(self.__size * self.__zoom, dtype=np.int32)
+        print("W {}, H {}".format(*new_size))
+        self.__data = self.__data.resize(new_size)
+
+        width, height = new_size
+          
+        new_width  = width  + 2 * cursor_x
+        new_height = height + 2 * cursor_y
+          
+        result = Image.new(self.__data.mode, (new_width, new_height), color) 
+          
+        result.paste(self.__data, (cursor_x, cursor_y))
+        self.__data = result
+
+
     def do_RGB_image(self, shape: tuple, color: tuple) :
         #to do
         img = np.ones((10, 10, 3))  # d1d8e3

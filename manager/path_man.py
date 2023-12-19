@@ -3,241 +3,240 @@
 from pathlib import Path
 import yaml
 import numpy as np
+import re
 
 
 class PathManager :
-    def __init__(self, config_file) :
-        self.output_suffix = None
-        self.input_suffix  = None
-        self.description_parent = None
-        self.output_parent    = None
-        self.input_parent_man = None
-        self.input_parent_row = None
-        self.source_path   = None
-        self.dest_path     = None
-        self.config_file   = config_file
-        self.read_config_yaml_file(self.config_file)
-        self.filename    = None
-        self.file_suffix = None
+    def __init__(self, config_file: str) :
+        self.__output_suffix = None # target filename suffix
+        self.__input_suffix  = None # input  filename suffix
+        self.__description_path = None # all data description
+        self.__input_path       = None
+        self.__target_path      = None
+        self.__man_path    = None
+        self.__row_path    = None
+        self.__source_path = None
+        self.__dest_path   = None
+        self.__config_file = config_file
+        self.read_config_yaml_file()
 
-        self.resolutionMan = None
-        self.showFrame = None
+        self.__filename    = None
+
+        self.__resolutiOnman = None
+        self.__showframe     = None
 
     def __str__(self) :
         strRet = """
         source_path : {}
         dest_path   : {}
-        input_parent_row : {}
-        input_parent_man : {}
-        output_parent    : {}
-        description_parent : {}
+        row_path    : {}
+        man_path    : {}
+        input_path  : {}
+        target_path : {}
+        description_path : {}
         input_suffix     : {}
         output_suffix    : {}
-        """.format(self.source_path, self.dest_path,
-                   self.input_parent_row, self.input_parent_man, self.output_parent, self.description_parent,
-                   self.input_suffix, self.output_suffix)
+        """.format(self.__source_path,  self.__dest_path,
+                   self.__row_path,     self.__man_path, 
+                   self.__input_path,   self.__target_path, 
+                   self.__description_path,
+                   self.__input_suffix, self.__output_suffix)
         return strRet
 
-    def read_config_yaml_file(self, config_file: str) :
-        if (Path(config_file).is_file()) :
-            with open(config_file) as file :
+    def read_config_yaml_file(self) :
+        if (Path(self.__config_file).is_file()) :
+            with open(self.__config_file) as file :
                 # The FullLoader parameter handles the conversion from YAML
                 # scalar values to Python the dictionary format
                 config_list = yaml.load(file, Loader=yaml.FullLoader)
 
             if ('source_path' in config_list) :
-                self.source_path = config_list['source_path']
+                self.__source_path = config_list['source_path']
             else :
-                self.source_path = '/.'
+                self.__source_path = '/.'
             if ('dest_path' in config_list) :
-                self.dest_path = config_list['dest_path']
+                self.__dest_path = config_list['dest_path']
             else :
-                self.dest_path = '/.'
-            if ('input_parent_row' in config_list) :
-                self.input_parent_row = config_list['input_parent_row']
+                self.__dest_path = '/.'
+            if ('row_path' in config_list) :
+                self.__row_path = config_list['row_path']
             else :
-                self.input_parent_row = 'row'
-            if ('input_parent_man' in config_list) :
-                self.input_parent_man = config_list['input_parent_man']
+                self.__row_path = 'row'
+            if ('man_path' in config_list) :
+                self.__man_path = config_list['man_path']
             else :
-                self.input_parent_man = 'man'
-            if ('output_parent' in config_list) :
-                self.output_parent = config_list['output_parent']
+                self.__man_path = 'man'
+            if ('input_path' in config_list) :
+                self.__input_path = config_list['input_path']
             else :
-                self.output_parent = 'targets'
-            if ('description_parent' in config_list) :
-                self.description_parent = config_list['description_parent']
+                self.__input_path = 'inputs'
+            if ('target_path' in config_list) :
+                self.__target_path = config_list['target_path']
             else :
-                self.description_parent = 'description'
+                self.__target_path = 'targets'
+            if ('description_path' in config_list) :
+                self.__description_path = config_list['description_path']
+            else :
+                self.__description_path = 'description'
             if ('input_suffix' in config_list) :
-                self.input_suffix = config_list['input_suffix']
+                self.__input_suffix = config_list['input_suffix']
             else :
-                self.input_suffix = '.png'
+                self.__input_suffix = '.png'
             if ('output_suffix' in config_list) :
-                self.output_suffix = config_list['output_suffix']
+                self.__output_suffix = config_list['output_suffix']
             else :
-                self.output_suffix = '.csv'
+                self.__output_suffix = '.csv'
             print(config_list)
         else :
-            self.source_path = '/.'
-            self.dest_path   = '/.'
-            self.input_parent_row = 'row'
-            self.input_parent_man = 'man'
-            self.output_parent      = 'targets'
-            self.description_parent = 'description'
-            self.input_suffix  = '.png'
-            self.output_suffix = '.csv'
-            self.save_config(config_file)
+            self.__source_path = '/.'
+            self.__dest_path   = '/.'
+            self.__row_path = 'row'
+            self.__man_path = 'man'
+            self.__target_path = 'targets'
+            self.__input_path  = 'inputs'
+            self.__description_path = 'description'
+            self.__input_suffix  = '.png'
+            self.__output_suffix = '.csv'
+            self.save_config(self.__config_file)
 
     def save(self) :
-        self.save_config(self.config_file)
+        self.__save_config(self.__config_file)
 
-    def save_config(self, config_file: str) :
+    def __save_config(self, config_file: str) :
         # create a config file
         Path(config_file).touch(mode=0o666, exist_ok=True)
         # save default rating in yaml file
         names_yaml = """
         source_path : {}
         dest_path   : {}
-        input_parent_row : {}
-        input_parent_man : {}
-        output_parent      : {}
-        description_parent : {}
-        input_suffix  : {}
-        output_suffix : {}
-        """.format(self.source_path, self.dest_path,
-                   self.input_parent_row, self.input_parent_man, self.output_parent, self.description_parent,
-                   self.input_suffix, self.output_suffix)
+        row_path    : {}
+        man_path    : {}
+        input_path  : {}
+        target_path : {}
+        description_path : {}
+        input_suffix     : {}
+        output_suffix    : {}
+        """.format(self.__source_path,  self.__dest_path,
+                   self.__row_path,     self.__man_path, 
+                   self.__input_path,   self.__target_path, 
+                   self.__description_path,
+                   self.__input_suffix, self.__output_suffix)
         names = yaml.safe_load(names_yaml)
 
         with open(config_file, 'w') as file :
             yaml.dump(names, file)
 
     def set_source_path(self, source_path: str) :
-        self.source_path = source_path
-        self.showFrame.set_show_option(self.showFrame.SHOW_FILENAMES)
+        self.__source_path = source_path
+        self.__showframe.set_show_option(self.__showframe.SHOW_FILENAMES)
 
     def set_dest_path(self, dest_path: str) :
-        tmp_path = Path(dest_path)
-        if tmp_path.parents[0] != self.output_parent :
-            self.dest_path = dest_path
+        patern = r"(?P<dest_path>.+)/({}|{})/{}$".format(self.__man_path, self.__row_path, self.__input_path)
+        print(patern)
+
+        match_patern = re.search(patern, dest_path)
+        if (match_patern == None) :
+            self.__dest_path = dest_path
         else :
-            self.dest_path = str(tmp_path.root)
-        print('set_dest_path {}'.format(self.dest_path))
-        self.resolutionMan.set_path_parent(self.get_description_parent())
+            self.__dest_path = match_patern['dest_path']
+        print('set_dest_path {}'.format(self.__dest_path))
+        self.__resolutiOnman.set_path_parent(self.get_description_path())
 
     def set_filename(self, filename: str) :
-        self.filename = filename
+        self.__filename = filename
 
-    def is_file(self, filename: str) :
-        if (Path(self.source_path).joinpath('name').with_name(filename).is_file() == True):
-            self.filename = filename
+    def is_file(self, filename: str):
+        self.__filename = filename
+        if (Path(self.__source_path).joinpath('name').with_name(filename).is_file() == True):
             retVal = True
         else:
             retVal = False
         return retVal
 
-    def set_file_suffix(self, file_suffix: str) :
-        self.file_suffix = file_suffix
-
     def get_source_path(self) :
-        return self.source_path
+        return self.__source_path
 
     def get_source_files(self) :
-        files = Path(self.source_path).glob('*')
+        files = Path(self.__source_path).glob('*')
         files = list(map(lambda file: str(file.name), files))
         return np.array(files)
 
-    def get_dest_files(self) :
-        files = Path(self.dest_path).joinpath(self.input_parent_row).glob('*')
+    def get_row_files(self) :
+        files = Path(self.__dest_path).joinpath(self.__row_path, self.__input_path).glob('*')
         files = list(map(lambda file: str(file.name), files))
         return np.array(files)
 
     def get_dest_path(self) :
-        return self.dest_path
+        return self.__dest_path
 
     def get_row_path(self) :
-        return str(Path(self.dest_path).joinpath(self.input_parent_row))
+        return str(Path(self.__dest_path).joinpath(self.__row_path, self.__input_path))
 
     def get_target_path(self) :
-        return str(Path(self.dest_path).joinpath(self.output_parent))
+        return str(Path(self.__dest_path).joinpath(self.__row_path, self.__target_path))
 
     def get_filename(self) :
-        return self.filename
+        return self.__filename
 
-    def get_file_suffix(self) :
-        return self.file_suffix
-
-    def get_filename_with_suffixname(self, suffix:str, filename=None) : #filename: str
+    def get_filename_with_suffixname(self, suffixname:str, filename=None) : #filename: str
         if (filename is not None):
             filename = Path(filename)
-            filename = filename.with_stem(filename.stem + suffix)
-        elif (self.filename is not None):
-            filename = Path(self.filename)
-            filename = filename.with_stem(filename.stem + suffix)
+            filename = filename.with_stem(filename.stem + suffixname)
+        elif (self.__filename is not None):
+            filename = Path(self.__filename)
+            filename = filename.with_stem(filename.stem + suffixname)
         else:
-            filename = 'NONE'
+            filename = None
         # print(filename)
         return str(filename)
 
-    def get_saved_source_filename(self) :
-        if (self.filename is not None):
-            source_file = Path(self.source_path).joinpath(self.input_parent, 'name').with_name(
-                self.filename).with_suffix(self.input_suffix)
-        else :
-            source_file = None
-        return str(source_file)
-
-    def get_source_filename(self) :
-        if (self.filename is not None) :
-            if (self.file_suffix is not None) :
-                filename = Path(self.filename)
-                filename = filename.with_stem(filename.stem + self.file_suffix)
-                self.file_suffix = None
-            else :
-                filename = self.filename
-            source_file = Path(self.source_path).joinpath('name').with_name(filename)
-        else :
-            source_file = None
-        return str(source_file)
-
-    def get_row_filename(self, filename=None): #filename: str
+    def get_row_input_filename(self, filename=None): #filename: str
         if (filename is not None) :
-            file = Path(self.dest_path).joinpath(self.input_parent_row, 'name').with_name(filename)
-        elif (self.filename is not None) :
-            file = Path(self.dest_path).joinpath(self.input_parent_row, 'name').with_name(self.filename)
+            file = Path(self.get_row_path()).joinpath('name').with_name(filename)
+        elif (self.__filename is not None) :
+            file = Path(self.get_row_path()).joinpath('name').with_name(self.__filename)
         else :
             file = None
         return str(file)
 
-    def get_target_filename(self, filename=None): #filename: str
-        if (filename is not None) :
-            file = Path(self.dest_path).joinpath(self.output_parent, 'name').with_name(filename).with_suffix(self.output_suffix)
+    def get_row_target_filename(self, filename=None): #filename: str
+        if (filename is not None):
+            file = Path(self.get_target_path()).joinpath('name').with_name(filename).with_suffix(self.__output_suffix)
             Path(file).parent.mkdir(parents=True, exist_ok=True)
-        elif (self.filename is not None) :
-            file = Path(self.dest_path).joinpath(self.output_parent, 'name').with_name(self.filename).with_suffix(self.output_suffix)
+        elif (self.__filename is not None) :
+            file = Path(self.get_target_path()).joinpath('name').with_name(self.__filename).with_suffix(self.__output_suffix)
             Path(file).parent.mkdir(parents=True, exist_ok=True)
         else :
             file = None
         return str(file)
 
-    def get_dest_filename(self) :
-        if (self.filename is not None) :
-            file = Path(self.dest_path).joinpath(self.output_parent, 'name').with_name(self.filename).with_suffix(self.output_suffix)
-            Path(file).parent.mkdir(parents=True, exist_ok=True)
+    def get_man_input_filename(self, filename=None): #filename: str
+        if (filename is not None) :
+            file = Path(self.__dest_path).joinpath(self.__man_path, self.__input_path, 'name').with_name(filename)
+        elif (self.__filename is not None) :
+            file = Path(self.__dest_path).joinpath(self.__man_path, self.__input_path, 'name').with_name(self.__filename)
+        else :
+            file = None
+        return str(file)
+
+    def get_man_target_filename(self, filename=None): #filename: str
+        if (filename is not None) :
+            file = Path(self.__dest_path).joinpath(self.__man_path, self.__target_path, 'name').with_name(filename)
+        elif (self.__filename is not None) :
+            file = Path(self.__dest_path).joinpath(self.__man_path, self.__target_path, 'name').with_name(self.__filename)
         else :
             file = None
         return str(file)
 
     def get_object_info_file(self) :
-        file = str(Path(self.dest_path).joinpath(self.description_parent, 'object_info.yaml'))
-        return file
+        file = Path(self.__dest_path).joinpath(self.__description_path, 'object_info.yaml')
+        return str(file)
 
-    def get_description_parent(self) :
-        tmp_description_parent = str(Path(self.dest_path).joinpath(self.description_parent))
-        return tmp_description_parent
+    def get_description_path(self) :
+        file = Path(self.__dest_path).joinpath(self.__description_path)
+        return str(file)
 
-    def exist_filename(self, exist_filenames: 'array', filename:str):
+    def exist_filename(self, exist_filenames: 'array', filename: str):
         size_similar_item = np.argwhere(exist_filenames == filename).reshape(-1).shape[0]
         if (size_similar_item > 0):
             retVal = True
@@ -265,7 +264,7 @@ class PathManager :
 
 
     def set_ResolutionManager(self, resolutionMan: object) :
-        self.resolutionMan = resolutionMan
+        self.__resolutiOnman = resolutionMan
 
     def set_ShowFrame(self, showFrame: object) :
-        self.showFrame = showFrame
+        self.__showframe = showFrame

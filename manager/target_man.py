@@ -207,6 +207,12 @@ class TargetManager(object) :
         print('valid_idx', valid_idx)
         return valid_idx
 
+    def resize_coord(self, zoom: float):
+        self.__df_targets['coord x0'] = np.array(self.__df_targets['coord x0'] * zoom, dtype=np.int32)
+        self.__df_targets['coord x1'] = np.array(self.__df_targets['coord x1'] * zoom, dtype=np.int32)
+        self.__df_targets['coord y0'] = np.array(self.__df_targets['coord y0'] * zoom, dtype=np.int32)
+        self.__df_targets['coord y1'] = np.array(self.__df_targets['coord y1'] * zoom, dtype=np.int32)
+
     def read(self, filename: str) :
         self.__df_targets = pd.read_csv(filename,
                                         sep=',',

@@ -1,8 +1,9 @@
-description_parent: description
+description_path: description
 dest_path: /home/gheorghe/Desktop/s_AI/s_AI/target_dataset
-input_parent_man: man
-input_parent_row: row
+man_path: man
+row_path: row
 input_suffix: .png
-output_parent: targets
+target_path: targets
+input_path: inputs
 output_suffix: .csv
 source_path: /home/gheorghe/Desktop/s_AI/s_AI/gen_data/8K
