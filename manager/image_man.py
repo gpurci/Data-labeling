@@ -57,14 +57,15 @@ class ImageManager :
         print('do_calc_zoom size_frame {} WH format'.format(self.__size_frame))
         print('do_calc_zoom image_size {} WH format'.format(self.__size))
         print('do_calc_zoom zoom W {} H {}'.format(fX, fY))
-        if fY >= 1 and fX >= 1 :
-            if fY > fX :
+        self.__zoom = 1.
+        if ((fY >= 1) and (fX >= 1)) :
+            if (fY < fX) :
                 self.__zoom = fY
             else :
                 self.__zoom = fX
 
-        if fY < 1 or fX < 1 :
-            if fY < fX :
+        if ((fY < 1) or (fX < 1)) :
+            if (fY < fX) :
                 self.__zoom = fY
             else :
                 self.__zoom = fX
@@ -110,17 +111,15 @@ class ImageManager :
 
         new_size    = np.array(self.__size * self.__zoom, dtype=np.int32)
         print("W {}, H {}".format(*new_size))
-        self.__data = self.__data.resize(new_size)
 
-        width, height = new_size
+        fr_width, fr_height = self.__size_frame
+        fr_width, fr_height = int(fr_width), int(fr_height)
+
+        img = Image.new(self.__data.mode, (fr_width, fr_height), color) 
           
-        new_width  = width  + 2 * cursor_x
-        new_height = height + 2 * cursor_y
-          
-        result = Image.new(self.__data.mode, (new_width, new_height), color) 
-          
-        result.paste(self.__data, (cursor_x, cursor_y))
-        self.__data = result
+        img.paste(self.__data.resize(new_size), (cursor_x, cursor_y))
+        self.__data = img
+        print('standardization W {}, H {}'.format(*self.__data.size))
 
 
     def do_RGB_image(self, shape: tuple, color: tuple) :
@@ -163,13 +162,13 @@ class ImageManager :
     def calc_coord_from_target(self, box: tuple) :
         print('calc_coord_from_target (x0 {}, y0 {}, x1 {}, y1 {})'.format(*box))
         dW, dH = self.__prev_cursor
-        print('dW {}, dH {}'.format(dW, dH))
+        print('dW {}, dH {}, zoom {}'.format(dW, dH, self.__zoom))
         (x0, y0, x1, y1) = np.array(box, dtype=np.float32) * self.__zoom
         x0, x1 = x0 + dW, x1 + dW
         y0, y1 = y0 + dH, y1 + dH
 
         print('(x0 {}, y0 {}, x1 {}, y1 {})'.format(x0, y0, x1, y1))
-        return x0, y0, x1, y1
+        return (x0, y0, x1, y1)
 
     def calc_coord_to_target(self, box: tuple) :
         print('calc_coord_to_target (x0 {}, y0 {}, x1 {}, y1 {})'.format(*box))

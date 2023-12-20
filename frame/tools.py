@@ -47,7 +47,7 @@ class ToolsFrame:
         print('file with suffix {}'.format(filename))
         _tabs_file   = self.__notebookMan.get_tabs()
         _source_file = self.__pathMan.get_source_files()
-        _row_file    = self.__pathMan.get_row_files()
+        _row_file    = self.__pathMan.get_input_files()
         _files = np.concatenate((_tabs_file, _source_file, _row_file), axis=None)
         _files = np.unique(_files, return_index=False, return_inverse=False, return_counts=False, axis=None, equal_nan=False)
         print('_files {}'.format(_files))

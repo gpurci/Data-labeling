@@ -109,21 +109,21 @@ class NotebookManager :
 
 
     def imageMan(self) :
-        if self.__idx_tab >= 0 :
+        if (self.__idx_tab >= 0) :
             retVal = self.__images[self.__idx_tab]
         else :
             retVal = self.__def_imageMan
         return retVal
 
     def targetMan(self) :
-        if self.__idx_tab >= 0 :
+        if (self.__idx_tab >= 0) :
             retVal = self.__targets[self.__idx_tab]
         else :
             retVal = self.__def_targetMan
         return retVal
 
     def get_filename(self) :
-        if self.__idx_tab >= 0 :
+        if (self.__idx_tab >= 0) :
             retVal = self.__filenames[self.__idx_tab]
         else :
             retVal = 'Not files'
@@ -139,7 +139,7 @@ class NotebookManager :
         print('source_file {}'.format(source_file))
         imageMan.read(source_file)
 
-        dest_file = self.__pathMan.get_row_target_filename()
+        dest_file = self.__pathMan.get_target_filename()
         if (Path(dest_file).is_file() == True) :
             print('True  -> dest_file {}'.format(dest_file))
             targetMan.read(dest_file)
@@ -160,7 +160,7 @@ class NotebookManager :
         self.__showFrame.set_data(imageMan, targetMan)
 
     def delete_tab(self, idx: int) :
-        if (idx >= 0) and (idx < self.get_tab_size()) :
+        if ((idx >= 0) and (idx < self.get_tab_size())) :
             del self.__images[idx]
             del self.__targets[idx]
             del self.__filenames[idx]
@@ -200,14 +200,18 @@ class NotebookManager :
         print('default_rating {}, read {}'.format(self.__default_rating, open(self.config_file).read()))
 
     def __save_dataset(self):
-        filename = self.__pathMan.get_row_target_filename(self.get_filename())
-        print('target_filename {}'.format(filename))
-        self.targetMan().save(filename)
-        filename = self.__pathMan.get_row_input_filename(self.get_filename())
-        print('row_filename {}'.format(filename))
-        if (Path(filename).is_file() == False):
-            print('Save row_filename {}'.format(filename))
-            self.imageMan().save(filename)
+        if (self.__idx_tab >= 0) :
+            filename = self.__pathMan.get_target_filename(self.get_filename())
+            print('target_filename {}'.format(filename))
+            self.targetMan().save(filename)
+            filename = self.__pathMan.get_input_filename(self.get_filename())
+            print('row_filename {}'.format(filename))
+            if (Path(filename).is_file() == False):
+                print('Save row_filename {}'.format(filename))
+                self.imageMan().save(filename)
+        else:
+            # not open tab
+            pass
 
     def save(self):
         self.__save_configs()

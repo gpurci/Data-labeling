@@ -1,0 +1,6 @@
+managementul fisierellor
+
+- source_path - path-ul ce indica sursa datelor targetate, sursa poate fi orice directorie sau directoriile generate la targetarea datelor
+				sunt generate cateva 2 foldere (row si man)
+					row - este folderul unde se salveaza datele (feature si target) in formatul lor neschimbat (ex: imaginile crude (input) in format WxH unde W si H pot avea orice valoare pozitiva mai mare decat 0 si labelul pentru imagine (target))
+					man - este folderul unde se salveaza datele (feature si target) manipulate dupa un standard fix (ex: imaginile  (input) in format standard WxH (512x256) unde W=512 si H=256 si labelul pentru imagine (target))

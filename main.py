@@ -18,6 +18,7 @@ from manager.import_man.yolo_v5_format import *
 from manager.notebook_man import *
 from manager.tools_man import *
 from manager.object_man import *
+from manager.standardization import *
 
 
 class TimeMonitor(object) :
@@ -110,6 +111,7 @@ class Application(Frame) :
         self.filemenu.add_command(label="Save", command=self.none_fn)
         self.filemenu.add_command(label="Save as...", command=self.none_fn)
         self.filemenu.add_command(label="Destination", command=MenuDestinationFrame(self.path_man))
+        self.filemenu.add_command(label="Standardize", command=Standardization(self.path_man, self.resolution_man))
 
         self.filemenu.add_separator()
 

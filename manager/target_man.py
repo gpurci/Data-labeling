@@ -207,11 +207,15 @@ class TargetManager(object) :
         print('valid_idx', valid_idx)
         return valid_idx
 
-    def resize_coord(self, zoom: float):
-        self.__df_targets['coord x0'] = np.array(self.__df_targets['coord x0'] * zoom, dtype=np.int32)
-        self.__df_targets['coord x1'] = np.array(self.__df_targets['coord x1'] * zoom, dtype=np.int32)
-        self.__df_targets['coord y0'] = np.array(self.__df_targets['coord y0'] * zoom, dtype=np.int32)
-        self.__df_targets['coord y1'] = np.array(self.__df_targets['coord y1'] * zoom, dtype=np.int32)
+    def resize_coord(self, fn: 'function'):
+        print('START resize_coord')
+        print(self)
+        for idx in range(self.__DEFAULT_OBJECT+1, self.get_object_size()):
+            box = self.get_coord(idx)
+            box = fn(box)
+            self.set_coord(idx, box)
+        print(self)
+        print('END resize_coord')
 
     def read(self, filename: str) :
         self.__df_targets = pd.read_csv(filename,
@@ -225,7 +229,7 @@ class TargetManager(object) :
                                             'coord y0' : 'int',
                                             'coord y1' : 'int'
                                         })
-        print('columns {}'.format(self.__df_targets.columns))
+        #print('columns {}'.format(self.__df_targets.columns))
 
         self.__init_selected_object()
         self.__init_last_name()
