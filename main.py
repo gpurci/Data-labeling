@@ -20,7 +20,6 @@ from manager.tools_man import *
 from manager.object_man import *
 from manager.standardization import *
 
-
 class TimeMonitor(object) :
     def __init__(self) :
         self.prev_t = self.time()
@@ -76,6 +75,10 @@ class WorkFrameDimension(object) :
 
             self.__width  = config_list['width']
             self.__height = config_list['height']
+            self.__resolution = config_list['resolution']
+
+            #if (isinstance((self.__resolution, str)) == True):
+
             print(config_list)
         else :
             self.__width  = 1100

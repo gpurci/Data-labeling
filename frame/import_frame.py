@@ -13,11 +13,11 @@ class ImportFrame :
         self.__windows = None
         self.__config_file = config_file
 
-        self.__pathManager = pathManager
+        self.__pathMan = pathManager
         self.set_windows(windows)
 
-        self.__source_path = self.__pathManager.get_source_path()
-        self.__dest_path = self.__pathManager.get_dest_path()
+        self.__source_path = self.__pathMan.get_source_path()
+        self.__dest_path = self.__pathMan.get_dest_path()
 
     def set_windows(self, windows: object) :
         self.__windows = windows
@@ -79,18 +79,18 @@ class ImportFrame :
         self.__read_config_yaml_file()
         self.__source_path = str(self.__src_path_entry.get())
         self.__dest_path = str(self.__dest_path_entry.get())
-        self.__pathManager.set_dest_path(self.__dest_path)
-        self.__pathManager.set_source_path(self.__pathManager.get_input_path())
+        self.__pathMan.set_dest_path(self.__dest_path)
+        self.__pathMan.set_source_path(self.__pathMan.get_input_path())
 
         datasets = TargetManager(self.__default_rating)
-        self.__import_fn(self.__source_path, self.__dest_path, datasets, self.__pathManager)
+        self.__import_fn(self.__source_path, self.__dest_path, datasets, self.__pathMan)
 
     def __source_path_UI(self, window: object) :
         src_path_label = Label(window, text="Source path", width=10)
         src_path_label.pack(side=LEFT)
 
         self.__src_path_entry = Entry(window, width=100, bd=1)
-        self.__src_path_entry.insert(0, self.__pathManager.get_source_path())
+        self.__src_path_entry.insert(0, self.__pathMan.get_source_path())
         self.__src_path_entry.pack({"side" : "left"})
 
         change_src_path_button = Button(window)
@@ -103,7 +103,7 @@ class ImportFrame :
         dest_path_label.pack(side=LEFT)
 
         self.__dest_path_entry = Entry(window, width=100, bd=1)
-        self.__dest_path_entry.insert(0, self.__pathManager.get_dest_path())
+        self.__dest_path_entry.insert(0, self.__pathMan.get_dest_path())
         self.__dest_path_entry.pack({"side" : "left"})
 
         change_dest_path_button = Button(window)

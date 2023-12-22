@@ -22,10 +22,12 @@ class NotebookFrame(object) :
             print('__change_tab  {}'.format(select_tab_val))
             index = self.__note.index(select_tab_val)
             print('__change_tab index {}'.format(index))
-            self.__notebookMan.select_tab(index)
+            name = self.__notebookMan.get_tab_name(index)
+            self.__notebookMan.select_tab(name)
 
     def select_tab(self, index: int):
-        self.__note.select(index)
+        if (index >=0):
+            self.__note.select(index)
 
 
     def run(self) :
@@ -93,7 +95,8 @@ class CustomNotebook(ttk.Notebook) :
 
         if self._active == index :
             self.forget(index)
-            self.__notebookMan.delete_tab(index)
+            name = self.__notebookMan.get_tab_name(index)
+            self.__notebookMan.delete_tab(name)
             self.event_generate("<<NotebookTabClosed>>")
 
         self.state(["!pressed"])

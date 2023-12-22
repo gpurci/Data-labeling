@@ -170,7 +170,6 @@ class PathManager :
         self.__filename = filename
 
     def is_file(self, filename: str):
-        self.__filename = filename
         if (Path(self.__source_path).joinpath('name').with_name(filename).is_file() == True):
             retVal = True
         else:

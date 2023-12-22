@@ -1,9 +1,9 @@
 description_path: description
-dest_path: /home/gheorghe/Desktop/s_AI/s_AI/target_dataset/man
+dest_path: /home/gheorghe/Desktop/s_AI/s_AI/target_dataset/row
 input_path: inputs
 input_suffix: .png
 man_path: man
 output_suffix: .csv
 row_path: row
-source_path: /home/gheorghe/Desktop/s_AI/s_AI/target_dataset/man/inputs
+source_path: /home/gheorghe/Desktop/s_AI/s_AI/gen_data/8K
 target_path: targets

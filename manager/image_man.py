@@ -52,6 +52,9 @@ class ImageManager :
     def get_size(self) :
         return self.__data.size
 
+    def get_data(self) :
+        return self.__data
+
     def __do_calc_zoom(self) :
         fX, fY = self.__size_frame / self.__size
         print('do_calc_zoom size_frame {} WH format'.format(self.__size_frame))

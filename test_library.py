@@ -1,35 +1,31 @@
+import time
+import tkinter.ttk as ttk
 import tkinter as tk
 
-class Example(tk.Frame):
-    def __init__(self, root):
-        tk.Frame.__init__(self, root)
+root=tk.Tk()
 
-        self.menubar = tk.Menu()
-        self.test1Menu = tk.Menu()
-        self.test2Menu = tk.Menu()
-        self.menubar.add_cascade(label="Test1", menu=self.test1Menu)
-        self.menubar.add_cascade(label="Test2", menu=self.test2Menu)
+root.config(width=300,height=220)
 
-        self.test1Menu.add_command(label="Enable Test2", command=self.enable_menu)
-        self.test1Menu.add_command(label="Disable Test2", command=self.disable_menu)
-        self.test2Menu.add_command(label="One")
-        self.test2Menu.add_command(label="Two")
-        self.test2Menu.add_command(label="Three")
-        self.test2Menu.add_separator()
-        self.test2Menu.add_command(label="Four")
-        self.test2Menu.add_command(label="Five")
+notebook=ttk.Notebook(root)
+notebook.place(x=0,y=0)
 
-        root.configure(menu=self.menubar)
+tabList=[]
+i=0
+while i<6:    
+     tabList.append(tk.Frame(root))
+     tabList[i].config(width=300,height=150,background='white')
+     i+=1
 
-    def enable_menu(self):
-        self.menubar.entryconfig("Test2", state="normal")
+i=0
+while i<6: 
+    notebook.add(tabList[i],text='tab'+str(i))
+    i+=1
 
-    def disable_menu(self):
-        self.menubar.entryconfig("Test2", state="disabled")
+def fLoopTabs():
+    notebook.select('tab'+str(3))
+    #Here goes the Screenshot function
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    root.geometry("500x500")
-    app = Example(root)
-    app.pack(fill="both", expand=True)
-    root.mainloop()
+button=ttk.Button(root,text='Loop',command=fLoopTabs)
+button.place(x=20,y=180)
+
+root.mainloop()

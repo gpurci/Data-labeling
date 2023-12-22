@@ -41,7 +41,7 @@ class ToolsFrame:
 
     def __new_file(self):
         suffixname = self.__notebookMan.targetMan().get_last_name()
-        filename   = self.__notebookMan.get_filename()
+        filename   = self.__notebookMan.get_tab_name()
         print('TOOLS NEW FILE, actual filename {} suffixname {}'.format(filename, suffixname))
         filename   = self.__pathMan.get_filename_with_suffixname('_'+suffixname, filename)
         print('file with suffix {}'.format(filename))
