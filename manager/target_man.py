@@ -119,6 +119,9 @@ class TargetManager(object) :
     def get_names(self) :
         return list(self.__df_targets['names'])
 
+    def get_object_name(self, key: int) :
+        return self.__df_targets['names'][key]
+
     def get_default_object(self) :
         return self.__DEFAULT_OBJECT
 
@@ -321,6 +324,24 @@ class TargetManager(object) :
     def save(self, filename: str) :
         # save target data to csv file
         self.__save_targets(filename)
+
+    def find_object_by_coord(self, coord: tuple):
+        print('find_object_by_coord {}, coord {}, size {}'.format('START', coord, self.get_object_size()))
+        x, y = coord
+        lst_item = []
+        for idx in range(self.__DEFAULT_OBJECT+1, self.get_object_size()):
+            (x0, y0, x1, y1) = self.get_coord(idx)
+            #print('name {}, (x0 {}, y0 {}, x1 {}, y1 {})'.format(self.get_object_name(idx), x0, y0, x1, y1))
+            if ((x >= x0) and (x <= x1) and (y >= y0) and (y <= y1)):
+                #print('find_object_by_coord idx {}, name {}'.format(idx, self.get_object_name(idx)))
+                lst_item.append(idx)
+
+        if (len(lst_item) == 0):
+            lst_item = None
+        return lst_item
+                
+
+
 
     def set_ShowFrame(self, showFrame: object) :
         self.__showFrame = showFrame

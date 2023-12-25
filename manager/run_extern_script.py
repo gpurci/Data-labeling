@@ -28,8 +28,6 @@ class RunExternScript(object) :
         self.__imageMan  = ImageManager(frame=self.__resolutionMan.get_size())
         self.__targetMan = TargetManager(0)
 
-        self.update()
-
 
     def update(self):
         self.__read_config_file()
@@ -51,6 +49,7 @@ class RunExternScript(object) :
             self.file_detector(str(file))
 
     def source_detector(self):
+        self.update()
         print('SOURCE DETECTOR {}'.format(None))
         for file in self.__pathMan.get_source_files():
             self.source_file_detector(str(file))

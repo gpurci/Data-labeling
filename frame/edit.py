@@ -114,6 +114,7 @@ class EditFrame(object) :
     def __on_canvas_click_release(self, event: object) :
         self.__is_canvas_click_release = True
         try :
+            self.__editMan.set_end_work_coords(event.x, event.y)
             self.__editMan.run_last_release_mode()
         except Exception as e :
             # Handle the exception

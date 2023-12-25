@@ -30,8 +30,8 @@ class EditManager :
         self.set_start_work_coords(0, 0)
         self.set_end_work_coords(0, 0)
 
-        self.__mode_fn         = [self.__cmd_normal_mode,         self.__cmd_edit_mode,         self.__cmd_select_mode]
-        self.__mode_release_fn = [self.__cmd_normal_mode_release, self.__cmd_edit_mode_release, self.__cmd_select_mode_release]
+        self.__mode_fn         = [self.__cmd_normal_mode,         self.__cmd_edit_mode,         self.__cmd_select_mode,         self.__cmd_find_obj_mode]
+        self.__mode_release_fn = [self.__cmd_normal_mode_release, self.__cmd_edit_mode_release, self.__cmd_select_mode_release, self.__cmd_find_obj_mode_release]
 
         self.NORMAL_MODE = 0
         self.EDIT_MODE   = 1
@@ -137,7 +137,7 @@ class EditManager :
             print('__cmd_edit_mode box {}, type{}'.format(box, type(box)))
             d_x, d_y = self.__x1 - self.__x0, self.__y1 - self.__y0
             step_point = 5    #the tolerance in pixel point to select a peak of box
-            if (self.__x0 > x0) and (self.__x0 < x1) and (self.__y0 > y0) and (self.__y0 < y1) :
+            if ((self.__x0 > x0) and (self.__x0 < x1) and (self.__y0 > y0) and (self.__y0 < y1)) :
                 self.__edit_point = self.ALL_POINTS
                 box = (x0 + d_x, y0 + d_y, x1 + d_x, y1 + d_y)
             elif ((self.__x0 >= (x0 - step_point)) and (self.__x0 <= (x0 + step_point)) and (
@@ -168,10 +168,10 @@ class EditManager :
         x, y = self.__x1 - self.__pre_x1, self.__y1 - self.__pre_y1
         self.__imageMan.move(x, y)
         self.show()
-        '''
-        if (self.__showFrame is not None):
-            self.__showFrame.set_show_option(self.__showFrame.SHOW_IMAGE)
-        '''
+
+    def __cmd_find_obj_mode(self) :
+        pass
+
 
     def __cmd_select_mode_release(self) :
         self.__make_object.set_search_item('')
@@ -201,6 +201,18 @@ class EditManager :
 
     def __cmd_normal_mode_release(self) :
         pass
+
+    def __cmd_find_obj_mode_release(self) :
+        print('__cmd_find_obj_mode_release {}, coord {}'.format('START', (self.__x0, self.__y0, self.__x1, self.__y1)))
+        x, y,_, _ = self.__imageMan.calc_coord_to_target((self.__x1, self.__y1, 0, 0))
+        lst_object = self.__targetMan.find_object_by_coord((x, y))
+        print('lst_object {}'.format(lst_object))
+        if (lst_object != None):
+            self.__targetMan.select_object(lst_object[0])
+            self.show()
+        print('__cmd_find_obj_mode_release {}'.format('END'))
+
+
 
     def __add_object_name(self, object_name: str) :
         print('add_object_name #{}#'.format(object_name))
