@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
-
+import numpy as np
 from PIL import Image
 
 from manager.path_man import *
@@ -155,8 +155,8 @@ def yolo_v5_format_import_fn(source_path, dest_path, targets, path_man) :
     print('row_file_path {}/ntarget_file_path {}'.format(row_file_path, target_file_path))
     row_file_path.mkdir(parents=True, exist_ok=True)
     target_file_path.mkdir(parents=True, exist_ok=True)
-    object_names = get_object_names(source_path)
-    print('object_names : {}'.format(object_names))
+    all_object_names = np.array(get_object_names(source_path))
+    print('all_object_names : {}'.format(all_object_names))
     # filenames = list(map(lambda s: str(s), filenames))
     for filename in filenames :
         to_file_F = row_file_path.joinpath('name').with_name(filename.name)
@@ -166,19 +166,11 @@ def yolo_v5_format_import_fn(source_path, dest_path, targets, path_man) :
         np_label, np_center_x, np_center_y, np_w, np_h = readLabelsYoloV5Format(from_file_T)
         img = Image.open(str(filename))
         width, height = img.size
-        targets.new(height, width)
+        coord = (np_center_x, np_center_y, np_w, np_h)
+        object_names = all_object_names[np_label]
+        yolo_v5_format_file_import(targets, object_names, coord, img.size)
         del img
-        x0s, y0s, x1s, y1s = transformCenter2Cartesian(np_center_x, np_center_y, np_w, np_h, height, width)
-        for label, x0, y0, x1, y1 in zip(np_label, x0s, y0s, x1s, y1s) :
-            d_new_targets = {'names' : object_names[label],
-                             'description' : object_names[label],
-                             'rating' : targets.get_default_rating(),
-                             'coord x0' : x0,
-                             'coord x1' : x1,
-                             'coord y0' : y0,
-                             'coord y1' : y1}
-            targets.add_object(d_new_targets)
-            print('targets {}'.format(targets.get_object_size()))
+
         to_file_T = path_man.get_target_filename(str(filename.name))
         targets.save(to_file_T)
 
@@ -186,14 +178,29 @@ def yolo_v5_format_import_fn(source_path, dest_path, targets, path_man) :
         print('to file {}'.format(to_file_F))
         print('targets {}'.format(targets))
 
+def yolo_v5_format_file_import(targets, object_names, coord, size):
+    height, width = size
+    np_center_x, np_center_y, np_w, np_h = coord
+    targets.new(height, width)
+    x0s, y0s, x1s, y1s = transformCenter2Cartesian(np_center_x, np_center_y, np_w, np_h, height, width)
+    for obj_name, x0, y0, x1, y1 in zip(object_names, x0s, y0s, x1s, y1s) :
+        d_new_targets = {'names'    :    obj_name,
+                         'description' : obj_name,
+                         'rating'   : targets.get_default_rating(),
+                         'coord x0' : x0,
+                         'coord x1' : x1,
+                         'coord y0' : y0,
+                         'coord y1' : y1}
+        targets.add_object(d_new_targets)
 
-def get_object_names(config_file) :
-    config_file = Path(config_file).joinpath('name').with_name('data.yaml')
-    if Path(config_file).is_file() :
-        with open(config_file) as file :
-            config_list = yaml.load(file, Loader=yaml.FullLoader)
-        object_names = config_list['names']
-        print(config_list)
+
+def get_object_names(config_file: str) :
+    _config_file = Path(config_file).joinpath('name').with_name('data.yaml')
+    if (Path(_config_file).is_file()) :
+        with open(_config_file) as file :
+            _config_list = yaml.load(file, Loader=yaml.FullLoader)
+        _object_names = _config_list['names']
+        print(_config_list)
     else :
-        object_names = []
-    return object_names
+        _object_names = []
+    return _object_names

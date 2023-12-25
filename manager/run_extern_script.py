@@ -6,6 +6,11 @@ from tkinter import messagebox
 
 from manager.image_man import *
 from manager.target_man import *
+from manager.standardization import *
+
+from manager.import_man.yolo_v5_format import *
+
+
 
 class RunExternScript(object) :
     def __init__(self, path_manager: object, resolution_man: object, config_file: str) :
@@ -18,39 +23,68 @@ class RunExternScript(object) :
 
         self.__import_library = None
         self.__script_code    = None
+        self.__standardization = Standardization(path_manager, resolution_man)
+
+        self.__imageMan  = ImageManager(frame=self.__resolutionMan.get_size())
+        self.__targetMan = TargetManager(0)
 
     def __str__(self):
         return self.__script_code
 
-    def run(self):
-        print('\n\n\n\nRUN_EXTERN_SCRIPT {}'.format('run'))
-        imageMan  = ImageManager(frame=self.__resolutionMan.get_size())
-        targetMan = TargetManager(0)
+    def get_imageMan(self):
+        return self.__imageMan
 
+    def get_targetMan(self):
+        return self.__targetMan
+
+    def folder_detector(self):
+        print('FOLDER DETECTOR {}'.format(None))
         for file in self.__pathMan.get_input_files():
-            file = str(file)
-            print('file {}, type {}'.format(file, type(file)))
-            row_input_file = self.__pathMan.get_input_filename(file)
-            print('row_input_file {}'.format(row_input_file))
-            imageMan.read_standardization(row_input_file, (0, 0, 0))
+            self.file_detector(str(file))
 
-            man_target_file = self.__pathMan.get_man_target_filename(file)
-            print('man_target_file {}'.format(man_target_file))
-            x, y = imageMan.get_size()
-            targetMan.set_size(x, y)
-            targetMan.save(man_target_file)
+    def file_detector(self, filename: str):
+        print('FILE DETECTOR {}'.format(filename))
+        self.__standardization.export_image(filename, self.__imageMan)
+        img = self.__imageMan.get_man_data()
 
-        self.__pathMan.set_source_path(self.__pathMan.get_man_input_path())
+        self.__local['run_detector'](self.__local['detector'], img, self.__targetMan, 0.1, None, self.__local)
 
-    def test_run(self):
-        g = dict()
-        l = dict()
-        #exec(self.__import_library, g, l)
-        print(f'\n\n\nGLOBAL {g}')
-        print(f'\n\n\nLOCAL {l}')
-        exec(self.__script_code, g, l)
-        print(f'\n\n\nGLOBAL {g}')
-        print(f'\n\n\nLOCAL {l}')
+        row_input_file = self.__pathMan.get_input_filename(filename)
+        man_input_file = self.__pathMan.get_man_input_filename(filename)
+        self.__imageMan.save(man_input_file, False)
+        x, y = self.__imageMan.get_size()
+        self.__targetMan.set_size(x, y)
+        self.__targetMan.resize_coord(self.__imageMan.calc_coord_to_target)
+
+        man_target_file = self.__pathMan.get_man_target_filename(filename)
+        print('man_target_file {}'.format(man_target_file))
+
+        self.__targetMan.save(man_target_file)
+
+    def image_detector(self, imageMan: object):
+        print('IMAGE DETECTOR {}'.format('Start'))
+        self.__imageMan = imageMan
+        self.__standardization.export_image(filename, self.__imageMan)
+        man_image = self.__imageMan.get_man_data()
+
+        self.__local['run_detector'](self.__local['detector'], man_image, self.__targetMan, 0.1, None, self.__local)
+
+        x, y = self.__imageMan.get_size()
+        self.__targetMan.set_size(x, y)
+        self.__targetMan.resize_coord(self.__imageMan.calc_coord_to_target)
+        print('IMAGE DETECTOR {}'.format('End'))
+
+
+
+
+    def exec_script(self):
+        self.__global = dict()
+        self.__local  = dict()
+        exec(self.__import_library, self.__global, self.__local)
+        exec(self.__script_code,    self.__global, self.__local)
+        #print(f'\n\n\nGLOBAL {self.__global}')
+        #print(f'\n\n\nLOCAL {self.__local}')
+
 
 
     def read_script(self):
@@ -97,4 +131,3 @@ class RunExternScript(object) :
         with open(self.__config_file, 'w') as file :
             yaml.dump(config_data_yaml, file)
         print('script_file {}, read {}'.format(self.__script_file, open(self.__config_file).read()))
-

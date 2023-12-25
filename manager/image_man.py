@@ -13,15 +13,17 @@ class ImageManager :
     """
 
     def __init__(self, frame=(600, 600)) :
-        self.__editFrame = None
-        self.__show_data = None
-        self.__size = None
+        self.__editFrame  = None
+        self.__show_data  = None
+        self.__size       = None
         self.__size_frame = np.array(frame, dtype=np.float32)
-        self.__zoom = 1
+        self.__zoom       = 1
         self.__zoom_normal = 1
-        self.__zoom_step = 0.05
+        self.__zoom_step   = 0.05
         self.__prev_cursor = np.array((0, 0), dtype=np.float32)
-        self.__data = None
+        self.__data        = None
+        self.__man_data        = None
+        self.__pad_color   = (0, 0, 0)
 
     def copy(self):
         imageMan = ImageManager(self.get_frame_size())
@@ -33,6 +35,9 @@ class ImageManager :
 
     def get_local_data(self):
         return self.__editFrame, self.__zoom_step, self.__data.copy()
+
+    def set_pad_color(self, color: tuple):
+        self.__pad_color = color
 
     def __str__(self) :
         returnStr = "ImageManager"
@@ -54,6 +59,9 @@ class ImageManager :
 
     def get_data(self) :
         return self.__data
+
+    def get_man_data(self) :
+        return self.__man_data
 
     def __do_calc_zoom(self) :
         fX, fY = self.__size_frame / self.__size
@@ -118,11 +126,10 @@ class ImageManager :
         fr_width, fr_height = self.__size_frame
         fr_width, fr_height = int(fr_width), int(fr_height)
 
-        img = Image.new(self.__data.mode, (fr_width, fr_height), color) 
+        self.__man_data = Image.new(self.__data.mode, (fr_width, fr_height), color) 
           
-        img.paste(self.__data.resize(new_size), (cursor_x, cursor_y))
-        self.__data = img
-        print('standardization W {}, H {}'.format(*self.__data.size))
+        self.__man_data.paste(self.__data.resize(new_size), (cursor_x, cursor_y))
+        print('standardization W {}, H {}'.format(*self.__man_data.size))
 
 
     def do_RGB_image(self, shape: tuple, color: tuple) :
@@ -200,10 +207,18 @@ class ImageManager :
         self.__editFrame.coords(cursor_x, cursor_y)
         self.__do_for_tkinter()
 
-    def save(self, filename: str) :
-        if (self.__data != None):
+    def save(self, filename: str, is_man_data=False) :# is_man_data: bool
+        if ((is_man_data == False) and (self.__data != None)):
             Path(filename).touch(mode=0o666, exist_ok=True)
+            print('save image data size {}'.format(self.__data.size))
             self.__data.save(filename)
+        elif((is_man_data == True) and (self.__man_data != None)):
+            Path(filename).touch(mode=0o666, exist_ok=True)
+            print('save image man data size {}'.format(self.__man_data.size))
+            self.__man_data.save(filename)
+        else:
+            pass
+
 
     def set_EditFrame(self, editFrame: object) :
         self.__editFrame = editFrame

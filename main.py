@@ -14,6 +14,7 @@ from frame.tools import *
 
 from manager.edit_man import *
 from manager.resolution_man import *
+from manager.path_man import *
 from manager.import_man.yolo_v5_format import *
 from manager.notebook_man import *
 from manager.tools_man import *
