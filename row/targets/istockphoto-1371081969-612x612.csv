@@ -1,0 +1,13 @@
+names,description,rating,coord x0,coord x1,coord y0,coord y1
+all_within,,0,0.0,-1.0,0.0,-1.0
+all_without,,0,0.0,612.0,0.0,408.0
+Building,Building,0,335.0,446.0,215.0,310.0
+Building,Building,0,480.0,530.0,176.0,249.0
+Building,Building,0,230.0,264.0,319.0,358.0
+Skyscraper,Skyscraper,0,311.0,371.0,140.0,236.0
+Tower,Tower,0,311.0,369.0,144.0,236.0
+Tree,Tree,0,229.0,254.0,225.0,254.0
+Tree,Tree,0,207.0,249.0,279.0,337.0
+Tree,Tree,0,207.0,247.0,278.0,316.0
+Building,Building,0,5.0,86.0,231.0,325.0
+Tower,Tower,0,155.0,236.0,143.0,255.0

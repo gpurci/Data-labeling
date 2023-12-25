@@ -1,0 +1,8 @@
+names,description,rating,coord x0,coord x1,coord y0,coord y1
+all_within,,0,0.0,-1.0,0.0,-1.0
+all_without,,0,0.0,612.0,0.0,307.0
+Helmet,Helmet,0,350.0,603.0,17.0,292.0
+Human face,Human face,0,371.0,429.0,95.0,242.0
+Human nose,Human nose,0,370.0,395.0,133.0,183.0
+Headphones,Headphones,0,355.0,611.0,8.0,270.0
+Human mouth,Human mouth,0,378.0,394.0,196.0,216.0

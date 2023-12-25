@@ -1,0 +1,12 @@
+names,description,rating,coord x0,coord x1,coord y0,coord y1
+all_within,,0,0.0,-1.0,0.0,-1.0
+all_without,,0,0.0,612.0,0.0,408.0
+Bird,Bird,0,285.0,502.0,112.0,253.0
+Flower,Flower,0,223.0,399.0,183.0,359.0
+Flower,Flower,0,504.0,608.0,1.0,110.0
+Flower,Flower,0,507.0,610.0,2.0,176.0
+Flower,Flower,0,348.0,406.0,252.0,306.0
+Flower,Flower,0,492.0,526.0,249.0,299.0
+Flower,Flower,0,503.0,610.0,0.0,60.0
+Flower,Flower,0,514.0,533.0,291.0,317.0
+Flower,Flower,0,539.0,611.0,2.0,123.0

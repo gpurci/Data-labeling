@@ -181,8 +181,11 @@ class PathManager :
 
     def get_source_files(self) :
         files = Path(self.__source_path).glob('*')
-        files = list(map(lambda file: str(file.name), files))
-        return np.array(files)
+        new_files = []
+        for file in files:
+            if (file.is_file()):
+                new_files.append(str(file.name))
+        return np.array(new_files)
 
     def get_input_files(self) :
         files = Path(self.__dest_path).joinpath(self.__input_path).glob('*')

@@ -20,6 +20,7 @@ from manager.notebook_man import *
 from manager.tools_man import *
 from manager.object_man import *
 from manager.standardization import *
+from manager.run_extern_script import *
 
 class TimeMonitor(object) :
     def __init__(self) :
@@ -116,6 +117,7 @@ class Application(Frame) :
         self.filemenu.add_command(label="Save as...", command=self.none_fn)
         self.filemenu.add_command(label="Destination", command=MenuDestinationFrame(self.path_man))
         self.filemenu.add_command(label="Standardize", command=Standardization(self.path_man, self.resolution_man))
+        self.filemenu.add_command(label="SourceDetect", command=self.run_extern_script.source_detector)
 
         self.filemenu.add_separator()
 
@@ -194,6 +196,8 @@ class Application(Frame) :
 
         self.tools_man.set_PathManager(self.path_man)
         self.tools_man.set_NotebookManager(self.notebook_man)
+        self.tools_man.set_RunExternScript(self.run_extern_script)
+        
 
         self.notebook_frame.set_NotebookManager(self.notebook_man)
 
@@ -267,6 +271,7 @@ class Application(Frame) :
         self.tools_man  = ToolsManager()
         self.edit_man   = EditManager()
         self.object_man = ObjectManager(self.path_man)
+        self.run_extern_script = RunExternScript(self.path_man, self.resolution_man, r'./config/config_run_script.yaml')
 
         self.description_frame     = DescriptionFrame()
         self.select_object_frame   = SelectObjectFrame()

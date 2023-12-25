@@ -1,0 +1,11 @@
+names,description,rating,coord x0,coord x1,coord y0,coord y1
+all_within,,0,0.0,-1.0,0.0,-1.0
+all_without,,0,0.0,612.0,0.0,344.0
+Tree,Tree,0,306.0,407.0,160.0,257.0
+Human head,Human head,0,21.0,55.0,30.0,70.0
+Jellyfish,Jellyfish,0,228.0,262.0,241.0,274.0
+Person,Person,0,6.0,204.0,206.0,348.0
+Balloon,Balloon,0,317.0,333.0,134.0,152.0
+Human head,Human head,0,0.0,210.0,202.0,356.0
+Tree,Tree,0,468.0,501.0,21.0,57.0
+Tree,Tree,0,107.0,175.0,74.0,162.0

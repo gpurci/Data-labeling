@@ -1,0 +1,7 @@
+names,description,rating,coord x0,coord x1,coord y0,coord y1
+all_within,,0,0.0,-1.0,0.0,-1.0
+all_without,,0,0.0,591.0,0.0,612.0
+Window,Window,0,-54.0,655.0,27.0,561.0
+Plant,Plant,0,-41.0,567.0,398.0,603.0
+Tree,Tree,0,-45.0,580.0,389.0,606.0
+Window,Window,0,-127.0,719.0,0.0,366.0

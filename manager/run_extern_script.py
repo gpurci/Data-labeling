@@ -28,6 +28,14 @@ class RunExternScript(object) :
         self.__imageMan  = ImageManager(frame=self.__resolutionMan.get_size())
         self.__targetMan = TargetManager(0)
 
+        self.update()
+
+
+    def update(self):
+        self.__read_config_file()
+        self.__read_script()
+        self.__exec_script()
+        
     def __str__(self):
         return self.__script_code
 
@@ -42,16 +50,42 @@ class RunExternScript(object) :
         for file in self.__pathMan.get_input_files():
             self.file_detector(str(file))
 
+    def source_detector(self):
+        print('SOURCE DETECTOR {}'.format(None))
+        for file in self.__pathMan.get_source_files():
+            self.source_file_detector(str(file))
+
+    def source_file_detector(self, filename: str):
+        print('SOURCE FILE DETECTOR {}'.format(filename))
+
+        source_file = self.__pathMan.get_source_filename(filename)
+        print('source_file {}'.format(source_file))
+        self.__imageMan.read_standardization(source_file, (0, 0, 0))
+
+        man_image = self.__imageMan.get_man_data()
+
+        self.__local['run_detector'](self.__local['detector'], man_image, self.__targetMan, 0.1, None, self.__local)
+
+        row_input_file = self.__pathMan.get_input_filename(filename)
+        self.__imageMan.save(row_input_file)
+        x, y = self.__imageMan.get_size()
+        self.__targetMan.set_size(x, y)
+        self.__targetMan.resize_coord(self.__imageMan.calc_coord_to_target)
+
+        row_target_file = self.__pathMan.get_target_filename(filename)
+        print('row_target_file {}'.format(row_target_file))
+
+        self.__targetMan.save(row_target_file)
+
     def file_detector(self, filename: str):
         print('FILE DETECTOR {}'.format(filename))
         self.__standardization.export_image(filename, self.__imageMan)
-        img = self.__imageMan.get_man_data()
+        man_image = self.__imageMan.get_man_data()
 
-        self.__local['run_detector'](self.__local['detector'], img, self.__targetMan, 0.1, None, self.__local)
+        self.__local['run_detector'](self.__local['detector'], man_image, self.__targetMan, 0.1, None, self.__local)
 
-        row_input_file = self.__pathMan.get_input_filename(filename)
         man_input_file = self.__pathMan.get_man_input_filename(filename)
-        self.__imageMan.save(man_input_file, False)
+        self.__imageMan.save(man_input_file)
         x, y = self.__imageMan.get_size()
         self.__targetMan.set_size(x, y)
         self.__targetMan.resize_coord(self.__imageMan.calc_coord_to_target)
@@ -75,9 +109,7 @@ class RunExternScript(object) :
         print('IMAGE DETECTOR {}'.format('End'))
 
 
-
-
-    def exec_script(self):
+    def __exec_script(self):
         self.__global = dict()
         self.__local  = dict()
         exec(self.__import_library, self.__global, self.__local)
@@ -87,8 +119,7 @@ class RunExternScript(object) :
 
 
 
-    def read_script(self):
-        self.__read_config_file()
+    def __read_script(self):
         if (Path(self.__import_file).is_file() == True):
             self.__import_library = Path(self.__import_file).read_text()
         else:
@@ -109,10 +140,15 @@ class RunExternScript(object) :
 
             if ('script_file' in config_list) :
                 self.__script_file = config_list['script_file']
+                if (Path(self.__script_file).is_file() != True):
+                    self.__script_file = './run_script/run.py'
             else :
                 self.__script_file = './run_script/run.py'
             if ('import_file' in config_list) :
                 self.__import_file = config_list['import_file']
+                if (Path(self.__import_file).is_file() != True):
+
+                    self.__import_file = './run_script/import_library.py'
             else :
                 self.__import_file = './run_script/import_library.py'
             print(config_list)

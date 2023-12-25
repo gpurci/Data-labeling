@@ -1,0 +1,20 @@
+names,description,rating,coord x0,coord x1,coord y0,coord y1
+all_within,,0,0.0,-1.0,0.0,-1.0
+all_without,,0,0.0,612.0,0.0,408.0
+Elephant,Elephant,0,356.0,542.0,25.0,146.0
+Animal,Animal,0,175.0,475.0,193.0,332.0
+Cattle,Cattle,0,72.0,152.0,79.0,126.0
+Antelope,Antelope,0,32.0,77.0,124.0,164.0
+Antelope,Antelope,0,91.0,136.0,133.0,155.0
+Zebra,Zebra,0,310.0,349.0,147.0,195.0
+Zebra,Zebra,0,478.0,537.0,166.0,213.0
+Zebra,Zebra,0,163.0,249.0,133.0,199.0
+Deer,Deer,0,91.0,133.0,132.0,157.0
+Deer,Deer,0,32.0,76.0,129.0,163.0
+Bull,Bull,0,162.0,477.0,190.0,329.0
+Cattle,Cattle,0,18.0,72.0,79.0,106.0
+Giraffe,Giraffe,0,300.0,323.0,139.0,174.0
+Cattle,Cattle,0,174.0,460.0,201.0,334.0
+Animal,Animal,0,72.0,153.0,81.0,124.0
+Carnivore,Carnivore,0,562.0,611.0,190.0,225.0
+Mammal,Mammal,0,167.0,458.0,206.0,323.0

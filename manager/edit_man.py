@@ -36,6 +36,7 @@ class EditManager :
         self.NORMAL_MODE = 0
         self.EDIT_MODE   = 1
         self.SELECT_MODE = 2
+        self.FIND_OBJ_MODE = 3
         self.__work_mode = self.NORMAL_MODE
 
         self.POINT_00   = 0

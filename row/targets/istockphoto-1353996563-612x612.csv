@@ -1,0 +1,6 @@
+names,description,rating,coord x0,coord x1,coord y0,coord y1
+all_within,,0,0.0,-1.0,0.0,-1.0
+all_without,,0,0.0,612.0,0.0,344.0
+Person,Person,0,281.0,334.0,163.0,288.0
+Man,Man,0,279.0,335.0,163.0,288.0
+Clothing,Clothing,0,283.0,331.0,177.0,277.0

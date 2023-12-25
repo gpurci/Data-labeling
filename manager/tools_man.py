@@ -8,6 +8,14 @@ class ToolsManager:
         self.__imageMan  = None
         
 
+    def detect(self):
+        print('DETECT {}'.format('start'))
+        #self.__notebookMan.double(filename)
+        #box = self.__targetMan.get_last_coord()
+        #self.__imageMan.crop(box)
+        #self.__targetMan.crop_last_name()
+        print('DETECT {}'.format('end'))
+
     def crop(self, filename: str):
         print('CROP filename {}'.format(filename))
         self.__notebookMan.double(filename)
@@ -24,3 +32,6 @@ class ToolsManager:
 
     def set_NotebookManager(self, notebookMan: object) :
         self.__notebookMan = notebookMan
+
+    def set_RunExternScript(self, runExtScript: object) :
+        self.__runExtScript = runExtScript

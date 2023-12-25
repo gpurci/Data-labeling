@@ -1,0 +1,10 @@
+names,description,rating,coord x0,coord x1,coord y0,coord y1
+all_within,,0,0.0,-1.0,0.0,-1.0
+all_without,,0,0.0,516.0,0.0,612.0
+Tree,Tree,0,15.0,524.0,0.0,594.0
+Tree,Tree,0,238.0,524.0,0.0,580.0
+Tree,Tree,0,-19.0,315.0,42.0,594.0
+Tree,Tree,0,4.0,479.0,0.0,330.0
+Tree,Tree,0,-2.0,168.0,7.0,603.0
+Tree,Tree,0,10.0,344.0,0.0,267.0
+Plant,Plant,0,-5.0,165.0,24.0,597.0

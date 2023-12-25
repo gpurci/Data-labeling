@@ -160,6 +160,11 @@ class EditFrame(object) :
         normal_btn["command"] = self.__cmd_normal_mode
         normal_btn.pack({"side" : "left"})
 
+        normal_btn = Button(button_frame, cursor="circle")
+        normal_btn["text"] = "Find object"
+        normal_btn["command"] = self.__cmd_find_obj_mode
+        normal_btn.pack({"side" : "left"})
+
     def set_work_frame(self, filename: str) :
         self.__edit_frame.config(text=filename)
 
@@ -177,6 +182,12 @@ class EditFrame(object) :
     def __cmd_normal_mode(self) :
         self.__editMan.set_work_mode(self.__editMan.NORMAL_MODE)
         self.__canvas_frame.config(cursor="arrow")
+        self.__delete_box_4_circle()
+
+    def __cmd_find_obj_mode(self) :
+        self.__editMan.set_work_mode(self.__editMan.FIND_OBJ_MODE)
+        self.__canvas_frame.config(cursor="circle")
+        self.__delete_selected_box()
         self.__delete_box_4_circle()
 
     def set_EditManager(self, editManager: object) :

@@ -1,0 +1,12 @@
+names,description,rating,coord x0,coord x1,coord y0,coord y1
+all_within,,0,0.0,-1.0,0.0,-1.0
+all_without,,0,0.0,612.0,0.0,344.0
+Tree,Tree,0,407.0,552.0,243.0,341.0
+Tree,Tree,0,578.0,611.0,264.0,295.0
+Plant,Plant,0,45.0,108.0,250.0,288.0
+Building,Building,0,0.0,601.0,62.0,291.0
+Tree,Tree,0,337.0,412.0,265.0,342.0
+Tree,Tree,0,0.0,53.0,281.0,343.0
+Tree,Tree,0,255.0,349.0,259.0,294.0
+Wheel,Wheel,0,301.0,365.0,239.0,262.0
+Tree,Tree,0,525.0,605.0,274.0,342.0

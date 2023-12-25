@@ -23,13 +23,6 @@ class ToolsFrame:
         self.__window = window
         self.__addItemFrame.set_windows(self.__window)
 
-
-    def __crop(self):
-        print('TOOLS CROP')
-        self.__new_file()
-        self.__addItemFrame.set_add_fn(self.__toolsMan.crop)
-        self.__addItemFrame.run()
-
     def run(self):
         tools_frame = LabelFrame(self.__window, text='Tools')
         tools_frame.pack(fill="both", expand="yes")
@@ -38,6 +31,22 @@ class ToolsFrame:
         crop_button["text"] = "Crop",
         crop_button["command"] = self.__crop
         crop_button.pack({"side": "left"})
+
+        crop_button = Button(tools_frame)
+        crop_button["text"] = "Detect",
+        crop_button["command"] = self.__detect
+        crop_button.pack({"side": "left"})
+
+
+    def __detect(self):
+        print('TOOLS DETECT')
+        self.__toolsMan.detect()
+
+    def __crop(self):
+        print('TOOLS CROP')
+        self.__new_file()
+        self.__addItemFrame.set_add_fn(self.__toolsMan.crop)
+        self.__addItemFrame.run()
 
     def __new_file(self):
         suffixname = self.__notebookMan.targetMan().get_last_name()

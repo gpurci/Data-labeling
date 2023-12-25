@@ -1,0 +1,7 @@
+names,description,rating,coord x0,coord x1,coord y0,coord y1
+all_within,,0,0.0,-1.0,0.0,-1.0
+all_without,,0,0.0,612.0,0.0,490.0
+Hippopotamus,Hippopotamus,0,38.0,484.0,14.0,415.0
+Rhinoceros,Rhinoceros,0,19.0,477.0,5.0,414.0
+Animal,Animal,0,88.0,451.0,12.0,418.0
+Sea lion,Sea lion,0,50.0,484.0,30.0,447.0
