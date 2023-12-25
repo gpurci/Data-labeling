@@ -1,7 +1,0 @@
-names,description,rating,coord x0,coord x1,coord y0,coord y1
-all_within,,0,0,-1,0,-1
-all_without,nan,0,0,1600,0,760
-Flower,Flower,0,1547,1597,545,601
-Flower,Flower,0,1095,1133,226,270
-Flower,Flower,0,1242,1286,171,217
-Plant,Plant,0,43,1563,-32,765

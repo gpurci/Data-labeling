@@ -1,6 +1,0 @@
-names,description,rating,coord x0,coord x1,coord y0,coord y1
-all_within,,0,0.0,-1.0,0.0,-1.0
-all_without,,0,0.0,612.0,0.0,408.0
-Eagle,Eagle,0,79.0,485.0,40.0,319.0
-Eagle,Eagle,0,214.0,485.0,36.0,211.0
-Falcon,Falcon,0,87.0,494.0,36.0,325.0

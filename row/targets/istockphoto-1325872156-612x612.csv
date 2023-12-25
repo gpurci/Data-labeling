@@ -1,7 +1,0 @@
-names,description,rating,coord x0,coord x1,coord y0,coord y1
-all_within,,0,0.0,-1.0,0.0,-1.0
-all_without,,0,0.0,612.0,0.0,306.0
-Person,Person,0,279.0,337.0,125.0,249.0
-Whale,Whale,0,390.0,590.0,177.0,207.0
-Clothing,Clothing,0,284.0,333.0,145.0,224.0
-Poster,Poster,0,0.0,611.0,1.0,338.0
