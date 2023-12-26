@@ -1,10 +1,18 @@
 #!/usr/bin/python
 
-from target_manager import *
+# importing sys
+import sys
 
-from manager.target_man import TargetManager
+# adding Folder_2/subfolder to the system path
+sys.path.insert(0, '/home/gheorghe/Desktop/Data_labeling/Data-labeling')
+from manager.target_man import *
 
-target_man = TargetManager(r'./config/config_target_manager.yaml')
+
+
+target_man = TargetManager(1)
+target_man.read(r't_target_man_crop.csv')
+
+print(target_man)
 
 
 def crop_last_targets() :
@@ -72,6 +80,18 @@ def crop_last_targets() :
 
     # assert factorial(0) == 1
 
+def get_all():
+    retVal = target_man.get_all()
+    print('dataframe:\n {}\ntype {}'.format(retVal, type(retVal)))
 
-crop_last_targets()
-double_last_name()
+def concatenate():
+    print('concatenate '.format(None))
+    target_man.concatenate(target_man)
+    print(target_man)
+
+
+#crop_last_targets()
+#double_last_name()
+get_all()
+concatenate()
+

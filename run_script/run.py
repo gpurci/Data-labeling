@@ -12,7 +12,6 @@ def run_detector(detector, image, targetMan, min_score, global_var, local_var):
 
     result = {key:value.numpy() for key,value in result.items()}
 
-    targetMan.new(im_height, im_width)
     for score, obj_name, coord in zip(result["detection_scores"], result["detection_class_entities"], result["detection_boxes"]) :
         if (score < min_score):
             continue

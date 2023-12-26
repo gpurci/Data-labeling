@@ -17,12 +17,14 @@ class ImageManager :
         self.__show_data  = None
         self.__size       = None
         self.__size_frame = np.array(frame, dtype=np.float32)
-        self.__zoom       = 1
+        self.__size_standard = np.array(frame, dtype=np.float32)
+        self.__zoom        = 1
         self.__zoom_normal = 1
         self.__zoom_step   = 0.05
+        self.__zoom_man    = 1
         self.__prev_cursor = np.array((0, 0), dtype=np.float32)
         self.__data        = None
-        self.__man_data        = None
+        self.__man_data    = None
         self.__pad_color   = (0, 0, 0)
 
     def copy(self):
@@ -38,6 +40,9 @@ class ImageManager :
 
     def set_pad_color(self, color: tuple):
         self.__pad_color = color
+
+    def set_size_standard(self, size: tuple):
+        self.__size_standard = np.array(size, dtype=np.float32)
 
     def __str__(self) :
         returnStr = "ImageManager"
@@ -63,25 +68,25 @@ class ImageManager :
     def get_man_data(self) :
         return self.__man_data
 
-    def __do_calc_zoom(self) :
-        fX, fY = self.__size_frame / self.__size
-        print('do_calc_zoom size_frame {} WH format'.format(self.__size_frame))
+    def __do_calc_zoom(self, _size_frame) :
+        fX, fY = _size_frame / self.__size
+        print('do_calc_zoom size_frame {} WH format'.format(_size_frame))
         print('do_calc_zoom image_size {} WH format'.format(self.__size))
         print('do_calc_zoom zoom W {} H {}'.format(fX, fY))
-        self.__zoom = 1.
+        _zoom = 1
         if ((fY >= 1) and (fX >= 1)) :
             if (fY < fX) :
-                self.__zoom = fY
+                _zoom = fY
             else :
-                self.__zoom = fX
+                _zoom = fX
 
         if ((fY < 1) or (fX < 1)) :
             if (fY < fX) :
-                self.__zoom = fY
+                _zoom = fY
             else :
-                self.__zoom = fX
-        self.__zoom_normal = self.__zoom
-        print('do_calc_zoom zoom {}'.format(self.__zoom))
+                _zoom = fX
+        print('do_calc_zoom zoom {}'.format(_zoom))
+        return _zoom
 
     def get_start_cursor(self) :
         img_size = np.array(self.__size * self.__zoom, dtype=np.int32)
@@ -91,6 +96,16 @@ class ImageManager :
         cursor_x, cursor_y = (fr_width - img_width) / 2., (fr_height - img_height) / 2.
         cursor_x, cursor_y = int(cursor_x), int(cursor_y)
         self.__prev_cursor = np.array((cursor_x, cursor_y), dtype=np.float32)
+        print('cursor_x {}, cursor_y {}'.format(cursor_x, cursor_y))
+        return cursor_x, cursor_y
+
+    def get_man_cursor(self) :
+        img_size = np.array(self.__size * self.__zoom_man, dtype=np.int32)
+        print("W {}, H {}".format(*img_size))
+        img_width, img_height = img_size
+        fr_width, fr_height = self.__size_standard
+        cursor_x, cursor_y = (fr_width - img_width) / 2., (fr_height - img_height) / 2.
+        cursor_x, cursor_y = int(cursor_x), int(cursor_y)
         print('cursor_x {}, cursor_y {}'.format(cursor_x, cursor_y))
         return cursor_x, cursor_y
 
@@ -105,7 +120,8 @@ class ImageManager :
         self.__data = Image.open(filename)
         self.__size = np.array(self.__data.size, dtype=np.float32)
         print("image_size W {}, H {}".format(*self.__size))
-        self.__do_calc_zoom()
+        self.__zoom = self.__do_calc_zoom(self.__size_frame)
+        self.__zoom_normal = self.__zoom
 
         cursor_x, cursor_y = self.get_start_cursor()
         self.__editFrame.coords(cursor_x, cursor_y)
@@ -116,7 +132,7 @@ class ImageManager :
         self.__data = Image.open(filename)
         self.__size = np.array(self.__data.size, dtype=np.float32)
         print("image_size W {}, H {}".format(*self.__size))
-        self.__do_calc_zoom()
+        self.__zoom_man = self.__do_calc_zoom(self.__size_standard)
 
         cursor_x, cursor_y = self.get_start_cursor()
 
@@ -130,6 +146,23 @@ class ImageManager :
           
         self.__man_data.paste(self.__data.resize(new_size), (cursor_x, cursor_y))
         print('standardization W {}, H {}'.format(*self.__man_data.size))
+
+    def standardization(self, color: tuple) :
+        self.__zoom_man = self.__do_calc_zoom(self.__size_standard)
+
+        cursor_x, cursor_y = self.get_man_cursor()
+
+        new_size    = np.array(self.__size * self.__zoom_man, dtype=np.int32)
+        print("W {}, H {}".format(*new_size))
+
+        fr_width, fr_height = self.__size_standard
+        fr_width, fr_height = int(fr_width), int(fr_height)
+
+        self.__man_data = Image.new(self.__data.mode, (fr_width, fr_height), color) 
+          
+        self.__man_data.paste(self.__data.resize(new_size), (cursor_x, cursor_y))
+        print('standardization W {}, H {}'.format(*self.__man_data.size))
+
 
 
     def do_RGB_image(self, shape: tuple, color: tuple) :
@@ -192,6 +225,18 @@ class ImageManager :
         print('return (x0 {}, y0 {}, x1 {}, y1 {})'.format(*box))
         return box
 
+    def calc_man_coord_to_target(self, box: tuple) :
+        print('calc_coord_to_target (x0 {}, y0 {}, x1 {}, y1 {})'.format(*box))
+        dW, dH = self.get_man_cursor()
+        print('dW {}, dH {}'.format(dW, dH))
+        (x0, y0, x1, y1) = box
+        x0, x1 = x0 - dW, x1 - dW
+        y0, y1 = y0 - dH, y1 - dH
+
+        box = np.array((x0, y0, x1, y1), dtype=np.float32) / self.__zoom_man
+        print('return (x0 {}, y0 {}, x1 {}, y1 {})'.format(*box))
+        return box
+
     def crop(self, box: tuple) :
         print('crop (x0 {}, y0 {}, x1 {}, y1 {})'.format(*box))
         # Cropped image of above dimension
@@ -201,7 +246,8 @@ class ImageManager :
         self.__size = np.array(img.size, dtype=np.float32)
         print("image_size W {}, H {}".format(*self.__size))
         self.__data = img
-        self.__do_calc_zoom()
+        self.__zoom = self.__do_calc_zoom(self.__size_frame)
+        self.__zoom_normal = self.__zoom
 
         cursor_x, cursor_y = self.get_start_cursor()
         self.__editFrame.coords(cursor_x, cursor_y)

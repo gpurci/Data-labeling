@@ -116,8 +116,6 @@ class Application(Frame) :
         self.filemenu.add_command(label="Save", command=self.none_fn)
         self.filemenu.add_command(label="Save as...", command=self.none_fn)
         self.filemenu.add_command(label="Destination", command=MenuDestinationFrame(self.path_man))
-        self.filemenu.add_command(label="Standardize", command=Standardization(self.path_man, self.resolution_man))
-        self.filemenu.add_command(label="SourceDetect", command=self.run_extern_script.source_detector)
 
         self.filemenu.add_separator()
 
@@ -137,12 +135,15 @@ class Application(Frame) :
         self.editmenu.add_command(label="Program", command=self.none_fn)
         self.editmenu.add_command(label="Filter Aria", command=self.none_fn)
         self.editmenu.add_command(label="Plot", command=self.none_fn)
-
         self.editmenu.add_separator()
-
         self.editmenu.add_command(label="Delete", command=self.quit)
-
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
+
+        self.toolsmenu = Menu(self.menubar, tearoff=0)
+        self.toolsmenu.add_command(label="Standardize", command=Standardization(self.path_man, self.resolution_man))
+        self.toolsmenu.add_command(label="SourceDetect", command=self.run_extern_script.source_detector)
+        self.menubar.add_cascade(label="Tools", menu=self.toolsmenu)
+
         self.helpmenu = Menu(self.menubar, tearoff=0)
         self.helpmenu.add_command(label="Help Index", command=self.quit)
         self.helpmenu.add_command(label="About...", command=self.quit)

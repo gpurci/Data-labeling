@@ -10,10 +10,9 @@ class ToolsManager:
 
     def detect(self):
         print('DETECT {}'.format('start'))
-        #self.__notebookMan.double(filename)
-        #box = self.__targetMan.get_last_coord()
-        #self.__imageMan.crop(box)
-        #self.__targetMan.crop_last_name()
+        if (self.__runExtScript.is_runable() == False):
+            self.__runExtScript.update()
+        self.__runExtScript.image_detector(self.__imageMan, self.__targetMan)
         print('DETECT {}'.format('end'))
 
     def crop(self, filename: str):

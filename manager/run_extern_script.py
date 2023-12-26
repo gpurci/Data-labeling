@@ -28,6 +28,8 @@ class RunExternScript(object) :
         self.__imageMan  = ImageManager(frame=self.__resolutionMan.get_size())
         self.__targetMan = TargetManager(0)
 
+    def is_runable(self):
+        return (self.__script_file != None)
 
     def update(self):
         self.__read_config_file()
@@ -60,6 +62,8 @@ class RunExternScript(object) :
         source_file = self.__pathMan.get_source_filename(filename)
         print('source_file {}'.format(source_file))
         self.__imageMan.read_standardization(source_file, (0, 0, 0))
+        im_width, im_height = self.__imageMan.get_size()
+        self.__targetMan.new(im_width, im_height)
 
         man_image = self.__imageMan.get_man_data()
 
@@ -67,8 +71,6 @@ class RunExternScript(object) :
 
         row_input_file = self.__pathMan.get_input_filename(filename)
         self.__imageMan.save(row_input_file)
-        x, y = self.__imageMan.get_size()
-        self.__targetMan.set_size(x, y)
         self.__targetMan.resize_coord(self.__imageMan.calc_coord_to_target)
 
         row_target_file = self.__pathMan.get_target_filename(filename)
@@ -80,13 +82,13 @@ class RunExternScript(object) :
         print('FILE DETECTOR {}'.format(filename))
         self.__standardization.export_image(filename, self.__imageMan)
         man_image = self.__imageMan.get_man_data()
+        im_width, im_height = self.__imageMan.get_size()
+        self.__targetMan.new(im_width, im_height)
 
         self.__local['run_detector'](self.__local['detector'], man_image, self.__targetMan, 0.1, None, self.__local)
 
         man_input_file = self.__pathMan.get_man_input_filename(filename)
         self.__imageMan.save(man_input_file)
-        x, y = self.__imageMan.get_size()
-        self.__targetMan.set_size(x, y)
         self.__targetMan.resize_coord(self.__imageMan.calc_coord_to_target)
 
         man_target_file = self.__pathMan.get_man_target_filename(filename)
@@ -94,17 +96,17 @@ class RunExternScript(object) :
 
         self.__targetMan.save(man_target_file)
 
-    def image_detector(self, imageMan: object):
+    def image_detector(self, imageMan: object, targetMan: object):
         print('IMAGE DETECTOR {}'.format('Start'))
-        self.__imageMan = imageMan
-        self.__standardization.export_image(filename, self.__imageMan)
-        man_image = self.__imageMan.get_man_data()
+        imageMan.standardization((0, 0, 0))
+        man_image = imageMan.get_man_data()
+        im_width, im_height = imageMan.get_size()
+        self.__targetMan.new(im_width, im_height)
 
         self.__local['run_detector'](self.__local['detector'], man_image, self.__targetMan, 0.1, None, self.__local)
 
-        x, y = self.__imageMan.get_size()
-        self.__targetMan.set_size(x, y)
-        self.__targetMan.resize_coord(self.__imageMan.calc_coord_to_target)
+        self.__targetMan.resize_coord(imageMan.calc_man_coord_to_target)
+        targetMan.concatenate(self.__targetMan)
         print('IMAGE DETECTOR {}'.format('End'))
 
 

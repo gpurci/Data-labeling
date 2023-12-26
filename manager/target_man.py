@@ -145,6 +145,9 @@ class TargetManager(object) :
         y1 = self.__df_targets['coord y1']
         return x0, y0, x1, y1
 
+    def get_all(self):
+        return self.__df_targets.loc[self.__DEFAULT_OBJECT+1:]
+
     def get_size(self) :
         x = self.__df_targets['coord x1'][self.__DEFAULT_OBJECT]
         y = self.__df_targets['coord y1'][self.__DEFAULT_OBJECT]
@@ -290,10 +293,10 @@ class TargetManager(object) :
         if self.__showFrame is not None :
             self.__showFrame.set_show_option(self.__showFrame.SHOW_OBJECT)
 
-    def new(self, x1: int, y1: int) :
+    def new(self, x: int, y: int) :
         self.__delete()
         self.__init()
-        self.set_last_coord((0, 0, x1, y1))
+        self.set_coord(self.__DEFAULT_OBJECT, (0, 0, x, y))
 
     def add_object(self, d_new_target: dict) :
         self.__df_targets.loc[self.get_object_size()] = d_new_target
@@ -339,8 +342,12 @@ class TargetManager(object) :
         if (len(lst_item) == 0):
             lst_item = None
         return lst_item
-                
 
+    def concatenate(self, targetMan: object):
+        self.__df_targets = pd.concat([self.__df_targets, targetMan.get_all()], ignore_index=True, axis=0)
+
+        if self.__showFrame is not None :
+            self.__showFrame.set_show_option(self.__showFrame.SHOW_OBJECT)
 
 
     def set_ShowFrame(self, showFrame: object) :

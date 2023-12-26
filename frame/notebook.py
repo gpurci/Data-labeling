@@ -12,6 +12,7 @@ class NotebookFrame(object) :
         self.__notebookMan = None
         self.__note        = None
         self.__window      = None
+        self.__tabwidth    = 30
 
     def set_windows(self, window: object) :
         self.__window = window
@@ -45,6 +46,11 @@ class NotebookFrame(object) :
 
     def add(self, filename: str) :
         # Adding the Tab Name
+        size = len(filename)
+        if (size > self.__tabwidth):
+            filename = filename[:self.__tabwidth]
+        else:
+            filename = filename + ' '*(self.__tabwidth - size)
         self.__note.add(Frame(self.__note, width=400, height=5), text=filename)
 
     def set_NotebookManager(self, notebookMan: object) :
@@ -146,6 +152,14 @@ class CustomNotebook(ttk.Notebook) :
                 ]
             })
         ])
+
+        style.theme_create( "MyStyle", parent="alt", settings={
+        "CustomNotebook": {"configure": {"tabmargins": [0, 0, 2, 0] } },
+        "CustomNotebook.Tab": {"configure": {"padding": [3, 1] },}})
+
+
+
+        style.theme_use("MyStyle")
 
     def set_NotebookManager(self, notebookMan) :
         self.__notebookMan = notebookMan
