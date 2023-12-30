@@ -13,7 +13,7 @@ class ChangeUserNameMenu(object):
         frame_title  = 'Change user name'
         search_title = 'User name'
         search_item  = ''
-        check_similarly_item = True
+        check_similarly_item = False
         self.__make_object = AddItemFrame(frame_title, search_title, search_item, check_similarly_item)
         self.__make_object.set_cancel_fn(lambda : print('CANCEL'))
         self.__make_object.set_add_fn(self.__change_user_name)

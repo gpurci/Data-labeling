@@ -129,7 +129,7 @@ class PathManager :
             self.__filenameFrame.set_filenames(self.get_source_files())
 
     def set_dest_path(self, _path: str) :
-        patern = r"(?P<path>.+/({}|{}))(/({}|{})(/(\w+))?)?$".format(self.__man_path, self.__row_path, self.__input_path, self.__target_path)
+        patern = r"(?P<path>.+/({}|{}))(/({}|{})(?P<user>(/(\w+)))?)?$".format(self.__man_path, self.__row_path, self.__input_path, self.__target_path)
         print('set_dest_path regex patern {}'.format(patern))
 
         match_patern = re.search(patern, _path)
@@ -139,6 +139,9 @@ class PathManager :
             self.__dest_path = Path(_path).joinpath(self.__row_path)
         else :
             self.__dest_path = match_patern['path']
+            if (match_patern['user']):
+                print('user ', match_patern['user'])
+                self.set_user_name(match_patern['user'][1:])
 
         self.__dest_path = str(self.__dest_path)
         self.__makedir()

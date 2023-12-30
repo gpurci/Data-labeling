@@ -296,15 +296,13 @@ class TargetManager(object) :
 
     def double_last_name(self) :
         print('DOUBLE_last_name {} item {}, len {}'.format(self.get_last_name(), self.__selected_object,
-                                                          self.get_object_size()))
+                                                           self.get_object_size()))
         print('{}'.format(self))
 
         d_new_target = self.__df_targets.loc[self.__selected_object]
         print('dataset {}'.format(d_new_target))
 
-        self.__df_targets.loc[self.get_object_size()] = d_new_target
-        self.set_selected_object(self.get_object_size()-1)
-        self.update_last_name()
+        self.add_object(d_new_target)
         print('{}'.format(self))
 
         if self.__showFrame is not None :
