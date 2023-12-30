@@ -19,10 +19,11 @@ class Standardization :
         for file in self.__pathMan.get_input_files():
             file = str(file)
             print('file {}, type {}'.format(file, type(file)))
-            self.export_image(file, imageMan)
+            row_input_file = self.__pathMan.get_input_filename(file)
             man_input_file = self.__pathMan.get_man_input_filename(file)
             print('man_input_file {}'.format(man_input_file))
-            imageMan.read_standardization(row_input_file, (0, 0, 0))
+            imageMan.read(row_input_file)
+            imageMan.standardization((0, 0, 0))
             imageMan.save(man_input_file, True)
 
             row_target_file = self.__pathMan.get_target_filename(file)
@@ -40,7 +41,8 @@ class Standardization :
         print('export_image file {}'.format(file))
         row_input_file = self.__pathMan.get_input_filename(file)
         print('row_input_file {}'.format(row_input_file))
-        imageMan.read_standardization(row_input_file, (0, 0, 0))
+        imageMan.read(row_input_file)
+        imageMan.standardization((0, 0, 0))
 
 
             

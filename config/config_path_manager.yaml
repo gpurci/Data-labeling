@@ -1,9 +1,10 @@
 description_path: description
-dest_path: /home/gheorghe/Desktop/s_AI/s_AI/test_source_detector/row
+dest_path: /home/gheorghe/Desktop/s_AI/data_image/row
 input_path: inputs
 input_suffix: .png
 man_path: man
 output_suffix: .csv
 row_path: row
-source_path: /home/gheorghe/Desktop/s_AI/s_AI/test_source_detector/row/inputs
+source_path: /home/gheorghe/Desktop/s_AI/data_image/row/inputs
 target_path: targets
+user: Test

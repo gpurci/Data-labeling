@@ -10,12 +10,13 @@ class SelectFilenameFrame(object) :
     def __init__(self) :
         self.__pathMan     = None
         self.__notebookMan = None
+        self.__showFrame   = None
 
         self.__win_listbox_files = None
         self.__window            = None
 
         self.__filename  = None
-        self.__files     = None
+        self.__filenames = []
         self.__last_item = -1
 
     def set_windows(self, window:object) :
@@ -29,26 +30,31 @@ class SelectFilenameFrame(object) :
                                                 yscrollcommand=scrollbar.set, bd=5)
         self.__win_listbox_files.pack(side=LEFT, fill=None)
 
-        self.__print_filenames()
+        self.__print_filenames(self.__filenames)
         self.__win_listbox_files.bind("<<ListboxSelect>>", self.__on_item_select)
         scrollbar.config(command=self.__win_listbox_files.yview)
 
-    def __print_filenames(self) :
-        self.__files = self.__pathMan.get_source_files()
-        print('print_filenames {}'.format(self.__files))
+    def __print_filenames(self, filenames) :
+        #print('print_filenames {}'.format(filenames))
         # Add items to the Listbox
-        for filename in self.__files :
+        for filename in filenames :
             print('items {}'.format(filename))
             self.__win_listbox_files.insert(END, filename)
 
     def show(self) :
         print('update {}'.format('SelectFilenameFrame'))
         self.__win_listbox_files.delete(0, END)
-        self.__print_filenames()
+        self.__print_filenames(self.__filenames)
+
+    def set_filenames(self, filenames: list):
+        self.__filenames = filenames
+        if (self.__showFrame != None):
+            self.__showFrame.set_show_option(self.__showFrame.SHOW_FILENAMES)
+
 
     def set_filename(self, filename: str):
         try:
-            idx = self.__files.index(filename)
+            idx = self.__filenames.index(filename)
             self.__set_item(idx)
         except:
             pass
@@ -82,6 +88,10 @@ class SelectFilenameFrame(object) :
 
     def set_PathManager(self, pathMan: object):
         self.__pathMan = pathMan
+        self.set_filenames(self.__pathMan.get_source_files())
 
     def set_NotebookManager(self, notebookMan: object) :
         self.__notebookMan = notebookMan
+
+    def set_ShowFrame(self, showFrame: object) :
+        self.__showFrame = showFrame

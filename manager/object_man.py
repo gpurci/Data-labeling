@@ -2,6 +2,8 @@
 
 from pathlib import Path
 import yaml
+import numpy as np
+from manager.target_man import *
 
 
 class ObjectManager :
@@ -15,8 +17,36 @@ class ObjectManager :
         print('ObjectManager {}'.format(names))
         self.__object_names = names
 
+    def add_object_names(self, names: 'array'):
+        print('ObjectManager {}'.format(names))
+        for name in names:
+            self.__add_item_to_items(name)
+
     def get_object_names(self):
         return self.__object_names
+
+    def get_user_object_freq(self):
+        targetMan = TargetManager(0)
+        d_object_names = {}
+        for target_filename in self.__pathMan.get_target_filenames():
+            filename = self.__pathMan.get_target_filename(str(target_filename))
+            targetMan.read(filename)
+            object_names = targetMan.get_names()
+            for name in object_names:
+                if (name in d_object_names) :
+                    d_object_names[name] += 1
+                else :
+                    d_object_names[name]  = 1
+        return d_object_names
+
+    def __add_item_to_items(self, item: str):
+        if (self.__is_item_in_items(item) == False):
+            self.__object_names = np.append(self.__object_names, item)
+
+    def __is_item_in_items(self, item: str):
+        size_similar_item = np.argwhere(self.__object_names == item).reshape(-1).shape[0]
+        #print('size_similar_item {}'.format(size_similar_item))
+        return (size_similar_item > 0)
 
     def __get_object_names(self):
         if (Path(self.__pathMan.get_object_info_file()).is_file()) :

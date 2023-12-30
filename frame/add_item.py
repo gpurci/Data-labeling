@@ -11,7 +11,7 @@ class AddItemFrame :
         self.__s_search_item  = search_item
 
         self.__s_prev_item   = ''
-        self.__as_items      = []
+        self.__as_items      = np.array([])
         self.__ask_is_item   = is_item
         self.__CHECK_SIMILARLY_ITEM = is_item
 
@@ -100,9 +100,12 @@ class AddItemFrame :
 
 
     def __get_similarly_items(self, item: str):
-        items_idx = np.array(list(map(lambda val: item in val, self.__as_items)))
-        similarly_items = self.__as_items[items_idx]
-        print('similarly_items {}'.format(similarly_items))
+        if (self.__as_items.shape[0] > 0):
+            items_idx = np.array(list(map(lambda val: item in val, self.__as_items)))
+            similarly_items = self.__as_items[items_idx]
+            print('similarly_items {}'.format(similarly_items))
+        else:
+            similarly_items = []
         return similarly_items
 
     def __set_search_item(self, item: str):
@@ -172,8 +175,11 @@ class AddItemFrame :
 
 
     def __is_item_in_items(self, item: str):
-        size_similar_item = np.argwhere(self.__as_items == item).reshape(-1).shape[0]
-        print('size_similar_item {}'.format(size_similar_item))
+        if (self.__as_items.shape[0] > 0):
+            size_similar_item = np.argwhere(self.__as_items == item).reshape(-1).shape[0]
+            #print('size_similar_item {}'.format(size_similar_item))
+        else:
+            size_similar_item = 0
         return (size_similar_item > 0)
 
     def __ask_check_item(self, item: str):

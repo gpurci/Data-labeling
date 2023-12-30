@@ -26,6 +26,8 @@ class ImageManager :
         self.__data        = None
         self.__man_data    = None
         self.__pad_color   = (0, 0, 0)
+        self.__dilatation  = (0, 0)
+        self.__is_man      = False
 
     def copy(self):
         imageMan = ImageManager(self.get_frame_size())
@@ -43,6 +45,9 @@ class ImageManager :
 
     def set_size_standard(self, size: tuple):
         self.__size_standard = np.array(size, dtype=np.float32)
+
+    def set_dilatation(self, size: tuple):
+        self.__dilatation = np.array(size, dtype=np.int32)
 
     def __str__(self) :
         returnStr = "ImageManager"
@@ -68,12 +73,12 @@ class ImageManager :
     def get_man_data(self) :
         return self.__man_data
 
-    def __do_calc_zoom(self, _size_frame) :
+    def __fDoClcZoom(self, _size_frame) :
         fX, fY = _size_frame / self.__size
         print('do_calc_zoom size_frame {} WH format'.format(_size_frame))
         print('do_calc_zoom image_size {} WH format'.format(self.__size))
         print('do_calc_zoom zoom W {} H {}'.format(fX, fY))
-        _zoom = 1
+        _zoom = 1.
         if ((fY >= 1) and (fX >= 1)) :
             if (fY < fX) :
                 _zoom = fY
@@ -109,46 +114,34 @@ class ImageManager :
         print('cursor_x {}, cursor_y {}'.format(cursor_x, cursor_y))
         return cursor_x, cursor_y
 
-    def __do_for_tkinter(self):
-        img_size = np.array(self.__size * self.__zoom, dtype=np.int32)
+    def __vDoTkinterImage(self, _data: 'pil_image', _size: tuple, _zoom: float):
+        img_size = np.array(_size * _zoom, dtype=np.int32)
         print("W {}, H {}".format(*img_size))
-        img = self.__data.resize(img_size)
+        img = _data.resize(img_size, resample=None, box=None, reducing_gap=None)
         self.__show_data = ImageTk.PhotoImage(img)
 
 
     def read(self, filename: str) :
-        self.__data = Image.open(filename)
+        self.__data = Image.open(filename).convert('RGB')
         self.__size = np.array(self.__data.size, dtype=np.float32)
+
+    def vDoImageTK(self):
         print("image_size W {}, H {}".format(*self.__size))
-        self.__zoom = self.__do_calc_zoom(self.__size_frame)
+        self.__zoom = self.__fDoClcZoom(self.__size_frame)
         self.__zoom_normal = self.__zoom
 
         cursor_x, cursor_y = self.get_start_cursor()
         self.__editFrame.coords(cursor_x, cursor_y)
-        self.__do_for_tkinter()
-
-
-    def read_standardization(self, filename: str, color: tuple) :
-        self.__data = Image.open(filename)
-        self.__size = np.array(self.__data.size, dtype=np.float32)
-        print("image_size W {}, H {}".format(*self.__size))
-        self.__zoom_man = self.__do_calc_zoom(self.__size_standard)
-
-        cursor_x, cursor_y = self.get_start_cursor()
-
-        new_size    = np.array(self.__size * self.__zoom, dtype=np.int32)
-        print("W {}, H {}".format(*new_size))
-
-        fr_width, fr_height = self.__size_frame
-        fr_width, fr_height = int(fr_width), int(fr_height)
-
-        self.__man_data = Image.new(self.__data.mode, (fr_width, fr_height), color) 
-          
-        self.__man_data.paste(self.__data.resize(new_size), (cursor_x, cursor_y))
-        print('standardization W {}, H {}'.format(*self.__man_data.size))
+        if (self.__is_man == True):
+            print('MAN_DATA')
+            _data = self.__man_data
+        else:
+            print('DATA')
+            _data = self.__data
+        self.__vDoTkinterImage(_data, self.__size, self.__zoom)
 
     def standardization(self, color: tuple) :
-        self.__zoom_man = self.__do_calc_zoom(self.__size_standard)
+        self.__zoom_man = self.__fDoClcZoom(self.__size_standard)
 
         cursor_x, cursor_y = self.get_man_cursor()
 
@@ -159,17 +152,15 @@ class ImageManager :
         fr_width, fr_height = int(fr_width), int(fr_height)
 
         self.__man_data = Image.new(self.__data.mode, (fr_width, fr_height), color) 
-          
+        
         self.__man_data.paste(self.__data.resize(new_size), (cursor_x, cursor_y))
         print('standardization W {}, H {}'.format(*self.__man_data.size))
 
 
 
-    def do_RGB_image(self, shape: tuple, color: tuple) :
-        #to do
-        img = np.ones((10, 10, 3))  # d1d8e3
-        img = Image.fromarray(img, mode='RGB')
-        self.__show_data = ImageTk.PhotoImage(img)
+    def new(self, shape: tuple, color: tuple) :
+        img = Image.new(mode='RGB', size=shape, color=color)
+        return img
 
     def __move_on_edit_frame(self, x: int, y: int) :
         print('__move_on_edit_frame x {}, y {}'.format(x, y))
@@ -197,10 +188,27 @@ class ImageManager :
         print('zoom {}'.format(self.__zoom / self.__zoom_normal))
         
         self.__move_on_edit_frame(x, y)
-        self.__do_for_tkinter()
+        self.__vDoTkinterImage(self.__data, self.__size, self.__zoom)
 
     def move(self, x: int, y: int) :
         self.__move_on_edit_frame(x, y)
+
+    def transparency(self, alfa: tuple) :
+        print('transparency mode  {}, pixel {}'.format(self.__data.mode, self.__data.getpixel((0, 0))))
+        _data = np.asarray(self.__data, dtype=np.int8)
+        print('original data shape {} {}, {}'.format(self.__data.size, _data.shape, _data[0][0]))
+        _alfa = np.array(alfa, dtype=np.float32)
+        print('alfa  {}'.format(_alfa))
+        _data = np.array(_data * _alfa, dtype=np.int8)
+        print('alfa data shape {}, {} {}'.format(_data.shape, _data[0][0], type(_data[0][0][0])))
+
+        self.__man_data = Image.fromarray(_data, mode=self.__data.mode)
+        print('size man_data {}, data {}'.format(self.__man_data.size, self.__data.size))
+
+        self.__is_man      = True
+        self.__vDoTkinterImage(self.__man_data, self.__size, self.__zoom)
+
+
 
     def calc_coord_from_target(self, box: tuple) :
         print('calc_coord_from_target (x0 {}, y0 {}, x1 {}, y1 {})'.format(*box))
@@ -246,12 +254,12 @@ class ImageManager :
         self.__size = np.array(img.size, dtype=np.float32)
         print("image_size W {}, H {}".format(*self.__size))
         self.__data = img
-        self.__zoom = self.__do_calc_zoom(self.__size_frame)
+        self.__zoom = self.__fDoClcZoom(self.__size_frame)
         self.__zoom_normal = self.__zoom
 
         cursor_x, cursor_y = self.get_start_cursor()
         self.__editFrame.coords(cursor_x, cursor_y)
-        self.__do_for_tkinter()
+        self.__vDoTkinterImage(self.__data, self.__size, self.__zoom)
 
     def save(self, filename: str, is_man_data=False) :# is_man_data: bool
         if ((is_man_data == False) and (self.__data != None)):

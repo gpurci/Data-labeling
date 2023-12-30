@@ -37,6 +37,17 @@ class ToolsFrame:
         crop_button["command"] = self.__detect
         crop_button.pack({"side": "left"})
 
+        crop_button = Button(tools_frame)
+        crop_button["text"] = "Transparency",
+        crop_button["command"] = self.__transparency
+        crop_button.pack({"side": "left"})
+
+
+
+
+    def __transparency(self):
+        print('TOOLS TRANSPARENCY')
+        self.__toolsMan.transparency()
 
     def __detect(self):
         print('TOOLS DETECT')

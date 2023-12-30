@@ -6,7 +6,15 @@ class ToolsManager:
         self.__notebookMan = None
         self.__targetMan = None
         self.__imageMan  = None
+        self.__showFrame = None
         
+
+    def transparency(self):
+        print('TRANSPARENCY {}'.format('start'))
+        self.__imageMan.transparency((1., 1., 1.3))
+        print('TRANSPARENCY {}'.format('end'))
+        if (self.__showFrame != None):
+            self.__showFrame.set_show_option(self.__showFrame.SHOW_OBJECT)
 
     def detect(self):
         print('DETECT {}'.format('start'))
@@ -34,3 +42,6 @@ class ToolsManager:
 
     def set_RunExternScript(self, runExtScript: object) :
         self.__runExtScript = runExtScript
+
+    def set_ShowFrame(self, showFrame: object) :
+        self.__showFrame = showFrame

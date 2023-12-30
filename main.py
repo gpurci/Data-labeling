@@ -19,6 +19,8 @@ from manager.import_man.yolo_v5_format import *
 from manager.notebook_man import *
 from manager.tools_man import *
 from manager.object_man import *
+from manager.edit_menu_man import *
+from manager.find_menu_man import *
 from manager.standardization import *
 from manager.run_extern_script import *
 
@@ -113,7 +115,7 @@ class Application(Frame) :
         self.menubar = Menu(self)
         self.filemenu = Menu(self.menubar, tearoff=0)
         self.filemenu.add_command(label="Open", command=MenuOpenFrame(self.path_man))
-        self.filemenu.add_command(label="Save", command=self.none_fn)
+        self.filemenu.add_command(label="Save", command=self.__save)
         self.filemenu.add_command(label="Save as...", command=self.none_fn)
         self.filemenu.add_command(label="Destination", command=MenuDestinationFrame(self.path_man))
 
@@ -132,9 +134,7 @@ class Application(Frame) :
         self.editmenu.add_command(label="Cut", command=self.none_fn)
         self.editmenu.add_command(label="Undo", command=self.none_fn)
         self.editmenu.add_command(label="Zoom", command=self.none_fn)
-        self.editmenu.add_command(label="Program", command=self.none_fn)
-        self.editmenu.add_command(label="Filter Aria", command=self.none_fn)
-        self.editmenu.add_command(label="Plot", command=self.none_fn)
+        self.editmenu.add_command(label="Change user name", command=ChangeUserNameMenu(self.path_man))
         self.editmenu.add_separator()
         self.editmenu.add_command(label="Delete", command=self.quit)
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
@@ -143,6 +143,13 @@ class Application(Frame) :
         self.toolsmenu.add_command(label="Standardize", command=Standardization(self.path_man, self.resolution_man))
         self.toolsmenu.add_command(label="SourceDetect", command=self.run_extern_script.source_detector)
         self.menubar.add_cascade(label="Tools", menu=self.toolsmenu)
+
+        self.findmenu = Menu(self.menubar, tearoff=0)
+        self.findmenu.add_command(label="Find object name", command=FindFilesMenu(self.path_man, self.select_filename_frame))
+        self.findmenu.add_command(label="More that ...", command=MoreThatMenu(self.path_man, self.select_filename_frame))
+        self.findmenu.add_command(label="Less that ...", command=LessThatMenu(self.path_man, self.select_filename_frame))
+        self.findmenu.add_command(label="Object names", command=ObjectNamesMenu(self.windows, self.object_man))
+        self.menubar.add_cascade(label="Find", menu=self.findmenu)
 
         self.helpmenu = Menu(self.menubar, tearoff=0)
         self.helpmenu.add_command(label="Help Index", command=self.quit)
@@ -180,6 +187,7 @@ class Application(Frame) :
 
         self.select_filename_frame.set_PathManager(self.path_man)
         self.select_filename_frame.set_NotebookManager(self.notebook_man)
+        self.select_filename_frame.set_ShowFrame(self.show_frame)
 
         self.select_object_frame.set_ObjectManager(self.object_man)
 
@@ -191,13 +199,14 @@ class Application(Frame) :
         self.edit_man.set_ObjectManager(self.object_man)
 
         self.path_man.set_ResolutionManager(self.resolution_man)
-        self.path_man.set_ShowFrame(self.show_frame)
+        self.path_man.set_FilenameFrame(self.select_filename_frame)
 
         self.resolution_man.set_path_parent(self.path_man.get_description_path())
 
         self.tools_man.set_PathManager(self.path_man)
         self.tools_man.set_NotebookManager(self.notebook_man)
         self.tools_man.set_RunExternScript(self.run_extern_script)
+        self.tools_man.set_ShowFrame(self.show_frame)
         
 
         self.notebook_frame.set_NotebookManager(self.notebook_man)
@@ -250,6 +259,7 @@ class Application(Frame) :
     # Display all
     def __display(self) :
         self.show_frame.show()
+        # automaticaly show changes after 100 msec
         self.windows.after(100, self.__display)
 
     # Auto save
@@ -272,7 +282,7 @@ class Application(Frame) :
         self.tools_man  = ToolsManager()
         self.edit_man   = EditManager()
         self.object_man = ObjectManager(self.path_man)
-        self.run_extern_script = RunExternScript(self.path_man, self.resolution_man, r'./config/config_run_script.yaml')
+        self.run_extern_script = RunExternScript(self.path_man, self.resolution_man, self.object_man, r'./config/config_run_script.yaml')
 
         self.description_frame     = DescriptionFrame()
         self.select_object_frame   = SelectObjectFrame()

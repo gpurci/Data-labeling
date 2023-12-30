@@ -18,7 +18,6 @@ class EditManager :
         self.__targetMan = None
         self.__imageMan  = None
 
-
         frame_title  = 'Make an object'
         search_title = 'Object name'
         search_item  = ''

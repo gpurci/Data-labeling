@@ -77,6 +77,9 @@ class TargetManager(object) :
     def set_default_rating(self, rating: int) :
         self.__default_rating = rating
 
+    def set_object_name(self, key: int, name: str) :
+        self.__df_targets.at[key, 'names'] = name.lower()
+
     def set_description(self, key: int, text: str) :
         self.__df_targets.at[key, 'description'] = text
 
@@ -85,10 +88,24 @@ class TargetManager(object) :
 
     def set_coord(self, key: int, coord: tuple) :
         (x0, y0, x1, y1) = coord
+        im_width, im_height = self.get_size()
+        def put_point_box_image(point, max_size):
+            if (point < 0):
+                retVal = 0
+            elif(point > max_size):
+                retVal = max_size
+            else:
+                retVal = point
+            return retVal
+
         if (x0 > x1):
             x0, x1 = x1, x0
         if (y0 > y1):
             y0, y1 = y1, y0
+        x0 = put_point_box_image(x0, im_width)
+        x1 = put_point_box_image(x1, im_width)
+        y0 = put_point_box_image(y0, im_height)
+        y1 = put_point_box_image(y1, im_height)
         self.__df_targets.at[key, 'coord x0'] = int(x0)
         self.__df_targets.at[key, 'coord x1'] = int(x1)
         self.__df_targets.at[key, 'coord y0'] = int(y0)
@@ -301,20 +318,21 @@ class TargetManager(object) :
     def add_object(self, d_new_target: dict) :
         self.__df_targets.loc[self.get_object_size()] = d_new_target
         self.set_selected_object(self.get_object_size()-1)
-        self.update_last_name()
 
         self.set_description(self.__selected_object, self.get_last_description())
         self.set_rating(self.__selected_object, self.get_last_rating())
         self.set_coord(self.__selected_object, self.get_last_coord())
+        self.set_object_name(self.__selected_object, self.get_object_name(self.__selected_object))
+        self.update_last_name()
 
-        if self.__showFrame is not None :
+        if (self.__showFrame is not None) :
             self.__showFrame.set_show_option(self.__showFrame.SHOW_OBJECT)
 
     def set_last_object_name(self, name: str) :
-        self.__df_targets.at[self.__selected_object, 'names'] = name
+        self.set_object_name(self.__selected_object, name)
         self.update_last_name()
 
-        if self.__showFrame is not None :
+        if (self.__showFrame is not None) :
             self.__showFrame.set_show_option(self.__showFrame.SHOW_OBJECT)
 
     def select_object(self, item: int) :
@@ -342,6 +360,19 @@ class TargetManager(object) :
         if (len(lst_item) == 0):
             lst_item = None
         return lst_item
+
+    def find_object_by_name(self, name: str):
+        print('find_object_by_name {}, name {}, size {}'.format('START', name, self.get_object_size()))
+        lst_item = []
+        for idx in range(self.__DEFAULT_OBJECT+1, self.get_object_size()):
+            object_name = self.get_object_name(idx)
+            if (object_name == name):
+                lst_item.append(object_name)
+
+        if (len(lst_item) == 0):
+            lst_item = None
+        return lst_item
+
 
     def concatenate(self, targetMan: object):
         self.__df_targets = pd.concat([self.__df_targets, targetMan.get_all()], ignore_index=True, axis=0)

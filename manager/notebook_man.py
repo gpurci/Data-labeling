@@ -97,7 +97,7 @@ class NotebookManager :
 
         self.__def_targetMan = TargetManager(self.__default_rating)
         self.__config(self.__def_imageMan, self.__def_targetMan)
-        self.__def_imageMan.do_RGB_image((4, 4), (255, 255, 255))#to do
+        self.__def_imageMan.new((4, 4), (255, 255, 255))
         self.__def_targetMan.read(self.default_target_file)
 
     def set_default_rating(self, rating: int) :
@@ -192,6 +192,7 @@ class NotebookManager :
         image_file = self.__pathMan.get_source_filename()
         print('image_file {}'.format(image_file))
         imageMan.read(image_file)
+        imageMan.vDoImageTK()
 
         target_file = self.__pathMan.get_target_filename()
         if (Path(target_file).is_file() == True) :

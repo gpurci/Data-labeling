@@ -8,8 +8,8 @@ import re
 
 class PathManager :
     def __init__(self, config_file: str) :
-        self.__resolutiOnman = None
-        self.__showframe     = None
+        self.__resolutionMan = None
+        self.__filenameFrame = None
 
         self.__output_suffix = None # target filename suffix
         self.__input_suffix  = None # input  filename suffix
@@ -20,6 +20,7 @@ class PathManager :
         self.__row_path    = None
         self.__source_path = None
         self.__dest_path   = None
+        self.__user        = None
         self.__config_file = config_file
         self.__read_config_yaml_file()
 
@@ -37,69 +38,46 @@ class PathManager :
         description_path : {}
         input_suffix     : {}
         output_suffix    : {}
+        user             : {}
         """.format(self.__source_path,  self.__dest_path,
                    self.__row_path,     self.__man_path, 
                    self.__input_path,   self.__target_path, 
                    self.__description_path,
-                   self.__input_suffix, self.__output_suffix)
+                   self.__input_suffix, self.__output_suffix,
+                   self.__user)
         return strRet
 
     def __read_config_yaml_file(self) :
+        def check_key(config_list, key, default):
+            if (key in config_list) :
+                retVal = config_list[key]
+            else :
+                retVal = default
+            return retVal
+
         if (Path(self.__config_file).is_file()):
             with open(self.__config_file) as file :
                 # The FullLoader parameter handles the conversion from YAML
                 # scalar values to Python the dictionary format
                 config_list = yaml.load(file, Loader=yaml.FullLoader)
 
-            if ('source_path' in config_list) :
-                self.__source_path = config_list['source_path']
-            else :
-                self.__source_path = '/.'
-            if ('dest_path' in config_list) :
-                self.__dest_path = config_list['dest_path']
-            else :
-                self.__dest_path = '/.'
-            if ('row_path' in config_list) :
-                self.__row_path = config_list['row_path']
-            else :
-                self.__row_path = 'row'
-            if ('man_path' in config_list) :
-                self.__man_path = config_list['man_path']
-            else :
-                self.__man_path = 'man'
-            if ('input_path' in config_list) :
-                self.__input_path = config_list['input_path']
-            else :
-                self.__input_path = 'inputs'
-            if ('target_path' in config_list) :
-                self.__target_path = config_list['target_path']
-            else :
-                self.__target_path = 'targets'
-            if ('description_path' in config_list) :
-                self.__description_path = config_list['description_path']
-            else :
-                self.__description_path = 'description'
-            if ('input_suffix' in config_list) :
-                self.__input_suffix = config_list['input_suffix']
-            else :
-                self.__input_suffix = '.png'
-            if ('output_suffix' in config_list) :
-                self.__output_suffix = config_list['output_suffix']
-            else :
-                self.__output_suffix = '.csv'
             print(config_list)
 
         else :
-            self.__source_path = '/.'
-            self.__dest_path   = '/.'
-            self.__row_path = 'row'
-            self.__man_path = 'man'
-            self.__target_path = 'targets'
-            self.__input_path  = 'inputs'
-            self.__description_path = 'description'
-            self.__input_suffix  = '.png'
-            self.__output_suffix = '.csv'
-            self.__save_config(self.__config_file)
+            config_list = {'NotConfigFile':0}
+
+        self.__source_path = check_key(config_list, 'source_path', '/.')
+        self.__dest_path   = check_key(config_list, 'dest_path',   '/.')
+        self.__row_path    = check_key(config_list, 'row_path',    'row')
+        self.__man_path    = check_key(config_list, 'man_path',    'man')
+        self.__input_path  = check_key(config_list, 'input_path',  'inputs')
+        self.__target_path = check_key(config_list, 'target_path', 'targets')
+        self.__user        = check_key(config_list, 'user',        'user')
+        self.__description_path = check_key(config_list, 'description_path', 'description')
+        self.__input_suffix     = check_key(config_list, 'input_suffix',     '.png')
+        self.__output_suffix    = check_key(config_list, 'output_suffix',    '.csv')
+
+        self.__save_config(self.__config_file)
 
         self.set_source_path(self.__source_path)
         self.set_dest_path(self.__dest_path)
@@ -121,11 +99,13 @@ class PathManager :
         description_path : {}
         input_suffix     : {}
         output_suffix    : {}
+        user             : {}
         """.format(self.__source_path,  self.__dest_path,
                    self.__row_path,     self.__man_path, 
                    self.__input_path,   self.__target_path, 
                    self.__description_path,
-                   self.__input_suffix, self.__output_suffix)
+                   self.__input_suffix, self.__output_suffix,
+                   self.__user)
         names = yaml.safe_load(names_yaml)
 
         with open(config_file, 'w') as file :
@@ -145,11 +125,11 @@ class PathManager :
             self.set_dest_path(match_patern['path'])
         print('set_source_path {}'.format(self.__source_path))
 
-        if (self.__showframe != None):
-            self.__showframe.set_show_option(self.__showframe.SHOW_FILENAMES)
+        if (self.__filenameFrame != None):
+            self.__filenameFrame.set_filenames(self.get_source_files())
 
     def set_dest_path(self, _path: str) :
-        patern = r"(?P<path>.+/({}|{}))(/({}|{}))?$".format(self.__man_path, self.__row_path, self.__input_path, self.__target_path)
+        patern = r"(?P<path>.+/({}|{}))(/({}|{})(/(\w+))?)?$".format(self.__man_path, self.__row_path, self.__input_path, self.__target_path)
         print('set_dest_path regex patern {}'.format(patern))
 
         match_patern = re.search(patern, _path)
@@ -161,10 +141,17 @@ class PathManager :
             self.__dest_path = match_patern['path']
 
         self.__dest_path = str(self.__dest_path)
+        self.__makedir()
+
+
         print('set_dest_path {}'.format(self.__dest_path))
         
-        if (self.__resolutiOnman != None):
-            self.__resolutiOnman.set_path_parent(self.get_description_path())
+        if (self.__resolutionMan != None):
+            self.__resolutionMan.set_path_parent(self.get_description_path())
+
+    def set_user_name(self, user: str) :
+        self.__user = user
+        self.__makedir()
 
     def set_filename(self, filename: str) :
         self.__filename = filename
@@ -192,29 +179,30 @@ class PathManager :
         files = list(map(lambda file: str(file.name), files))
         return np.array(files)
 
+    def get_target_filenames(self) :
+        files = Path(self.get_target_path()).glob('*')
+        files = list(map(lambda file: str(file.name), files))
+        return np.array(files)
+
     def get_dest_path(self) :
         return self.__dest_path
 
     def get_input_path(self) :
         path = Path(self.__dest_path).joinpath(self.__input_path)
-        path.mkdir(parents=True, exist_ok=True)
         return str(path)
 
     def get_target_path(self) :
-        path = Path(self.__dest_path).joinpath(self.__target_path)
-        path.mkdir(parents=True, exist_ok=True)
+        path = Path(self.__dest_path).joinpath(self.__target_path, self.__user)
         return str(path)
 
     def get_man_input_path(self) :
         parent = str(Path(self.__dest_path).parent)
         path = Path(parent).joinpath(self.__man_path, self.__input_path)
-        path.mkdir(parents=True, exist_ok=True)
         return str(path)
 
     def get_man_target_path(self) :
         parent = str(Path(self.__dest_path).parent)
-        path = Path(parent).joinpath(self.__man_path, self.__target_path)
-        path.mkdir(parents=True, exist_ok=True)
+        path = Path(parent).joinpath(self.__man_path, self.__target_path, self.__user)
         return str(path)
 
     def get_filename(self) :
@@ -255,13 +243,23 @@ class PathManager :
     def get_target_filename(self, filename=None): #filename: str
         if (filename is not None):
             file = Path(self.get_target_path()).joinpath('name').with_name(filename).with_suffix(self.__output_suffix)
-            Path(file).parent.mkdir(parents=True, exist_ok=True)
         elif (self.__filename is not None) :
             file = Path(self.get_target_path()).joinpath('name').with_name(self.__filename).with_suffix(self.__output_suffix)
-            Path(file).parent.mkdir(parents=True, exist_ok=True)
         else :
             file = None
         return str(file)
+
+    def get_input_filename_by_target(self, filename=None): #filename: str
+        if (filename is not None):
+            match = str(Path(filename).stem) + '*'
+            file = list(Path(self.get_input_path()).glob(match))
+            if (len(file) != 0):
+                file = str(file[0].name)
+            else:
+                file = None
+        else :
+            file = None
+        return file
 
     def get_man_input_filename(self, filename=None): #filename: str
         if (filename is not None) :
@@ -288,10 +286,23 @@ class PathManager :
         file = Path(parent).joinpath(self.__description_path, 'object_info.yaml')
         return str(file)
 
+    def get_user_info_file(self) :
+        #print('get_object_info_file {}'.format(self))
+        parent = str(Path(self.__dest_path).parent)
+        #print('get_object_info_file parent {}'.format(parent))
+        file = Path(parent).joinpath(self.__description_path, 'user_info.yaml')
+        return str(file)
+
     def get_description_path(self) :
         parent = str(Path(self.__dest_path).parent)
         path = Path(parent).joinpath(self.__description_path)
         return str(path)
+
+    def __makedir(self):
+        Path(self.get_input_path()).mkdir(parents=True, exist_ok=True)
+        Path(self.get_target_path()).mkdir(parents=True, exist_ok=True)
+        Path(self.get_man_input_path()).mkdir(parents=True, exist_ok=True)
+        Path(self.get_man_target_path()).mkdir(parents=True, exist_ok=True)
 
     def exist_filename(self, exist_filenames: 'array', filename: str):
         size_similar_item = np.argwhere(exist_filenames == filename).reshape(-1).shape[0]
@@ -321,7 +332,7 @@ class PathManager :
 
 
     def set_ResolutionManager(self, resolutionMan: object) :
-        self.__resolutiOnman = resolutionMan
+        self.__resolutionMan = resolutionMan
 
-    def set_ShowFrame(self, showFrame: object) :
-        self.__showframe = showFrame
+    def set_FilenameFrame(self, obj: object) :
+        self.__filenameFrame = obj

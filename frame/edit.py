@@ -131,8 +131,7 @@ class EditFrame(object) :
                                    width=self.__workframe_dim.get_width(), height=self.__workframe_dim.get_height(),
                                    bd=0, bg='#d1d8e3')  # d1d8e3
 
-        img = np.ones((4, 4, 3))  # d1d8e3
-        img = Image.fromarray(img, mode='RGB')
+        img = Image.new(mode='RGB', size=(4, 4), color=(0xd1, 0xd8, 0xe3))
         self.__cs_image = self.__canvas_frame.create_image(
             (0, 0),
             anchor=NW,

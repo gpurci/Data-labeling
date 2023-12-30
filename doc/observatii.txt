@@ -1,0 +1,2 @@
+- pentru a imbunatati calitatea prezicerii, facem dilatarea imaginii zoomIn, zoomOut, rotire, translare
+- o imagine care a suferit schimbari este numita imagine copil
