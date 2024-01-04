@@ -18,8 +18,6 @@ class ToolsManager:
 
     def detect(self):
         print('DETECT {}'.format('start'))
-        if (self.__runExtScript.is_runable() == False):
-            self.__runExtScript.update()
         self.__runExtScript.image_detector(self.__imageMan, self.__targetMan)
         print('DETECT {}'.format('end'))
 

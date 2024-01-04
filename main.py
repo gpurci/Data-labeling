@@ -22,7 +22,7 @@ from manager.object_man import *
 from manager.edit_menu_man import *
 from manager.find_menu_man import *
 from manager.standardization import *
-from manager.run_extern_script import *
+from manager.run_detect_script import *
 
 class TimeMonitor(object) :
     def __init__(self) :
@@ -141,7 +141,7 @@ class Application(Frame) :
 
         self.toolsmenu = Menu(self.menubar, tearoff=0)
         self.toolsmenu.add_command(label="Standardize", command=Standardization(self.path_man, self.resolution_man))
-        self.toolsmenu.add_command(label="SourceDetect", command=self.run_extern_script.source_detector)
+        self.toolsmenu.add_command(label="ObjectDetect", command=self.run_detect_script.source_detector)
         self.menubar.add_cascade(label="Tools", menu=self.toolsmenu)
 
         self.findmenu = Menu(self.menubar, tearoff=0)
@@ -205,7 +205,7 @@ class Application(Frame) :
 
         self.tools_man.set_PathManager(self.path_man)
         self.tools_man.set_NotebookManager(self.notebook_man)
-        self.tools_man.set_RunExternScript(self.run_extern_script)
+        self.tools_man.set_RunExternScript(self.run_detect_script)
         self.tools_man.set_ShowFrame(self.show_frame)
         
 
@@ -282,7 +282,7 @@ class Application(Frame) :
         self.tools_man  = ToolsManager()
         self.edit_man   = EditManager()
         self.object_man = ObjectManager(self.path_man)
-        self.run_extern_script = RunExternScript(self.path_man, self.resolution_man, self.object_man, r'./config/config_run_script.yaml')
+        self.run_detect_script = RunDetectScript(self.path_man, self.resolution_man, self.object_man, r'./config/config_run_script.yaml')
 
         self.description_frame     = DescriptionFrame()
         self.select_object_frame   = SelectObjectFrame()

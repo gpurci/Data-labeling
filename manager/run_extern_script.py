@@ -3,122 +3,104 @@
 from pathlib import Path
 import yaml
 from tkinter import messagebox
-
-from manager.image_man import *
-from manager.target_man import *
-from manager.standardization import *
-
-from manager.import_man.yolo_v5_format import *
-
+import os
 
 
 class RunExternScript(object) :
-    def __init__(self, path_manager: object, resolution_man: object, object_man: object, config_file: str) :
-        self.__pathMan       = path_manager
-        self.__resolutionMan = resolution_man
-        self.__objectMan     = object_man
-
+    def __init__(self, config_file: str, def_import_filename:str, def_script_filename:str) :
         self.__config_file   = config_file
+        self.__def_import_filename = def_import_filename
+        self.__def_script_filename = def_script_filename
 
-        self.__script_file    = None
-        self.__import_file    = None
+        self.__prev_mod_time_import = 0
+        self.__prev_mod_time_script = 0
 
-        self.__import_library = None
-        self.__script_code    = None
-        self.__standardization = Standardization(path_manager, resolution_man)
+        self.__import_filename = None
+        self.__script_filename = None
 
-        self.__imageMan  = ImageManager(frame=self.__resolutionMan.get_size())
-        self.__targetMan = TargetManager(0)
+        self.__import_library  = None
+        self.__script_code     = None
 
-    def is_runable(self):
-        return (self.__script_file != None)
+        self.__global = None
+        self.__local  = None
+
+    def __is_modified(self):
+        if ((self.__script_filename == None) or (self.__import_filename == None)):
+            bVal = True
+        else:
+            ti_mod_import = os.path.getmtime(self.__import_filename)
+            ti_mod_script = os.path.getmtime(self.__script_filename)
+            bVal = ((self.__prev_mod_time_import != ti_mod_import) or (self.__prev_mod_time_script != ti_mod_script))
+        return bVal
 
     def update(self):
-        self.__read_config_file()
-        self.__read_script()
-        self.__exec_script()
+        if (self.__is_modified() == True):
+            self.__read_config_filename()
+            self.__read_script()
+            self.__exec_script()
+            self.__prev_mod_time_import = os.path.getmtime(self.__import_filename)
+            self.__prev_mod_time_script = os.path.getmtime(self.__script_filename)
         
     def __str__(self):
         return self.__script_code
 
-    def get_imageMan(self):
-        return self.__imageMan
+    def set_import_filename(self, filename: str):
+        self.__import_filename = filename
+        self.__prev_mod_time_import = 0
 
-    def get_targetMan(self):
-        return self.__targetMan
+    def set_script_filename(self, filename: str):
+        self.__script_filename = filename
+        self.__prev_mod_time_script = 0
 
-    def folder_detector(self):
-        print('FOLDER DETECTOR {}'.format(None))
-        for file in self.__pathMan.get_input_files():
-            self.file_detector(str(file))
+    def get_globals(self):
+        return self.__global
 
-    def source_detector(self):
-        if (self.is_runable() == False):
-            self.update()
-        print('SOURCE DETECTOR {}'.format(None))
-        for file in self.__pathMan.get_source_files():
-            self.source_file_detector(str(file))
+    def get_locals(self):
+        return self.__local
 
-    def source_file_detector(self, filename: str):
-        print('SOURCE FILE DETECTOR {}'.format(filename))
-        source_file = self.__pathMan.get_source_filename(filename)
-        print('source_file {}'.format(source_file))
-        self.__imageMan.read(source_file)
-        self.__imageMan.standardization((0, 0, 0))
+    def __read_config_filename(self):
+        def check_filename(config_list, key, default_filename):
+            if (key in config_list) :
+                retFilename = config_list[key]
+            else :
+                retFilename = default_filename
 
-        man_image = self.__imageMan.get_man_data()
-        im_width, im_height = self.__imageMan.get_size()
-        self.__targetMan.new(im_width, im_height)
+            if (Path(retFilename).is_file() == False):
+                retFilename = Path(retFilename)
+                retFilename.parent.mkdir(mode=0o777, parents=True, exist_ok=True)
+                retFilename.touch(mode=0o666, exist_ok=True)
+            return str(retFilename)
 
-        self.__local['run_detector'](self.__local['detector'], man_image, self.__targetMan, 0.1, None, self.__local)
-        self.__targetMan.resize_coord(self.__imageMan.calc_man_coord_to_target)
-        self.__objectMan.add_object_names(self.__targetMan.get_names())
+        if (Path(self.__config_file).is_file()):
+            with open(self.__config_file) as file :
+                config_list = yaml.load(file, Loader=yaml.FullLoader)
+        else :
+            config_list = {'RunExternScript config_not_exist': self.__config_file}
+        print(config_list)
+        self.__script_filename = check_filename(config_list, 'script_filename', self.__def_script_filename)
+        self.__import_filename = check_filename(config_list, 'import_filename', self.__def_import_filename)
+        self.__save_config()
 
-        row_input_file = self.__pathMan.get_input_filename(filename)
-        self.__imageMan.save(row_input_file)
-
-        row_target_file = self.__pathMan.get_target_filename(filename)
-        print('row_target_file {}'.format(row_target_file))
-
-        self.__targetMan.save(row_target_file)
-
-    def file_detector(self, filename: str):
-        print('FILE DETECTOR {}'.format(filename))
-        row_input_file = self.__pathMan.get_input_filename(file)
-        print('row_input_file {}'.format(row_input_file))
-        self.__imageMan.read(row_input_file)
-        self.__imageMan.standardization((0, 0, 0))
-
-        man_image = self.__imageMan.get_man_data()
-        im_width, im_height = self.__imageMan.get_size()
-        self.__targetMan.new(im_width, im_height)
-
-        self.__local['run_detector'](self.__local['detector'], man_image, self.__targetMan, 0.1, None, self.__local)
-
-        man_input_file = self.__pathMan.get_man_input_filename(filename)
-        self.__imageMan.save(man_input_file)
-        self.__targetMan.resize_coord(self.__imageMan.calc_man_coord_to_target)
-
-        man_target_file = self.__pathMan.get_man_target_filename(filename)
-        print('man_target_file {}'.format(man_target_file))
-
-        self.__targetMan.save(man_target_file)
-
-    def image_detector(self, imageMan: object, targetMan: object):
-        print('IMAGE DETECTOR {}'.format('Start'))
-        imageMan.standardization((0, 0, 0))
-        man_image = imageMan.get_man_data()
-        im_width, im_height = imageMan.get_size()
-        self.__targetMan.new(im_width, im_height)
-
-        self.__local['run_detector'](self.__local['detector'], man_image, self.__targetMan, 0.1, None, self.__local)
-
-        self.__targetMan.resize_coord(imageMan.calc_man_coord_to_target)
-        targetMan.concatenate(self.__targetMan)
-        print('IMAGE DETECTOR {}'.format('End'))
-
+    def __read_script(self):
+        if (Path(self.__import_filename).is_file() == True):
+            self.__import_library = Path(self.__import_filename).read_text()
+        else:
+            # import filename does not exist
+            error = 'Import file @{}@ does not exist!'.format(self.__import_filename)
+            messagebox.showerror("Error", f"An error occurred: {error}")
+        if (Path(self.__script_filename).is_file() == True):
+            self.__script_code = Path(self.__script_filename).read_text()
+        else:
+            # script filename does not exist
+            error = 'Script file @{}@ does not exist!'.format(self.__script_filename)
+            messagebox.showerror("Error", f"An error occurred: {error}")
 
     def __exec_script(self):
+        if (self.__global != None):
+            del self.__global
+        if (self.__local != None):
+            del self.__local
+
         self.__global = dict()
         self.__local  = dict()
         exec(self.__import_library, self.__global, self.__local)
@@ -126,51 +108,14 @@ class RunExternScript(object) :
         #print(f'\n\n\nGLOBAL {self.__global}')
         #print(f'\n\n\nLOCAL {self.__local}')
 
-    def __read_script(self):
-        if (Path(self.__import_file).is_file() == True):
-            self.__import_library = Path(self.__import_file).read_text()
-        else:
-            #script file does not exist
-            error = r'Import file does not exist'
-            messagebox.showerror("Error", f"An error occurred: {error}")
-        if (Path(self.__script_file).is_file() == True):
-            self.__script_code = Path(self.__script_file).read_text()
-        else:
-            #script file does not exist
-            error = r'Script file does not exist'
-            messagebox.showerror("Error", f"An error occurred: {error}")
-
-    def __read_config_file(self):
-        if (Path(self.__config_file).is_file()):
-            with open(self.__config_file) as file :
-                config_list = yaml.load(file, Loader=yaml.FullLoader)
-
-            if ('script_file' in config_list) :
-                self.__script_file = config_list['script_file']
-                if (Path(self.__script_file).is_file() != True):
-                    self.__script_file = './run_script/run.py'
-            else :
-                self.__script_file = './run_script/run.py'
-
-            if ('import_file' in config_list) :
-                self.__import_file = config_list['import_file']
-                if (Path(self.__import_file).is_file() != True):
-                    self.__import_file = './run_script/import_library.py'
-            else :
-                self.__import_file = './run_script/import_library.py'
-            print(config_list)
-        else :
-            self.__source_path = './run_script/run.py'
-            self.__import_file = './run_script/import_library.py'
-            self.__save_config()
-
     def __save_config(self):
         # save name of script file in yaml file
-        config_data = """script_file : {}
-        import_file : {}
-        """.format(self.__script_file, self.__import_file)
+        config_data = """script_filename: {}
+import_filename: {}
+        """.format(self.__script_filename, self.__import_filename)
+        print(config_data)
         config_data_yaml = yaml.safe_load(config_data)
 
         with open(self.__config_file, 'w') as file :
             yaml.dump(config_data_yaml, file)
-        print('script_file {}, read {}'.format(self.__script_file, open(self.__config_file).read()))
+        print('read {}'.format(open(self.__config_file).read()))

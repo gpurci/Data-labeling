@@ -17,7 +17,9 @@ def run_detector(detector, image, targetMan, min_score, global_var, local_var):
             continue
         obj_name = str(obj_name, 'UTF-8')
         ymin, xmin, ymax, xmax = coord
+        print('coord ', coord)
         x0, y0, x1, y1 = xmin * im_width, ymin * im_height, xmax * im_width, ymax * im_height
+        print('detector (x0 {}, y0 {}, x1 {}, y1 {})'.format(x0, y0, x1, y1))
         d_new_targets = {'names'       : obj_name,
                          'description' : obj_name,
                          'rating'   : targetMan.get_default_rating(),
@@ -30,5 +32,5 @@ def run_detector(detector, image, targetMan, min_score, global_var, local_var):
     print("Found %d objects." % len(result["detection_scores"]))
     #print(f'\n\n\n\nRESULT detection_class_entities {result["detection_class_entities"]}')
     #print(f'\n\n\n\nRESULT detection_boxes {result["detection_boxes"]}')
-    print(f'\n\n\n\nRESULT {result.keys()}')
+    #print(f'\n\n\n\nRESULT {result.keys()}')
 

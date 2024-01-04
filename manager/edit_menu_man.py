@@ -7,8 +7,8 @@ from manager.target_man import *
 
 
 class ChangeUserNameMenu(object):
-    def __init__(self, path_manager: object) :
-        self.__pathMan       = path_manager
+    def __init__(self, path_man: object) :
+        self.__pathMan = path_man
 
         frame_title  = 'Change user name'
         search_title = 'User name'

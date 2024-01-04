@@ -1,2 +1,2 @@
-script_file: ./run_script/run.py
-import_file: ./run_script/import_library.py
+import_filename: ./run_script/import_library.py
+script_filename: ./run_script/run.py

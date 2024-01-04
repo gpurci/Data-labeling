@@ -60,7 +60,6 @@ class TargetManager(object) :
         print(' {}'.format('init'))
         self.__df_targets = pd.DataFrame(df_new_targets,
                                          index=[0, 1])
-        print('df_targets {}'.format(self.__df_targets))
         self.__init_selected_object()
         self.__init_last_name()
 
@@ -171,7 +170,7 @@ class TargetManager(object) :
         return x, y
 
     def get_object_size(self) :
-        return len(self.get_names())
+        return self.__df_targets.shape[0]
 
     def get_last_description(self) :
         return self.get_description(self.__selected_object)
@@ -311,7 +310,8 @@ class TargetManager(object) :
     def new(self, x: int, y: int) :
         self.__delete()
         self.__init()
-        self.set_coord(self.__DEFAULT_OBJECT, (0, 0, x, y))
+        self.set_size(x, y)
+        print('{}'.format(self))
 
     def add_object(self, d_new_target: dict) :
         self.__df_targets.loc[self.get_object_size()] = d_new_target
