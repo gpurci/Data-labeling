@@ -20,7 +20,7 @@ class PathManager :
         self.__row_path    = None
         self.__source_path = None
         self.__dest_path   = None
-        self.__user        = None
+        self.__user_name   = None
         self.__config_file = config_file
         self.__read_config_yaml_file()
 
@@ -44,7 +44,7 @@ class PathManager :
                    self.__input_path,   self.__target_path, 
                    self.__description_path,
                    self.__input_suffix, self.__output_suffix,
-                   self.__user)
+                   self.__user_name)
         return strRet
 
     def __read_config_yaml_file(self) :
@@ -72,7 +72,7 @@ class PathManager :
         self.__man_path    = check_key(config_list, 'man_path',    'man')
         self.__input_path  = check_key(config_list, 'input_path',  'inputs')
         self.__target_path = check_key(config_list, 'target_path', 'targets')
-        self.__user        = check_key(config_list, 'user',        'user')
+        self.__user_name   = check_key(config_list, 'user',        'user')
         self.__description_path = check_key(config_list, 'description_path', 'description')
         self.__input_suffix     = check_key(config_list, 'input_suffix',     '.png')
         self.__output_suffix    = check_key(config_list, 'output_suffix',    '.csv')
@@ -105,7 +105,7 @@ class PathManager :
                    self.__input_path,   self.__target_path, 
                    self.__description_path,
                    self.__input_suffix, self.__output_suffix,
-                   self.__user)
+                   self.__user_name)
         names = yaml.safe_load(names_yaml)
 
         with open(config_file, 'w') as file :
@@ -153,7 +153,7 @@ class PathManager :
             self.__resolutionMan.set_path_parent(self.get_description_path())
 
     def set_user_name(self, user: str) :
-        self.__user = user
+        self.__user_name = user
         self.__makedir()
 
     def set_filename(self, filename: str) :
@@ -165,6 +165,9 @@ class PathManager :
         else:
             retVal = False
         return retVal
+
+    def get_user_name(self) :
+        return self.__user_name
 
     def get_source_path(self) :
         return self.__source_path
@@ -195,7 +198,7 @@ class PathManager :
         return str(path)
 
     def get_target_path(self) :
-        path = Path(self.__dest_path).joinpath(self.__target_path, self.__user)
+        path = Path(self.__dest_path).joinpath(self.__target_path, self.__user_name)
         return str(path)
 
     def get_man_input_path(self) :
@@ -205,7 +208,7 @@ class PathManager :
 
     def get_man_target_path(self) :
         parent = str(Path(self.__dest_path).parent)
-        path = Path(parent).joinpath(self.__man_path, self.__target_path, self.__user)
+        path = Path(parent).joinpath(self.__man_path, self.__target_path, self.__user_name)
         return str(path)
 
     def get_filename(self) :

@@ -7,4 +7,4 @@ output_suffix: .csv
 row_path: row
 source_path: /home/gheorghe/Desktop/s_AI/data_image/row/inputs
 target_path: targets
-user: user
+user: test_test

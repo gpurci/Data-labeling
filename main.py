@@ -134,7 +134,7 @@ class Application(Frame) :
         self.editmenu.add_command(label="Cut", command=self.none_fn)
         self.editmenu.add_command(label="Undo", command=self.none_fn)
         self.editmenu.add_command(label="Zoom", command=self.none_fn)
-        self.editmenu.add_command(label="Change user name", command=ChangeUserNameMenu(self.path_man))
+        self.editmenu.add_command(label="Change user name", command=ChangeUserNameMenu(self.path_man, self.notebook_man))
         self.editmenu.add_separator()
         self.editmenu.add_command(label="Delete", command=self.quit)
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
@@ -225,6 +225,7 @@ class Application(Frame) :
 
         self.show_frame.set_EditFrame(self.edit_frame)
         self.show_frame.set_EditManager(self.edit_man)
+        self.show_frame.set_PathManager(self.path_man)
         self.show_frame.set_NotebookFrame(self.notebook_frame)
         self.show_frame.set_SelectObjectFrame(self.select_object_frame)
         self.show_frame.set_DescriptionFrame(self.description_frame)

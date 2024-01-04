@@ -34,14 +34,20 @@ class SelectObjectFrame :
         self.__imageMan = imageMan
         self.__targetMan = targetMan
 
+    def set_user_name(self, user) :
+        self.__labelframe.config(text=user)
+
     def none_fn(self) :
         pass
 
     def run(self) :
-        scrollbar = Scrollbar(self.__window)
+        self.__labelframe = LabelFrame(self.__window, text='user')
+        self.__labelframe.pack(fill="both", expand="yes")
+
+        scrollbar = Scrollbar(self.__labelframe)
         scrollbar.pack(side=RIGHT, fill=Y)
         # Create a Listbox with some items
-        self.__selected_obj_name = Listbox(self.__window, height=30, width=40, 
+        self.__selected_obj_name = Listbox(self.__labelframe, height=30, width=40, 
                                             yscrollcommand=scrollbar.set, bd=5, bg='#ffffff')
         self.__selected_obj_name.pack(side=LEFT, fill=None)
 

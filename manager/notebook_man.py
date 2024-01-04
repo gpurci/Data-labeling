@@ -193,14 +193,17 @@ class NotebookManager :
         print('image_file {}'.format(image_file))
         imageMan.read(image_file)
         imageMan.vDoImageTK()
+        size = imageMan.get_size()
+        self.__open_target(targetMan, size)
 
+    def __open_target(self, targetMan: object, size: tuple):
         target_file = self.__pathMan.get_target_filename()
         if (Path(target_file).is_file() == True) :
             print('True  -> target_file {}'.format(target_file))
             targetMan.read(target_file)
         else :
             print('False -> target_file {}'.format(target_file))
-            x, y = imageMan.get_size()
+            x, y = size
             targetMan.new(x, y)
         print('datasets {}'.format(targetMan))
 
@@ -217,7 +220,14 @@ class NotebookManager :
     def delete_tab(self, tab_name: str) :
         self.__save_dataset(tab_name)
         self.__tabMan.delete_tab(tab_name)
+        if (self.__tabMan.get_size() == 0):
+            self.__showFrame.set_filename(None)
         
+    def change_user_name(self):
+        if (self.__tab_name != None):
+            self.__open_target(self.targetMan(), self.targetMan().get_size())
+        self.__showFrame.set_show_option(self.__showFrame.SHOW_SET_USER)
+
 
     def double(self, filename: str):
         print('DOUBLE {}'.format(filename))
@@ -252,14 +262,14 @@ class NotebookManager :
             tab_name = self.__tab_name
 
         if (tab_name != None) :
-            file = self.__pathMan.get_target_filename(tab_name)
-            print('target_filename {}'.format(file))
-            self.targetMan(tab_name).save(file)
-            file = self.__pathMan.get_input_filename(tab_name)
-            print('image_filename {}'.format(file))
-            if (Path(file).is_file() == False):
-                print('Save filename {}'.format(file))
-                self.imageMan(tab_name).save(file)
+            filename = self.__pathMan.get_target_filename(tab_name)
+            print('target_filename {}'.format(filename))
+            self.targetMan(tab_name).save(filename)
+            filename = self.__pathMan.get_input_filename(tab_name)
+            print('image_filename {}'.format(filename))
+            if (Path(filename).is_file() == False):
+                print('Save filename {}'.format(filename))
+                self.imageMan(tab_name).save(filename)
         else:
             # not open tab
             pass

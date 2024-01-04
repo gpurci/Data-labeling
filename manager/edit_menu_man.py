@@ -7,8 +7,9 @@ from manager.target_man import *
 
 
 class ChangeUserNameMenu(object):
-    def __init__(self, path_man: object) :
-        self.__pathMan = path_man
+    def __init__(self, pathMan: object, notebookMan: object) :
+        self.__pathMan     = pathMan
+        self.__notebookMan = notebookMan
 
         frame_title  = 'Change user name'
         search_title = 'User name'
@@ -20,11 +21,14 @@ class ChangeUserNameMenu(object):
         self.__make_object.set_items(self.__get_user_names())
 
     def __call__(self):
+        self.__make_object.set_search_item('')
         self.__make_object.run()
 
     def __change_user_name(self, name: str):
+        self.__notebookMan.save()
         self.__pathMan.set_user_name(name)
         self.__save()
+        self.__notebookMan.change_user_name()
 
     def __save(self) :
         # save default rating in yaml file
@@ -39,7 +43,10 @@ class ChangeUserNameMenu(object):
         if (Path(self.__pathMan.get_user_info_file()).is_file()) :
             with open(self.__pathMan.get_user_info_file()) as file :
                 config_list = yaml.load(file, Loader=yaml.FullLoader)
-            retVal = config_list['user_names']
+            if ('user_names' in config_list):
+                retVal = config_list['user_names']
+            else:
+                retVal = 'User'
             print('user_names {}'.format(config_list))
         else :
             retVal = []

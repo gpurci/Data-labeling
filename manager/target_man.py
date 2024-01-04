@@ -167,7 +167,7 @@ class TargetManager(object) :
     def get_size(self) :
         x = self.__df_targets['coord x1'][self.__DEFAULT_OBJECT]
         y = self.__df_targets['coord y1'][self.__DEFAULT_OBJECT]
-        return x, y
+        return (x, y)
 
     def get_object_size(self) :
         return self.__df_targets.shape[0]

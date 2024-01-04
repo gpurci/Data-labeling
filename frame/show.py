@@ -20,6 +20,7 @@ class ShowFrame :
         self.SHOW_IMAGE     = 1
         self.SHOW_SET_TAB   = 2
         self.SHOW_FILENAMES = 3
+        self.SHOW_SET_USER  = 4
 
         self.__show_option = self.SHOW_NO
 
@@ -58,6 +59,16 @@ class ShowFrame :
             print('SHOW_FILENAMES')
             self.selectFilenameFrame.show()
             pass
+        elif (self.__show_option == self.SHOW_SET_USER) :
+            print('SHOW_SET_USER')
+            self.selectObjectFrame.set_user_name(self.__pathMan.get_user_name())
+            if (self.__filename != None):
+                self.__editMan.show()
+                self.selectObjectFrame.show()
+                self.descriptionFrame.set_text_frame(self.__targetMan.get_last_name(), self.__targetMan.get_last_description())
+                self.ratingFrame.set_rating(self.__targetMan.get_last_rating())
+            pass
+            pass
 
         self.__show_option = self.SHOW_NO
 
@@ -75,23 +86,26 @@ class ShowFrame :
 
 
 
-    def set_DescriptionFrame(self, descriptionFrame: object) :
-        self.descriptionFrame = descriptionFrame
+    def set_DescriptionFrame(self, obj: object) :
+        self.descriptionFrame = obj
 
-    def set_SelectObjectFrame(self, selectObjectFrame: object) :
-        self.selectObjectFrame = selectObjectFrame
+    def set_SelectObjectFrame(self, obj: object) :
+        self.selectObjectFrame = obj
 
-    def set_SelectFilenameFrame(self, selectFilenameFrame: object) :
-        self.selectFilenameFrame = selectFilenameFrame
+    def set_SelectFilenameFrame(self, obj: object) :
+        self.selectFilenameFrame = obj
 
-    def set_RatingFrame(self, ratingFrame: object) :
-        self.ratingFrame = ratingFrame
+    def set_RatingFrame(self, obj: object) :
+        self.ratingFrame = obj
 
-    def set_EditManager(self, editManager: object) :
-        self.__editMan = editManager
+    def set_EditManager(self, obj: object) :
+        self.__editMan = obj
 
-    def set_EditFrame(self, editFrame: object) :
-        self.editFrame = editFrame
+    def set_PathManager(self, obj: object) :
+        self.__pathMan = obj
 
-    def set_NotebookFrame(self, notebookFrame: object) :
-        self.notebookFrame = notebookFrame
+    def set_EditFrame(self, obj: object) :
+        self.editFrame = obj
+
+    def set_NotebookFrame(self, obj: object) :
+        self.notebookFrame = obj
