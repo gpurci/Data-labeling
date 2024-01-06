@@ -22,6 +22,10 @@ class ObjectManager :
         for name in names:
             self.__add_item_to_items(name)
 
+    def add_object_name(self, name: str):
+        print('ObjectManager {}'.format(name))
+        self.__add_item_to_items(name)
+
     def get_object_names(self):
         return self.__object_names
 
@@ -40,7 +44,9 @@ class ObjectManager :
         return d_object_names
 
     def __add_item_to_items(self, item: str):
+        item = item.lower()
         if (self.__is_item_in_items(item) == False):
+            print('__add_item_to_items {}'.format(item))
             self.__object_names = np.append(self.__object_names, item)
 
     def __is_item_in_items(self, item: str):

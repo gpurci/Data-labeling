@@ -108,10 +108,6 @@ class Application(Frame) :
         print('none_fn {}'.format('test'))
         pass
 
-    def import_yolov5_format(self) :
-        self.import_frame.set_import_fn(yolo_v5_format_import_fn)
-        self.import_frame()
-
     def menubar_fn(self) :
         self.menubar = Menu(self)
         self.filemenu = Menu(self.menubar, tearoff=0)
@@ -121,11 +117,12 @@ class Application(Frame) :
         self.filemenu.add_command(label="Destination", command=MenuDestinationFrame(self.path_man))
 
         self.filemenu.add_separator()
-
+        o_folder_structure = FolderStructure(self.object_man, self.import_frame)
         # add a submenu
         sub_menu_import = Menu(self.filemenu, tearoff=0)
-        sub_menu_import.add_command(label='Folder structure', command=FolderStructure(self.path_man).import_fn)
-        sub_menu_import.add_command(label='Yolo v5 format', command=self.import_yolov5_format)
+        sub_menu_import.add_command(label='Folder structure', command=o_folder_structure.import_frame)
+        o_yolo_v5_format = YoloV5Format(self.object_man, self.import_frame)
+        sub_menu_import.add_command(label='Yolo v5 format', command=o_yolo_v5_format.import_frame)
         sub_menu_import.add_command(label='...', command=self.none_fn)
 
         # add a submenu
@@ -304,7 +301,7 @@ class Application(Frame) :
         self.tools_frame    = ToolsFrame(self.tools_man, self.notebook_man, self.path_man)
         self.show_frame     = ShowFrame()
 
-        self.import_frame   = ImportFrame(windows, self.path_man, r'./config/config_target_manager.yaml')
+        self.import_frame   = ImportFrame(windows, self.path_man, r'./config/default_rating.yaml')
 
         self.menubar_fn()
         self.set_windows()

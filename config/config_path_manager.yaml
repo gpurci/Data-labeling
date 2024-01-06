@@ -1,10 +1,10 @@
 description_path: description
-dest_path: /home/gheorghe/Desktop/s_AI/data_image/row
+dest_path: /home/gheorghe/Desktop/s_AI/test_folder_structure/row
 input_path: inputs
 input_suffix: .png
 man_path: man
 output_suffix: .csv
 row_path: row
-source_path: /home/gheorghe/Desktop/s_AI/data_image/row/inputs
+source_path: /home/gheorghe/Desktop/s_AI/test_folder_structure/row/inputs
 target_path: targets
 user: test_test

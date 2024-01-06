@@ -2,22 +2,18 @@
 
 from tkinter import *
 from tkinter import filedialog
-
-from manager.import_man.yolo_v5_format import *
+import yaml
+from pathlib import Path
 
 
 class ImportFrame :
-    def __init__(self, windows, pathManager, config_file) :
+    def __init__(self, windows, pathMan, config_file) :
         self.__default_rating = None
-        self.__import_fn = None
-        self.__windows = None
-        self.__config_file = config_file
+        self.__import_fn      = None
+        self.__windows        = windows
+        self.__config_file    = config_file
 
-        self.__pathMan = pathManager
-        self.set_windows(windows)
-
-        self.__source_path = self.__pathMan.get_source_path()
-        self.__dest_path = self.__pathMan.get_dest_path()
+        self.__pathMan = pathMan
 
     def set_windows(self, windows: object) :
         self.__windows = windows
@@ -42,7 +38,10 @@ class ImportFrame :
         if Path(self.__config_file).is_file() :
             with open(self.__config_file) as file :
                 config_list = yaml.load(file, Loader=yaml.FullLoader)
-            self.set_default_rating(config_list['default_rating'])
+            if ('default_rating' in config_list):
+                self.set_default_rating(config_list['default_rating'])
+            else:
+                self.set_default_rating(0)
             print(config_list)
         else :
             self.set_default_rating(0)
@@ -50,40 +49,18 @@ class ImportFrame :
     def set_default_rating(self, rating: int) :
         self.__default_rating = rating
 
-    def __open_dir_source(self) :
-        source_path = filedialog.askdirectory(
-            initialdir=self.__source_path,  # Start in the root directory
-            title="Select a Directory",  # Custom title for the dialog
-            mustexist=True,  # Ensure that the selected directory exists
-        )
-        self.__set_source_path_frame(source_path)
-
-    def __set_source_path_frame(self, source_path: str) :
-        self.__src_path_entry.delete(0, END)
-        self.__src_path_entry.insert(0, source_path)
-
-    def __open_dir_dest(self) :
-        dest_path = filedialog.askdirectory(
-            initialdir=self.__dest_path,  # Start in the root directory
-            title="Select a Directory",  # Custom title for the dialog
-            mustexist=True,  # Ensure that the selected directory exists
-        )
-        self.__set_dest_path_frame(dest_path)
-
-    def __set_dest_path_frame(self, dest_path: str) :
-        self.__dest_path_entry.delete(0, END)
-        self.__dest_path_entry.insert(0, dest_path)
-
     def __do_import(self) :
         self.__import_frame.withdraw()
         self.__read_config_yaml_file()
-        self.__source_path = str(self.__src_path_entry.get())
-        self.__dest_path = str(self.__dest_path_entry.get())
-        self.__pathMan.set_dest_path(self.__dest_path)
-        self.__pathMan.set_source_path(self.__pathMan.get_input_path())
+        source_path = str(self.__src_path_entry.get())
+        dest_path = str(self.__dest_path_entry.get())
+        self.__pathMan.set_source_path(source_path)
+        self.__pathMan.set_dest_path(dest_path)
 
-        datasets = TargetManager(self.__default_rating)
-        self.__import_fn(self.__source_path, self.__dest_path, datasets, self.__pathMan)
+        print('default_rating {}'.format(self.__default_rating))
+        self.__import_fn(self.__pathMan, self.__default_rating)
+
+        self.__pathMan.set_source_path(dest_path)
 
     def __source_path_UI(self, window: object) :
         src_path_label = Label(window, text="Source path", width=10)
@@ -116,3 +93,27 @@ class ImportFrame :
         change_dest_path_button["text"] = "Import",
         change_dest_path_button["command"] = self.__do_import
         change_dest_path_button.pack({"side" : "top"})
+
+    def __open_dir_source(self) :
+        source_path = filedialog.askdirectory(
+            initialdir=self.__pathMan.get_source_path(),  # Start in the root directory
+            title="Select a Directory",  # Custom title for the dialog
+            mustexist=True,  # Ensure that the selected directory exists
+        )
+        self.__set_source_path_frame(source_path)
+
+    def __set_source_path_frame(self, source_path: str) :
+        self.__src_path_entry.delete(0, END)
+        self.__src_path_entry.insert(0, source_path)
+
+    def __open_dir_dest(self) :
+        dest_path = filedialog.askdirectory(
+            initialdir=self.__pathMan.get_dest_path(),  # Start in the root directory
+            title="Select a Directory",  # Custom title for the dialog
+            mustexist=True,  # Ensure that the selected directory exists
+        )
+        self.__set_dest_path_frame(dest_path)
+
+    def __set_dest_path_frame(self, dest_path: str) :
+        self.__dest_path_entry.delete(0, END)
+        self.__dest_path_entry.insert(0, dest_path)

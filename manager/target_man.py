@@ -8,10 +8,10 @@ import numpy as np
 class TargetManager(object) :
     def __init__(self, default_rating: int) :
         self.__df_targets = None
-        self.__last_name = None
+        self.__last_name  = None
         self.__selected_object = None
-        self.__DEFAULT_OBJECT = 1
-        self.__default_rating = default_rating
+        self.__DEFAULT_OBJECT  = 1
+        self.__default_rating  = default_rating
         self.__init()
         self.__showFrame = None
 
@@ -240,17 +240,23 @@ class TargetManager(object) :
         print('END resize_coord')
 
     def read(self, filename: str) :
-        self.__df_targets = pd.read_csv(filename,
-                                        sep=',',
-                                        dtype={
-                                            'names' : 'str',
-                                            'description' : 'str',
-                                            'rating' : 'int',
-                                            'coord x0' : 'int',
-                                            'coord x1' : 'int',
-                                            'coord y0' : 'int',
-                                            'coord y1' : 'int'
-                                        })
+        if (self.__df_targets != None):
+            del self.__df_targets
+
+        if (Path(filename).is_file() == False):
+            pass
+        else:
+            self.__df_targets = pd.read_csv(filename,
+                                            sep=',',
+                                            dtype={
+                                                'names' : 'str',
+                                                'description' : 'str',
+                                                'rating' : 'int',
+                                                'coord x0' : 'int',
+                                                'coord x1' : 'int',
+                                                'coord y0' : 'int',
+                                                'coord y1' : 'int'
+                                            })
         #print('columns {}'.format(self.__df_targets.columns))
 
         self.__init_selected_object()

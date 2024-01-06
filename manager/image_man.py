@@ -28,6 +28,7 @@ class ImageManager :
         self.__pad_color   = (0, 0, 0)
         self.__dilatation  = (0, 0)
         self.__is_man      = False
+        self.__is_image    = True
 
     def copy(self):
         imageMan = ImageManager(self.get_frame_size())
@@ -48,6 +49,9 @@ class ImageManager :
 
     def set_dilatation(self, size: tuple):
         self.__dilatation = np.array(size, dtype=np.int32)
+
+    def is_image(self):
+        return self.__is_image
 
     def __str__(self) :
         returnStr = "ImageManager"
@@ -121,9 +125,19 @@ class ImageManager :
         self.__show_data = ImageTk.PhotoImage(img)
 
 
-    def read(self, filename: str) :
-        self.__data = Image.open(filename).convert('RGB')
-        self.__size = np.array(self.__data.size, dtype=np.float32)
+    def read(self, filename: str, is_user=True) :
+        try:
+            self.__data = Image.open(filename).convert('RGB')
+            self.__size = np.array(self.__data.size, dtype=np.float32)
+            self.__is_image = True
+        except:
+            self.__is_image = False
+            error = 'Filename @{}@ does not exist!'.format(filename)
+            if (is_user == True):
+                # filename does not exist
+                messagebox.showerror("Error", f"An error occurred: {error}")
+            else:
+                print('---------ERROR-------\n---{}'.format(error))
 
     def vDoImageTK(self):
         print("image_size W {}, H {}".format(*self.__size))

@@ -121,7 +121,7 @@ class PathManager :
         if (match_patern == None) :
             self.__source_path = _path
         else :
-            self.__source_path = _path
+            self.__source_path = Path(match_patern['path']).joinpath(self.__input_path)
             self.set_dest_path(match_patern['path'])
         print('set_source_path {}'.format(self.__source_path))
 

@@ -1,11 +1,58 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/python
 
 import re
 import numpy as np
-from PIL import Image
+from pathlib import Path
 
-from manager.path_man import *
+from manager.image_man import *
 from manager.target_man import *
+
+
+class YoloV5Format(object) :
+    def __init__(self, object_man: object, import_frame: object) :
+        self.__objectMan = object_man
+        self.__import_frame = import_frame
+
+    def __call__(self):
+        pass
+
+    def import_frame(self) :
+        self.__import_frame.set_import_fn(self.__import_fn)
+        self.__import_frame()
+
+    def __import_fn(self, _pathMan, _default_rating) :
+        print('YoloV5Format import method {}'.format('START'))
+        imageMan  = ImageManager(frame=(0, 0))
+        targetMan = TargetManager(0)
+        filenames = Path(_pathMan.get_source_path()).glob('*/images/*.*')
+        all_object_names = get_object_names(source_path)
+        print('all_object_names : {}'.format(all_object_names))
+        # filenames = list(map(lambda s: str(s), filenames))
+        for filename in filenames :
+            print('filename {}'.format(filename))
+            imageMan.read(filename, False)
+            if (imageMan.is_image()):
+                to_file_F = _pathMan.get_input_filename(str(filename.name))
+                imageMan.save(to_file_F)
+                width, height = imageMan.get_size()
+
+                from_file_T = filename.with_suffix('.txt')
+                from_file_T = rename_dir(from_file_T, 'images', 'labels')
+                np_label, np_center_x, np_center_y, np_w, np_h = readLabelsYoloV5Format(from_file_T)
+                coord = (np_center_x, np_center_y, np_w, np_h)
+                object_names = all_object_names[np_label]
+                yolo_v5_format_file_import(targetMan, object_names, coord, img.size)
+
+                to_file_T = _pathMan.get_target_filename(str(filename.name))
+                targetMan.save(to_file_T)
+
+                print('filename {}'.format(filename))
+                print('to file {}'.format(to_file_F))
+                print('targetMan {}'.format(targetMan))
+
+    def export_fn(self, _pathMan):
+        pass
+
 
 
 def rename_dir(path, src, dst) :
@@ -148,36 +195,6 @@ def transformCartesian2Center(x0, y0, x1, y1, height, width) :
     return np_center_x, np_center_y, np_w, np_h
 
 
-def yolo_v5_format_import_fn(source_path, dest_path, targets, path_man) :
-    filenames = Path(source_path).glob('*/images/*.*')
-    row_file_path    = Path(path_man.get_input_path())
-    target_file_path = Path(path_man.get_target_path())
-    print('row_file_path {}/ntarget_file_path {}'.format(row_file_path, target_file_path))
-    row_file_path.mkdir(parents=True, exist_ok=True)
-    target_file_path.mkdir(parents=True, exist_ok=True)
-    all_object_names = np.array(get_object_names(source_path))
-    print('all_object_names : {}'.format(all_object_names))
-    # filenames = list(map(lambda s: str(s), filenames))
-    for filename in filenames :
-        to_file_F = row_file_path.joinpath('name').with_name(filename.name)
-        to_file_F.write_bytes(filename.read_bytes())
-        from_file_T = filename.with_suffix('.txt')
-        from_file_T = rename_dir(from_file_T, 'images', 'labels')
-        np_label, np_center_x, np_center_y, np_w, np_h = readLabelsYoloV5Format(from_file_T)
-        img = Image.open(str(filename))
-        width, height = img.size
-        coord = (np_center_x, np_center_y, np_w, np_h)
-        object_names = all_object_names[np_label]
-        yolo_v5_format_file_import(targets, object_names, coord, img.size)
-        del img
-
-        to_file_T = path_man.get_target_filename(str(filename.name))
-        targets.save(to_file_T)
-
-        print('filename {}'.format(filename))
-        print('to file {}'.format(to_file_F))
-        print('targets {}'.format(targets))
-
 def yolo_v5_format_file_import(targets, object_names, coord, size):
     width, height = size
     np_center_x, np_center_y, np_w, np_h = coord
@@ -203,4 +220,4 @@ def get_object_names(config_file: str) :
         print(_config_list)
     else :
         _object_names = []
-    return _object_names
+    return np.array(_object_names)
