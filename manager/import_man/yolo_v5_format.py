@@ -179,9 +179,9 @@ def yolo_v5_format_import_fn(source_path, dest_path, targets, path_man) :
         print('targets {}'.format(targets))
 
 def yolo_v5_format_file_import(targets, object_names, coord, size):
-    height, width = size
+    width, height = size
     np_center_x, np_center_y, np_w, np_h = coord
-    targets.new(height, width)
+    targets.new(width, height)
     x0s, y0s, x1s, y1s = transformCenter2Cartesian(np_center_x, np_center_y, np_w, np_h, height, width)
     for obj_name, x0, y0, x1, y1 in zip(object_names, x0s, y0s, x1s, y1s) :
         d_new_targets = {'names'    :    obj_name,

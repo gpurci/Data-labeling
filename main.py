@@ -16,6 +16,7 @@ from manager.edit_man import *
 from manager.resolution_man import *
 from manager.path_man import *
 from manager.import_man.yolo_v5_format import *
+from manager.import_man.folder_structure import *
 from manager.notebook_man import *
 from manager.tools_man import *
 from manager.object_man import *
@@ -123,10 +124,20 @@ class Application(Frame) :
 
         # add a submenu
         sub_menu_import = Menu(self.filemenu, tearoff=0)
-        sub_menu_import.add_command(label='yolo v5 format', command=self.import_yolov5_format)
+        sub_menu_import.add_command(label='Folder structure', command=FolderStructure(self.path_man).import_fn)
+        sub_menu_import.add_command(label='Yolo v5 format', command=self.import_yolov5_format)
         sub_menu_import.add_command(label='...', command=self.none_fn)
 
+        # add a submenu
+        sub_menu_export = Menu(self.filemenu, tearoff=0)
+        sub_menu_export.add_command(label='Folder structure', command=self.none_fn)
+        sub_menu_export.add_command(label='Yolo v5 format', command=self.none_fn)
+        sub_menu_export.add_command(label="Standardize", command=Standardization(self.path_man, self.resolution_man))
+        sub_menu_export.add_command(label='...', command=self.none_fn)
+
         self.filemenu.add_cascade(label="Import", menu=sub_menu_import)
+        self.filemenu.add_separator()
+        self.filemenu.add_cascade(label="Export", menu=sub_menu_export)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Exit", command=self.quit)
         self.menubar.add_cascade(label="File", menu=self.filemenu)
@@ -140,7 +151,6 @@ class Application(Frame) :
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
 
         self.toolsmenu = Menu(self.menubar, tearoff=0)
-        self.toolsmenu.add_command(label="Standardize", command=Standardization(self.path_man, self.resolution_man))
         self.toolsmenu.add_command(label="ObjectDetect", command=self.run_detect_script.source_detector)
         self.menubar.add_cascade(label="Tools", menu=self.toolsmenu)
 
